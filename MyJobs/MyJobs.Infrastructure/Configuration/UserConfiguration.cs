@@ -3,6 +3,7 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
     using MyJobs.Infrastructure.Data.Models.Identity;
 
     public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
