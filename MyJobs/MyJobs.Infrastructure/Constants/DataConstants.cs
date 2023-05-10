@@ -3,9 +3,14 @@
     public static class DataConstants
     {
         //Application User
+        public const int UserUsernameMaxLength = 40;
+        public const int UserUsernameMinLength = 4;
+
         public const int UserFirstNameMaxLength = 40;
+        public const int UserFirstNameMinLength = 3;
 
         public const int UserLastNameMaxLength = 40;
+        public const int UserLastNameMinLength = 3;
 
         //Company
 

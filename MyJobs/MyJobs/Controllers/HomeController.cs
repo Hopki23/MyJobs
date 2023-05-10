@@ -1,18 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MyJobs.Models;
-using System.Diagnostics;
-
-namespace MyJobs.Controllers
+﻿namespace MyJobs.Controllers
 {
+    using System.Diagnostics;
+
+    using Microsoft.AspNetCore.Mvc;
+    using MyJobs.Models;
+
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
             return View();

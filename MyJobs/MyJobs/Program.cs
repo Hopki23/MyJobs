@@ -22,11 +22,10 @@ builder.Services.AddDefaultIdentity<ApplicationUser>
         options.Password.RequireNonAlphanumeric = false;
     })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<MyJobsDbContext>()
-    .AddDefaultTokenProviders();
-
+    .AddEntityFrameworkStores<MyJobsDbContext>();
 
 builder.Services.AddControllersWithViews();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
