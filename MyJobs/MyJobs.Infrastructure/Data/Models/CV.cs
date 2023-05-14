@@ -26,6 +26,9 @@
         public string Experience { get; set; } = null!;
 
         [Required]
+        public string Address { get; set; } = null!;
+
+        [Required]
         [MaxLength(DataConstants.SkillsMaxLength)]
         public string Skills { get; set; } = null!;
         public bool IsDeleted { get; set; }

@@ -3,12 +3,14 @@
     using System.ComponentModel.DataAnnotations;
 
     using MyJobs.Infrastructure.Constants;
+    using MyJobs.Infrastructure.Data.Models;
+
     public class Company
     {
         public Company()
         {
             this.Employers = new HashSet<Employer>();
-            this.Employees = new HashSet<Employee>();
+            this.EmployeeEmployments = new HashSet<EmployeeEmployment>();
             this.Jobs = new HashSet<Job>();
         }
 
@@ -29,6 +31,8 @@
         public bool IsDeleted { get; set; }
         public virtual ICollection<Job> Jobs { get; set; }
         public virtual ICollection<Employer> Employers { get; set; }
-        public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<EmployeeEmployment> EmployeeEmployments { get; set; }
+
+        //public virtual ICollection<Employee> Employees { get; set; }
     }
 }

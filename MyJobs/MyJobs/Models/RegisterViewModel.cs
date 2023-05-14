@@ -21,22 +21,36 @@
         public string PasswordRepeat { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.UserUsernameMaxLength)]
         [MinLength(DataConstants.UserUsernameMinLength)]
+        [MaxLength(DataConstants.UserUsernameMaxLength)]
         public string Username { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.UserFirstNameMaxLength)]
         [MinLength(DataConstants.UserFirstNameMinLength)]
+        [MaxLength(DataConstants.UserFirstNameMaxLength)]
         [Display(Name = "First Name")]
         public string FirstName { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.UserLastNameMaxLength)]
         [MinLength(DataConstants.UserLastNameMinLength)]
+        [MaxLength(DataConstants.UserLastNameMaxLength)]
         [Display(Name = "Last Name")]
         public string LastName { get; set; } = null!;
 
-        public bool IsEmployer { get; set; }
+        [Display(Name = "User Type")]
+        public string? UserType { get; set; } 
+
+        [Display(Name = "Skills")]
+        public string? Skills { get; set; }
+
+        [Display(Name = "Company name")]
+        public string? CompanyName { get; set; }
+
+        [Display(Name = "Phone number")]
+        public string? PhoneNumber { get; set; }
+
+        [Display(Name = "Address")]
+        public string? Address { get; set; }
     }
 }
+

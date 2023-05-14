@@ -3,7 +3,6 @@
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 
-    using MyJobs.Infrastructure.Configuration;
     using MyJobs.Infrastructure.Data.Models.Identity;
     using MyJobs.Infrastructure.Models;
 
@@ -18,28 +17,51 @@
         public DbSet<CV> CVs { get; set; } = null!;
         public DbSet<Company> Companies { get; set; } = null!;
         public DbSet<Job> Jobs { get; set; } = null!;
+        public DbSet<EmployeeEmployment> EmployeeEmployments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Employee>()
-                    .HasOne(e => e.Employer)
-                    .WithMany(e => e.Employees)
-                    .HasForeignKey(e => e.EmployerId)
-                    .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Employee>()
+            //        .HasOne(e => e.Employer)
+            //        .WithMany(e => e.Employees)
+            //        .HasForeignKey(e => e.EmployerId)
+            //        .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Employee>()
-                    .HasOne(c => c.Company)
-                    .WithMany(c => c.Employees)
-                    .HasForeignKey(e => e.EmployeeId)
-                    .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Employee>()
+            //        .HasOne(c => c.Company)
+            //        .WithMany(c => c.Employees)
+            //        .HasForeignKey(e => e.EmployeeId)
+            //        .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Employer>()
-                .HasMany(e => e.Employees)
-                .WithOne(e => e.Employer)
+            //modelBuilder.Entity<Employer>()
+            //    .HasMany(e => e.Employees)
+            //    .WithOne(e => e.Employer)
+            //    .HasForeignKey(e => e.EmployerId)
+            //    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<EmployeeEmployment>()
+                .HasKey(ee => ee.Id);
+
+            modelBuilder.Entity<EmployeeEmployment>()
+                .HasOne(c => c.Company)
+                .WithMany(e => e.EmployeeEmployments)
+                .HasForeignKey(e => e.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<EmployeeEmployment>()
+                .HasOne(ee => ee.Employer)
+                .WithMany(er => er.EmployeeEmployments)
                 .HasForeignKey(e => e.EmployerId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<EmployeeEmployment>()
+                 .HasOne(e => e.Employee)
+                 .WithMany(ee => ee.Employments)
+                 .HasForeignKey(e => e.EmployeeId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
 
             modelBuilder.Entity<Employer>()
                .HasMany(e => e.Jobs)
@@ -64,15 +86,6 @@
                 .WithOne(j => j.Company)
                 .HasForeignKey(j => j.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new RolesConfiguration());
-            modelBuilder.ApplyConfiguration(new UserRolesConfiguration());
-            //modelBuilder.ApplyConfiguration(new JobConfiguration());
-            //modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
-            //modelBuilder.ApplyConfiguration(new EmployerConfiguration());
-            //modelBuilder.ApplyConfiguration(new CompanyConfiguration());
-
         }
     }
 }

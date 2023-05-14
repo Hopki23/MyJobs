@@ -12,7 +12,7 @@ using MyJobs.Infrastructure.Data;
 namespace MyJobs.Infrastructure.Migrations
 {
     [DbContext(typeof(MyJobsDbContext))]
-    [Migration("20230510130641_Initial")]
+    [Migration("20230514180922_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,15 +64,6 @@ namespace MyJobs.Infrastructure.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "b344e7f4-4914-410a-9670-00056083dcb6",
-                            ConcurrencyStamp = "b344e7f4-4914-410a-9670-00056083dcb6",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -162,13 +153,6 @@ namespace MyJobs.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "ed6f8b16-e6bd-4092-b51e-69137932c8c3",
-                            RoleId = "b344e7f4-4914-410a-9670-00056083dcb6"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -268,27 +252,6 @@ namespace MyJobs.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "ed6f8b16-e6bd-4092-b51e-69137932c8c3",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "0bd99dbf-fa69-4e09-8b06-b1c86b1cf1e3",
-                            Email = "admin@abv.bg",
-                            EmailConfirmed = false,
-                            FirstName = "Admin",
-                            IsDeleted = false,
-                            LastName = "Adminov",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@ABV.BG",
-                            NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMF/P1unsowvwav9LBN5WW87h1xmMEXkdgbQn3KQo+WQ87vKmtgPL/yMsUBHoRfNGg==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "1972faff-5907-4d79-8a47-b1ccac2e319d",
-                            TwoFactorEnabled = false,
-                            UserName = "admin"
-                        });
                 });
 
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Company", b =>
@@ -328,6 +291,10 @@ namespace MyJobs.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Education")
                         .IsRequired()
@@ -370,26 +337,15 @@ namespace MyJobs.Infrastructure.Migrations
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Employee", b =>
                 {
                     b.Property<int>("EmployeeId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EmployerId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"), 1L, 1);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -405,11 +361,37 @@ namespace MyJobs.Infrastructure.Migrations
 
                     b.HasKey("EmployeeId");
 
-                    b.HasIndex("EmployerId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("MyJobs.Infrastructure.Models.EmployeeEmployment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("EmployerId");
+
+                    b.ToTable("EmployeeEmployments");
                 });
 
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Employer", b =>
@@ -574,29 +556,40 @@ namespace MyJobs.Infrastructure.Migrations
 
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Employee", b =>
                 {
-                    b.HasOne("MyJobs.Infrastructure.Models.Company", "Company")
-                        .WithMany("Employees")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MyJobs.Infrastructure.Models.Employer", "Employer")
-                        .WithMany("Employees")
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MyJobs.Infrastructure.Data.Models.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyJobs.Infrastructure.Models.EmployeeEmployment", b =>
+                {
+                    b.HasOne("MyJobs.Infrastructure.Models.Company", "Company")
+                        .WithMany("EmployeeEmployments")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MyJobs.Infrastructure.Models.Employee", "Employee")
+                        .WithMany("Employments")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MyJobs.Infrastructure.Models.Employer", "Employer")
+                        .WithMany("EmployeeEmployments")
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Company");
 
-                    b.Navigation("Employer");
+                    b.Navigation("Employee");
 
-                    b.Navigation("User");
+                    b.Navigation("Employer");
                 });
 
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Employer", b =>
@@ -639,7 +632,7 @@ namespace MyJobs.Infrastructure.Migrations
 
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Company", b =>
                 {
-                    b.Navigation("Employees");
+                    b.Navigation("EmployeeEmployments");
 
                     b.Navigation("Employers");
 
@@ -649,11 +642,13 @@ namespace MyJobs.Infrastructure.Migrations
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Employee", b =>
                 {
                     b.Navigation("CVs");
+
+                    b.Navigation("Employments");
                 });
 
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Employer", b =>
                 {
-                    b.Navigation("Employees");
+                    b.Navigation("EmployeeEmployments");
 
                     b.Navigation("Jobs");
                 });

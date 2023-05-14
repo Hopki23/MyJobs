@@ -2,23 +2,32 @@
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Mvc;
 
+    using MyJobs.Core.Repositories;
+    using MyJobs.Core.Constants;
     using MyJobs.Infrastructure.Data.Models.Identity;
     using MyJobs.Models;
+    using MyJobs.Infrastructure.Models;
 
     public class AccountController : BaseController
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IDbRepository dbRepository;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
+            IDbRepository dbRepository)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.roleManager = roleManager;
+            this.dbRepository = dbRepository;
         }
 
         [HttpGet]
@@ -26,7 +35,7 @@
         public IActionResult Register()
         {
             var model = new RegisterViewModel();
-            return this.View(model);
+            return View(model);
         }
 
         [HttpPost]
@@ -35,6 +44,16 @@
         {
             if (!ModelState.IsValid)
             {
+                foreach (var value in ModelState.Values)
+                {
+                    foreach (var error in value.Errors)
+                    {
+                        if (error != null)
+                        {
+                            var errorMessage = error.ErrorMessage;
+                        }
+                    }
+                }
                 return View(model);
             }
 
@@ -43,6 +62,7 @@
             if (doesUsernameExist)
             {
                 this.ModelState.AddModelError(nameof(model.Username), "Username already exists!");
+                return View(model);
             }
 
             var user = new ApplicationUser()
@@ -57,7 +77,49 @@
 
             if (result.Succeeded)
             {
+                var role = model.CompanyName != null ? "Employer" : "Employee";
+                //var role = model.UserType == "Employer" ? "Employer" : "Employee";
+
+                await userManager.AddToRoleAsync(user, role);
+
+                if (role == RoleConstants.Employee)
+                {
+                    var employee = new Employee
+                    {
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        IsDeleted = false,
+                        User = user
+                    };
+
+                    await this.dbRepository.AddAsync(employee);
+                }
+                else if (role == RoleConstants.Employer)
+                {
+                    var company = new Company
+                    {
+                        CompanyName = model.CompanyName!,
+                        PhoneNumber = model.PhoneNumber!,
+                        Address = model.Address!
+                    };
+
+                    await this.dbRepository.AddAsync(company);
+
+                    var employer = new Employer
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        IsDeleted=false,
+                        User = user,
+                        Company = company
+                    };
+
+                    await this.dbRepository.AddAsync(employer);
+                }
+
+                await this.dbRepository.SaveChangesAsync();
                 await this.signInManager.SignInAsync(user, isPersistent: false);
+
                 return RedirectToAction("Index", "Home");
             }
 
@@ -87,6 +149,7 @@
         {
             if (!ModelState.IsValid)
             {
+                model.ReturnUrl = returnUrl;
                 return this.View(model);
             }
 
@@ -116,6 +179,24 @@
             await this.signInManager.SignOutAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public async Task CreateRoles()
+        {
+            if (!await roleManager.RoleExistsAsync(RoleConstants.Administrator))
+            {
+                await roleManager.CreateAsync(new IdentityRole(RoleConstants.Administrator));
+            }
+
+            if (!await roleManager.RoleExistsAsync(RoleConstants.Employer))
+            {
+                await roleManager.CreateAsync(new IdentityRole(RoleConstants.Employer));
+            }
+
+            if (!await roleManager.RoleExistsAsync(RoleConstants.Employee))
+            {
+                await roleManager.CreateAsync(new IdentityRole(RoleConstants.Employee));
+            }
         }
     }
 }

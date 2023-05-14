@@ -1,4 +1,4 @@
-﻿namespace MyJobs.Infrastructure.Repositories
+﻿namespace MyJobs.Core.Repositories
 {
     using System.Linq.Expressions;
 
