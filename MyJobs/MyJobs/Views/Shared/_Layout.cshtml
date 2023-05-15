@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using MyJobs.Infrastructure.Constants
 @using MyJobs.Infrastructure.Data.Models.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -27,6 +28,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole(RoleConstants.Employer))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Create Job</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -41,11 +48,11 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - MyJobs @*<a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy*@</>
+            &copy; @DateTime.UtcNow.Year - MyJobs
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" ></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

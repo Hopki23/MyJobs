@@ -4,7 +4,6 @@
     using System.ComponentModel.DataAnnotations.Schema;
 
     using MyJobs.Infrastructure.Constants;
-    using MyJobs.Infrastructure.Data.Models;
     using MyJobs.Infrastructure.Data.Models.Identity;
 
     public class Employer
@@ -19,11 +18,11 @@
         public int EmployerId { get; set; }
 
         [Required]
-        [MaxLength(DataConstants.EmployerFirstNameMaxLength)]
+        [MaxLength(EmployerConstants.EmployerFirstNameMaxLength)]
         public string FirstName { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.EmployerLastNameMaxLength)]
+        [MaxLength(EmployerConstants.EmployerLastNameMaxLength)]
         public string LastName { get; set; } = null!;
 
         public bool IsDeleted { get; set; }

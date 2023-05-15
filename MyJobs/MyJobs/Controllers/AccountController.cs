@@ -6,10 +6,10 @@
     using Microsoft.AspNetCore.Mvc;
 
     using MyJobs.Core.Repositories;
-    using MyJobs.Core.Constants;
+    using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Data.Models.Identity;
-    using MyJobs.Models;
     using MyJobs.Infrastructure.Models;
+    using MyJobs.Core.Models.Account;
 
     public class AccountController : BaseController
     {
@@ -44,16 +44,6 @@
         {
             if (!ModelState.IsValid)
             {
-                foreach (var value in ModelState.Values)
-                {
-                    foreach (var error in value.Errors)
-                    {
-                        if (error != null)
-                        {
-                            var errorMessage = error.ErrorMessage;
-                        }
-                    }
-                }
                 return View(model);
             }
 
@@ -78,7 +68,6 @@
             if (result.Succeeded)
             {
                 var role = model.CompanyName != null ? "Employer" : "Employee";
-                //var role = model.UserType == "Employer" ? "Employer" : "Employee";
 
                 await userManager.AddToRoleAsync(user, role);
 

@@ -4,6 +4,7 @@
     using System.ComponentModel.DataAnnotations;
 
     using MyJobs.Infrastructure.Constants;
+    using MyJobs.Infrastructure.Data.Models;
 
     public class Job
     {
@@ -16,20 +17,22 @@
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(DataConstants.JobTitleMaxLength)]
+        [MaxLength(JobConstants.JobTitleMaxLength)]
         public string Title { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.CompanyNameMaxLength)]
+        [MaxLength(JobConstants.JobDescriptionMaxLength)]
         public string Description { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.RequirementsMaxLength)]
+        [MaxLength(JobConstants.RequirementsMaxLength)]
         public string Requirements { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.OfferingMaxLength)]
+        [MaxLength(JobConstants.OfferingMaxLength)]
         public string Offering { get; set; } = null!;
+        public bool IsApproved { get; set; }
+        public bool IsDeleted { get; set; }
 
         [ForeignKey(nameof(Company))]
         public int CompanyId { get; set; }
@@ -38,7 +41,8 @@
         public int EmployerId { get; set; }
         public Employer Employer { get; set; } = null!;
 
-        public bool IsDeleted { get; set; }
+        public int CategoryId { get; set; }
+        public virtual Category Category { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }
     }
 }

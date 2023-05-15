@@ -1,4 +1,4 @@
-﻿namespace MyJobs.Core.Constants
+﻿namespace MyJobs.Infrastructure.Constants
 {
     public class RoleConstants
     {

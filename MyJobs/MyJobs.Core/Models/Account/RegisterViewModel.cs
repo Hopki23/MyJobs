@@ -1,4 +1,4 @@
-﻿namespace MyJobs.Models
+﻿namespace MyJobs.Core.Models.Account
 {
     using System.ComponentModel.DataAnnotations;
 
@@ -21,27 +21,24 @@
         public string PasswordRepeat { get; set; } = null!;
 
         [Required]
-        [MinLength(DataConstants.UserUsernameMinLength)]
-        [MaxLength(DataConstants.UserUsernameMaxLength)]
+        [MinLength(UserConstants.UserUsernameMinLength)]
+        [MaxLength(UserConstants.UserUsernameMaxLength)]
         public string Username { get; set; } = null!;
 
         [Required]
-        [MinLength(DataConstants.UserFirstNameMinLength)]
-        [MaxLength(DataConstants.UserFirstNameMaxLength)]
+        [MinLength(UserConstants.UserFirstNameMinLength)]
+        [MaxLength(UserConstants.UserFirstNameMaxLength)]
         [Display(Name = "First Name")]
         public string FirstName { get; set; } = null!;
 
         [Required]
-        [MinLength(DataConstants.UserLastNameMinLength)]
-        [MaxLength(DataConstants.UserLastNameMaxLength)]
+        [MinLength(UserConstants.UserLastNameMinLength)]
+        [MaxLength(UserConstants.UserLastNameMaxLength)]
         [Display(Name = "Last Name")]
         public string LastName { get; set; } = null!;
 
         [Display(Name = "User Type")]
-        public string? UserType { get; set; } 
-
-        [Display(Name = "Skills")]
-        public string? Skills { get; set; }
+        public string? UserType { get; set; }
 
         [Display(Name = "Company name")]
         public string? CompanyName { get; set; }

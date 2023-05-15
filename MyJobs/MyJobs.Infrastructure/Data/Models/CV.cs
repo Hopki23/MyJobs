@@ -10,26 +10,26 @@
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(DataConstants.TitleMaxLength)]
+        [MaxLength(CVConstants.TitleMaxLength)]
         public string Title { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.SummaryMaxLength)]
+        [MaxLength(CVConstants.SummaryMaxLength)]
         public string Summary { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.EducationMaxLength)]
+        [MaxLength(CVConstants.EducationMaxLength)]
         public string Education { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.ExperienceMaxLength)]
+        [MaxLength(CVConstants.ExperienceMaxLength)]
         public string Experience { get; set; } = null!;
 
         [Required]
         public string Address { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.SkillsMaxLength)]
+        [MaxLength(CVConstants.SkillsMaxLength)]
         public string Skills { get; set; } = null!;
         public bool IsDeleted { get; set; }
         public int EmployeeId { get; set; }

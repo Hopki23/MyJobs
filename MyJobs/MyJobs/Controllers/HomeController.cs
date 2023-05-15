@@ -3,18 +3,23 @@
     using System.Diagnostics;
 
     using Microsoft.AspNetCore.Mvc;
-    using MyJobs.Models;
+
+    using MyJobs.Core.Models;
+    using MyJobs.Core.Services;
 
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IGetCategoriesService categoriesService;
+
+        public HomeController(IGetCategoriesService categoriesService)
         {
-            return View();
+            this.categoriesService = categoriesService;
         }
 
-        public IActionResult Privacy()
+        public IActionResult Index()
         {
-            return View();
+            var viewModel = categoriesService.GetCategories();
+            return View(viewModel);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

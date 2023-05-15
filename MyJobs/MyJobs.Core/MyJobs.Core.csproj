@@ -10,9 +10,4 @@
     <ProjectReference Include="..\MyJobs.Infrastructure\MyJobs.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Contracts\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>

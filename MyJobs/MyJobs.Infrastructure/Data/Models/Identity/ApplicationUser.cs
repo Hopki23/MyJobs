@@ -8,11 +8,11 @@
     public class ApplicationUser : IdentityUser
     {
         [Required]
-        [MaxLength(DataConstants.UserFirstNameMaxLength)]
+        [MaxLength(UserConstants.UserFirstNameMaxLength)]
         public string FirstName { get; set; } = null!;
 
         [Required]
-        [MaxLength(DataConstants.UserLastNameMaxLength)]
+        [MaxLength(UserConstants.UserLastNameMaxLength)]
         public string LastName { get; set; } = null!;
 
         public bool IsDeleted { get; set; }

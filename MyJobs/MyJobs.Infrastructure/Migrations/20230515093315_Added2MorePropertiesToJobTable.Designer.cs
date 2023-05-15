@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyJobs.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using MyJobs.Infrastructure.Data;
 namespace MyJobs.Infrastructure.Migrations
 {
     [DbContext(typeof(MyJobsDbContext))]
-    partial class MyJobsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230515093315_Added2MorePropertiesToJobTable")]
+    partial class Added2MorePropertiesToJobTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,81 +174,6 @@ namespace MyJobs.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("MyJobs.Infrastructure.Data.Models.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Software Engineer"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Food and Hospitality"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Aviation and Aerospace"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Real Estate"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Education and Training"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Marketing and Advertising"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "Healthcare and Medical"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "Full-Stack Developer"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Back-End Developer"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Front-End Developer"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Name = "QA Tester"
-                        });
                 });
 
             modelBuilder.Entity("MyJobs.Infrastructure.Data.Models.Identity.ApplicationUser", b =>
@@ -512,8 +439,10 @@ namespace MyJobs.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
@@ -548,8 +477,6 @@ namespace MyJobs.Infrastructure.Migrations
                         .HasColumnType("nvarchar(60)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("CompanyId");
 
@@ -694,12 +621,6 @@ namespace MyJobs.Infrastructure.Migrations
 
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Job", b =>
                 {
-                    b.HasOne("MyJobs.Infrastructure.Data.Models.Category", "Category")
-                        .WithMany("Jobs")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MyJobs.Infrastructure.Models.Company", "Company")
                         .WithMany("Jobs")
                         .HasForeignKey("CompanyId")
@@ -712,16 +633,9 @@ namespace MyJobs.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Category");
-
                     b.Navigation("Company");
 
                     b.Navigation("Employer");
-                });
-
-            modelBuilder.Entity("MyJobs.Infrastructure.Data.Models.Category", b =>
-                {
-                    b.Navigation("Jobs");
                 });
 
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Company", b =>

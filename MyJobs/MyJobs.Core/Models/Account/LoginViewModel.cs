@@ -1,4 +1,4 @@
-﻿namespace MyJobs.Models
+﻿namespace MyJobs.Core.Models.Account
 {
     using System.ComponentModel.DataAnnotations;
     public class LoginViewModel

@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MyJobs.Core.Constants;
+
 using MyJobs.Core.Repositories;
+using MyJobs.Core.Services;
 using MyJobs.Infrastructure.Data;
 using MyJobs.Infrastructure.Data.Models.Identity;
 
@@ -33,6 +34,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 builder.Services.AddScoped<IDbRepository, DbRepository>();
+builder.Services.AddScoped<IGetCategoriesService, GetCategoriesService>();
 
 
 builder.Services.AddControllersWithViews();
