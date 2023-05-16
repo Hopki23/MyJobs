@@ -35,6 +35,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddScoped<IDbRepository, DbRepository>();
 builder.Services.AddScoped<IGetCategoriesService, GetCategoriesService>();
+builder.Services.AddScoped<IJobService, JobService>();
 
 
 builder.Services.AddControllersWithViews();

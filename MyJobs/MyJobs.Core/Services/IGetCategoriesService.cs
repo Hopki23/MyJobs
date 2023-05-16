@@ -4,5 +4,6 @@
     public interface IGetCategoriesService
     {
         IndexViewModel GetCategories();
+        IEnumerable<KeyValuePair<string, string>> GetAllCategories();
     }
 }
