@@ -13,6 +13,7 @@
             : base(options)
         {
         }
+
         public DbSet<Employee> Employees { get; set; } = null!;
         public DbSet<Employer> Employers { get; set; } = null!;
         public DbSet<CV> CVs { get; set; } = null!;

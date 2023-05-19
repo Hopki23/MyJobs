@@ -9,6 +9,8 @@
 
         public const int JobDescriptionMaxLength = 600;
 
+        public const int JobResponsibilitiesMaxLength = 600;
+
         public const int RequirementsMaxLength = 1000;
 
         public const int OfferingMaxLength = 500;

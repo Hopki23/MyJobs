@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyJobs.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using MyJobs.Infrastructure.Data;
 namespace MyJobs.Infrastructure.Migrations
 {
     [DbContext(typeof(MyJobsDbContext))]
-    partial class MyJobsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230519095753_SeedData")]
+    partial class SeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -190,6 +192,63 @@ namespace MyJobs.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Software Engineer"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Food and Hospitality"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Aviation and Aerospace"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Real Estate"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Education and Training"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Marketing and Advertising"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Healthcare and Medical"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Full-Stack Developer"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Back-End Developer"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Front-End Developer"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "QA Tester"
+                        });
                 });
 
             modelBuilder.Entity("MyJobs.Infrastructure.Data.Models.Identity.ApplicationUser", b =>

@@ -9,6 +9,8 @@
         [Key]
         public int Id { get; set; }
 
+        public string? Image { get; set; }
+
         [Required]
         [MaxLength(CVConstants.TitleMaxLength)]
         public string Title { get; set; } = null!;
@@ -27,6 +29,15 @@
 
         [Required]
         public string Address { get; set; } = null!;
+
+        [Required]
+        [MaxLength(CVConstants.PhoneNumberMaxLength)]
+        public string PhoneNumber { get; set; } = null!;
+
+        public DateTime DateOfBirth { get; set; }
+
+        [Required]
+        public string Gender { get; set; } = null!;
 
         [Required]
         [MaxLength(CVConstants.SkillsMaxLength)]

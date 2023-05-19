@@ -16,6 +16,9 @@
         [Required]
         [MaxLength(JobConstants.RequirementsMaxLength)]
         public string Requirements { get; set; } = null!;
+        [Required]
+        [MaxLength(JobConstants.JobResponsibilitiesMaxLength)]
+        public string Responsibilities { get; set; } = null!;
 
         [Required]
         [MaxLength(JobConstants.OfferingMaxLength)]

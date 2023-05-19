@@ -1,6 +1,7 @@
 ﻿namespace MyJobs.Controllers
 {
     using System.Security.Claims;
+
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +34,7 @@
             {
                 CategoryItems = this.categoriesService.GetAllCategories(),
             };
-            
+
             return View(model);
         }
 
@@ -58,7 +59,21 @@
 
             this.jobService.CreateAsync(model, employerId, companyId);
 
-            return Redirect("/");
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult All(int page = 1)
+        {
+            const int ItemsPerPage = 5;
+            var model = new JobsListViewModel()
+            {
+                PageNumber = page,
+                ItemsPerPage = ItemsPerPage,
+                Jobs = this.jobService.GetAllJobs(page, ItemsPerPage),
+                JobsTotalCount = this.jobService.GetTotalJobCount()
+            };
+
+            return View(model);
         }
     }
 }

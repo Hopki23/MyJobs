@@ -16,6 +16,7 @@
             this.categoriesService = categoriesService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             var viewModel = categoriesService.GetCategories();

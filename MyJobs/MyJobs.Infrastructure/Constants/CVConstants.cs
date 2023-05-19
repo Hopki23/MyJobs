@@ -13,5 +13,7 @@
         public const int ExperienceMaxLength = 200;
 
         public const int SkillsMaxLength = 200;
+
+        public const int PhoneNumberMaxLength = 13;
     }
 }

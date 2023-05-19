@@ -29,6 +29,10 @@
         public string Requirements { get; set; } = null!;
 
         [Required]
+        [MaxLength(JobConstants.JobResponsibilitiesMaxLength)]
+        public string Responsibilities { get; set; }
+
+        [Required]
         [MaxLength(JobConstants.OfferingMaxLength)]
         public string Offering { get; set; } = null!;
         public bool IsApproved { get; set; }
