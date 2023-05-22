@@ -1,0 +1,92 @@
+﻿@using MyJobs.Core.Models.Job
+@model SingleJobViewModel
+@{
+    this.ViewData["Title"] = @Model.Title;
+    DateTime createdOn = Model.CreatedOn;
+    TimeSpan daysSincePosted = DateTime.Today - createdOn.Date;
+    int daysPostedAgo = (int)daysSincePosted.TotalDays;
+    string postedAgoText;
+    if (daysPostedAgo == 0)
+    {
+        postedAgoText = "Today";
+    }
+    else if (daysPostedAgo == 1)
+    {
+        postedAgoText = "1 day ago";
+    }
+    else
+    {
+        postedAgoText = $"{daysPostedAgo} days ago";
+    }
+}
+
+<body>
+    <div class="container">
+        <div class="job-details">
+            <h2>@this.ViewData["Title"]</h2>
+            <hr />
+            <h4>Posted On:</h4>
+            <p>@postedAgoText</p>
+            <br />
+            <h4>Town: @Model.Town  <span id="job-town"></span></h4>
+            <h4>Description:</h4>
+            <p>@Model.Description.Replace("; ", "<br />")</p>
+            <h4>Requirements:</h4>
+            <p>@Model.Requirements.Replace("; ", "<br />")</p>
+            <h4>Offering:</h4>
+            <p>@Model.Offering.Replace("; ", "<br />")</p>
+        </div>
+        <hr />
+        <div class="company-details">
+            <h2>Company Information</h2>
+            <p>Company Name: <span id="company-name">@Model.CompanyName</span></p>
+            <p>Phone Number: <span id="company-phone">@Model.PhoneNumber</span></p>
+            <p>Address: <span id="company-address">@Model.Address</span></p>
+        </div>
+        <hr />
+        <div class="employer-details">
+            <h2>Employer Information</h2>
+            <p>First Name: <span id="employer-firstname">@Model.EmployerFirstName</span></p>
+            <p>Last Name: <span id="employer-lastname">@Model.EmployerLastName</span></p>
+        </div>
+    </div>
+</body>
+
+@*<body>
+    <div class="job-details">
+        <h2>@this.ViewData["Title"]</h2>
+        <hr/>
+        <h4>Posted On: @postedAgoText  <span id="job-created-on"></span></h4>
+        <br />
+        <h4>Town: @Model.Town   <span id="job-town"></span></h4>
+        <br />
+        <h4>Description:</h4>
+         @foreach (var sentence in Model.Description.Split(new [] { '•', ';', '-' }))
+            {
+                <p>@sentence.Trim()</p>
+            }
+        <h4>Requirements:</h4>
+        @foreach (var sentence in Model.Requirements.Split(new [] { '•', ';', '-' }))
+            {
+                <p>@sentence.Trim()</p>
+            }
+        <h4>Offering:</h4>
+        @foreach (var sentence in Model.Offering.Split(new [] { '•', ';', '-' }))
+            {
+                <p>@sentence.Trim()</p>
+            }
+    </div>
+    <hr/>
+    <div class="company-details">
+        <h2>Company Information</h2>
+        <p>Company Name: @Model.CompanyName<span id="company-name"></span></p>
+        <p>Phone Number: @Model.PhoneNumber<span id="company-phone"></span></p>
+        <p>Address: @Model.Address<span id="company-address"></span></p>
+    </div>
+    <hr/>
+    <div class="employer-details">
+        <h2>Employer Information</h2>
+        <p>First Name: @Model.EmployerFirstName<span id="employer-firstname"></span></p>
+        <p>Last Name: @Model.EmployerLastName<span id="employer-lastname"></span></p>
+    </div>
+</body>*@

@@ -2,7 +2,7 @@
 {
     public class JobsListViewModel
     {
-        public IEnumerable<JobsViewModel> Jobs { get; set; }
+        public IEnumerable<JobsViewModel>? Jobs { get; set; }
         public bool HasPreviousPage => this.PageNumber > 1;
         public int PreviousPageNumber => this.PageNumber - 1;
         public bool HasNextPage => this.PageNumber < PagesCount;

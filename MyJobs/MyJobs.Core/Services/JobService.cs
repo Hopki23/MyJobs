@@ -20,6 +20,8 @@
             var job = new Job
             {
                 Title = model.Title,
+                Town = model.TownName,
+                CreatedOn = DateTime.UtcNow,
                 CategoryId = model.CategoryId,
                 Description = model.Description,
                 Requirements = model.Requirements,
@@ -29,14 +31,14 @@
                 CompanyId = companyId
             };
 
-            await repository.AddAsync(job);
-            await repository.SaveChangesAsync();
+            await this.repository.AddAsync(job);
+            await this.repository.SaveChangesAsync();
         }
 
         public IEnumerable<JobsViewModel> GetAllJobs(int page, int itemsToTake)
         {
             var jobs = this.repository.AllReadonly<Job>()
-                 .OrderByDescending(j => j.Id)
+                 .OrderByDescending(j => j.CreatedOn)
                  .Skip((page - 1) * itemsToTake)
                  .Take(itemsToTake)
                  .Select(j => new JobsViewModel
@@ -49,6 +51,27 @@
                  .ToList();
 
             return jobs;
+        }
+
+        public SingleJobViewModel GetSingleJob(int id)
+        {
+            return this.repository.AllReadonly<Job>()
+                .Where(j => j.Id == id)
+                .Select(j => new SingleJobViewModel
+                {
+                    Title = j.Title,
+                    Town = j.Town,
+                    Description = j.Description,
+                    Requirements = j.Requirements,
+                    Offering = j.Offering,
+                    CreatedOn = j.CreatedOn,
+                    CompanyName = j.Company.CompanyName,
+                    PhoneNumber = j.Company.PhoneNumber,
+                    Address = j.Company.Address,
+                    EmployerFirstName = j.Employer.FirstName,
+                    EmployerLastName = j.Employer.LastName
+                })
+                .FirstOrDefault()!;
         }
 
         public int GetTotalJobCount()

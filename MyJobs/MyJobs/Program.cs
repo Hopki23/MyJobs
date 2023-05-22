@@ -36,7 +36,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<IDbRepository, DbRepository>();
 builder.Services.AddScoped<IGetCategoriesService, GetCategoriesService>();
 builder.Services.AddScoped<IJobService, JobService>();
-
+builder.Services.AddScoped<IResumeService, ResumeService>();
 
 builder.Services.AddControllersWithViews();
 
@@ -61,21 +61,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-//    endpoints.MapControllerRoute(
-//      name: "areas",
-//      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-//    );
-
-//    endpoints.MapDefaultControllerRoute();
-//});
 
 app.MapControllerRoute(
     name: "default",

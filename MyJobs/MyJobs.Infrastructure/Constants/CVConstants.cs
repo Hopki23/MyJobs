@@ -2,17 +2,17 @@
 {
     public class CVConstants
     {
-        public const int TitleMaxLength = 150;
+        public const int TitleMaxLength = 300;
 
-        public const int TitleMinLength = 20;
+        public const int TitleMinLength = 10;
 
-        public const int SummaryMaxLength = 300;
+        public const int SummaryMaxLength = 700;
 
-        public const int EducationMaxLength = 200;
+        public const int EducationMaxLength = 700;
 
-        public const int ExperienceMaxLength = 200;
+        public const int ExperienceMaxLength = 700;
 
-        public const int SkillsMaxLength = 200;
+        public const int SkillsMaxLength = 700;
 
         public const int PhoneNumberMaxLength = 13;
     }

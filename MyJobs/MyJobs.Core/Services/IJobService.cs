@@ -8,5 +8,7 @@
         IEnumerable<JobsViewModel> GetAllJobs(int page, int itemsToTake = 5);
 
         int GetTotalJobCount();
+
+        SingleJobViewModel GetSingleJob(int id);
     }
 }

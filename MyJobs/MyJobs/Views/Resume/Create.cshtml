@@ -1,0 +1,68 @@
+﻿@using MyJobs.Core.Models.Resume
+@model ResumeViewModel
+@{
+    this.ViewData["Title"] = "Create your resume";
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <form id="resumeForm" method="post" enctype="multipart/form-data">
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.Image">Image</label>
+                <input class="form-control" type="file" name="imageFile" asp-for="@Model.Image" />
+                <span asp-validation-for="@Model.Image" class="text-danger"></span>
+            </div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.Title">Title</label>
+                <input class="form-control" type="text" asp-for="@Model.Title" />
+                <span asp-validation-for="@Model.Title" class="text-danger"></span>
+            </div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.Summary">Summary</label>
+                <textarea class="form-control" rows="4" asp-for="@Model.Summary"></textarea>
+                <span asp-validation-for="@Model.Summary" class="text-danger"></span>
+            </div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.Education">Education</label>
+                <textarea class="form-control" rows="4" asp-for="@Model.Education"></textarea>
+                <span asp-validation-for="@Model.Education" class="text-danger"></span>
+            </div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.Experience">Experience</label>
+                <textarea class="form-control" rows="4" asp-for="@Model.Experience"></textarea>
+                <span asp-validation-for="@Model.Experience" class="text-danger"></span>
+            </div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.Address">Address</label>
+                <textarea class="form-control" rows="2" asp-for="@Model.Address"></textarea>
+                <span asp-validation-for="@Model.Address" class="text-danger"></span>
+            </div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.PhoneNumber">Phone number</label>
+                <input class="form-control" rows="4" asp-for="@Model.PhoneNumber"></input>
+                <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.DateOfBirth">Date of Birth</label>
+                <input class="form-control" type="date" asp-for="@Model.DateOfBirth" />
+                <span asp-validation-for="@Model.DateOfBirth" class="text-danger"></span>
+            </div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.Gender">Gender</label>
+                <input class="form-control" rows="4" asp-for="@Model.Gender"></input>
+                <span asp-validation-for="@Model.Gender" class="text-danger"></span>
+            </div>
+            <div class="text-center mb-3">
+                <label asp-for="@Model.Skills">Skills</label>
+                <textarea class="form-control" rows="4" asp-for="@Model.Skills"></textarea>
+                <span asp-validation-for="@Model.Skills" class="text-danger"></span>
+            </div>
+            <div class="text-center">
+                <button id="createButton" type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>

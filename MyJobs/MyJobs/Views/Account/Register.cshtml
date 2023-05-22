@@ -34,7 +34,6 @@
 <script>
     const button = document.getElementById("nextButton");
     button.addEventListener("click", () => {
-        //:checked removed
         const userType = document.querySelector('input[name="UserType"]:checked').value;
         document.getElementById("registrationFormId").style.display = "none";
         if (userType === "Employee") {

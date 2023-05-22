@@ -21,6 +21,12 @@
         public string Responsibilities { get; set; } = null!;
 
         [Required]
+        [MaxLength(JobConstants.TownNameMaxLength)]
+        public string TownName { get; set; } = null!;
+
+        public DateTime CreatedOn { get; set; }
+
+        [Required]
         [MaxLength(JobConstants.OfferingMaxLength)]
         public string Offering { get; set; } = null!;
         public int CompanyId { get; set; }

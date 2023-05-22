@@ -30,7 +30,12 @@
 
         [Required]
         [MaxLength(JobConstants.JobResponsibilitiesMaxLength)]
-        public string Responsibilities { get; set; }
+        public string Responsibilities { get; set; } = null!;
+
+        [Required]
+        [MaxLength(JobConstants.TownNameMaxLength)]
+        public string Town { get; set; } = null!;
+        public DateTime CreatedOn { get; set; }
 
         [Required]
         [MaxLength(JobConstants.OfferingMaxLength)]
@@ -44,7 +49,7 @@
         public int EmployerId { get; set; }
         public Employer Employer { get; set; } = null!;
         public int CategoryId { get; set; }
-        public virtual Category Category { get; set; }
+        public virtual Category Category { get; set; } = null!;
         public virtual ICollection<Employee> Employees { get; set; }
     }
 }

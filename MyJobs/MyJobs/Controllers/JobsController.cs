@@ -48,13 +48,13 @@
                 return View(model);
             }
 
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var result = this.repository.All<Employer>()
                 .Where(e => e.UserId == userId)
                 .Select(e => new { e.EmployerId, e.CompanyId })
                 .FirstOrDefault();
 
-            int employerId = result.EmployerId;
+            int employerId = result!.EmployerId;
             int companyId = result.CompanyId;
 
             this.jobService.CreateAsync(model, employerId, companyId);
@@ -62,6 +62,7 @@
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
         public IActionResult All(int page = 1)
         {
             const int ItemsPerPage = 5;
@@ -73,6 +74,12 @@
                 JobsTotalCount = this.jobService.GetTotalJobCount()
             };
 
+            return View(model);
+        }
+
+        public IActionResult GetById(int id)
+        {
+            var model = this.jobService.GetSingleJob(id);
             return View(model);
         }
     }

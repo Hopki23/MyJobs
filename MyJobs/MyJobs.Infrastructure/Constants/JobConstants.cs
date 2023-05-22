@@ -14,5 +14,7 @@
         public const int RequirementsMaxLength = 1000;
 
         public const int OfferingMaxLength = 500;
+
+        public const int TownNameMaxLength = 20;
     }
 }
