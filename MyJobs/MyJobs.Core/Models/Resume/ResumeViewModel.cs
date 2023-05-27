@@ -8,6 +8,12 @@
         public string? Image { get; set; }
 
         [Required]
+        public string FirstName { get; set; } = null!;
+
+        [Required]
+        public string LastName { get; set; } = null!;
+
+        [Required]
         [MaxLength(CVConstants.TitleMaxLength)]
         public string Title { get; set; } = null!;
 

@@ -6,9 +6,13 @@
 
     public class CV
     {
+        public CV()
+        {
+            this.Jobs = new HashSet<Job>();
+        }
+
         [Key]
         public int Id { get; set; }
-
         public string? Image { get; set; }
 
         [Required]
@@ -42,8 +46,14 @@
         [Required]
         [MaxLength(CVConstants.SkillsMaxLength)]
         public string Skills { get; set; } = null!;
+        [Required]
+        public byte[] ResumeFile { get; set; } = null!;
+
+        [Required]
+        public string ResumeFileName { get; set; } = null!;
         public bool IsDeleted { get; set; }
         public int EmployeeId { get; set; }
         public Employee Employee { get; set; } = null!;
+        public virtual ICollection<Job> Jobs { get; set; }
     }
 }

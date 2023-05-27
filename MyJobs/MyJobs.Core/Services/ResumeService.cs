@@ -22,9 +22,9 @@
         public byte[] GenerateResumePDF(ResumeViewModel model)
         {
             using MemoryStream memoryStream = new MemoryStream();
-            PdfWriter writer = new(memoryStream);
-            PdfDocument pdfDocument = new(writer);
-            Document document = new(pdfDocument);
+            using PdfWriter writer = new(memoryStream);
+            using PdfDocument pdfDocument = new(writer);
+            using Document document = new(pdfDocument);
 
             if (!string.IsNullOrEmpty(model.Image))
             {
@@ -34,6 +34,8 @@
                 document.Add(image);
             }
 
+            document.Add(new Paragraph("First Name: " + model.FirstName));
+            document.Add(new Paragraph("Last Name: " + model.LastName));
             document.Add(new Paragraph("Title: " + model.Title));
             document.Add(new Paragraph("Summary: " + model.Summary));
             document.Add(new Paragraph("Education: " + model.Education));
@@ -51,9 +53,12 @@
 
         public async Task SaveResume(ResumeViewModel model, int employeeId)
         {
+            var employee = await this.repository.GetByIdAsync<Employee>(employeeId);
+            string fileName = $"{employee.FirstName}_{employee.LastName}.pdf";        
+
             var resume = new CV
             {
-                EmployeeId = employeeId,
+                Employee = employee,
                 Title = model.Title,
                 Summary = model.Summary,
                 Education = model.Education,
@@ -63,8 +68,12 @@
                 DateOfBirth = model.DateOfBirth,
                 Gender = model.Gender,
                 Image = model.Image,
-                PhoneNumber = model.PhoneNumber
+                PhoneNumber = model.PhoneNumber,
+                ResumeFileName = fileName
             };
+
+            byte[] resumeBytes = GenerateResumePDF(model);
+            resume.ResumeFile = resumeBytes;
 
             await this.repository.AddAsync(resume);
             await this.repository.SaveChangesAsync();

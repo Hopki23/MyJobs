@@ -20,73 +20,89 @@
     }
 }
 
-<body>
+<section class="post-area section-gap">
     <div class="container">
-        <div class="job-details">
-            <h2>@this.ViewData["Title"]</h2>
-            <hr />
-            <h4>Posted On:</h4>
-            <p>@postedAgoText</p>
-            <br />
-            <h4>Town: @Model.Town  <span id="job-town"></span></h4>
-            <h4>Description:</h4>
-            <p>@Model.Description.Replace("; ", "<br />")</p>
-            <h4>Requirements:</h4>
-            <p>@Model.Requirements.Replace("; ", "<br />")</p>
-            <h4>Offering:</h4>
-            <p>@Model.Offering.Replace("; ", "<br />")</p>
-        </div>
-        <hr />
-        <div class="company-details">
-            <h2>Company Information</h2>
-            <p>Company Name: <span id="company-name">@Model.CompanyName</span></p>
-            <p>Phone Number: <span id="company-phone">@Model.PhoneNumber</span></p>
-            <p>Address: <span id="company-address">@Model.Address</span></p>
-        </div>
-        <hr />
-        <div class="employer-details">
-            <h2>Employer Information</h2>
-            <p>First Name: <span id="employer-firstname">@Model.EmployerFirstName</span></p>
-            <p>Last Name: <span id="employer-lastname">@Model.EmployerLastName</span></p>
-        </div>
-    </div>
-</body>
+        <div class="row justify-content-center d-flex">
+            <div class="col-lg-8 post-list">
+                <div class="single-post d-flex flex-row">
+                    <div class="thumb">
+                        <ul class="tags">
+                            <li>
+                                <a>@Model.Category</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="details">
+                        <div class="title d-flex flex-row justify-content-between">
+                            <div class="titles">
+                                <h2>@this.ViewData["Title"]</h2>
+                                <hr />
+                            </div>
+                            <ul class="btns">
+                                <li><a asp-action="Apply" asp-route-id="@Model.Id">Apply</a></li>
+                            </ul>
 
-@*<body>
-    <div class="job-details">
-        <h2>@this.ViewData["Title"]</h2>
-        <hr/>
-        <h4>Posted On: @postedAgoText  <span id="job-created-on"></span></h4>
-        <br />
-        <h4>Town: @Model.Town   <span id="job-town"></span></h4>
-        <br />
-        <h4>Description:</h4>
-         @foreach (var sentence in Model.Description.Split(new [] { '•', ';', '-' }))
-            {
-                <p>@sentence.Trim()</p>
-            }
-        <h4>Requirements:</h4>
-        @foreach (var sentence in Model.Requirements.Split(new [] { '•', ';', '-' }))
-            {
-                <p>@sentence.Trim()</p>
-            }
-        <h4>Offering:</h4>
-        @foreach (var sentence in Model.Offering.Split(new [] { '•', ';', '-' }))
-            {
-                <p>@sentence.Trim()</p>
-            }
+                        </div>
+                        <br />
+                        <p>
+                            @Model.Description
+                        </p>
+                        <h4>Address</h4>
+                        <p class="address"><span class="lnr lnr-map"></span> @Model.Address</p>
+                    </div>
+                </div>
+                <div class="single-post job-experience">
+                    <h4 class="single-title">Requirements</h4>
+                    <ul>
+                        <li>
+                            @foreach (var req in Model.Requirements.Split(new char[] { '●', ';', '.' }))
+                            {
+                                if (!string.IsNullOrWhiteSpace(req))
+                                {
+                                    <span>&#8226; @req.Trim()</span>
+                                    <br />
+                                }
+                            }
+                        </li>
+                    </ul>
+                </div>
+                <div class="single-post job-experience">
+                    <h4 class="single-title">Responsibilities</h4>
+                    <ul>
+                        <li>
+                            @foreach (var res in Model.Responsibilities.Split(new char[] { '●', ';', '.' }))
+                            {
+                                if (!string.IsNullOrWhiteSpace(res))
+                                {
+                                    <span>&#8226; @res.Trim()</span>
+                                    <br />
+                                }
+                            }
+                        </li>
+                    </ul>
+                </div>
+                <div class="single-post job-experience">
+                    <h4 class="single-title">What we offer</h4>
+                    <ul>
+                        <li>
+                            @foreach (var offer in Model.Offering.Split(new char[] { '●', ';', '.' }))
+                            {
+                                if (!string.IsNullOrWhiteSpace(offer))
+                                {
+                                    <span>&#8226; @offer.Trim()</span>
+                                    <br />
+                                }
+                            }
+                        </li>
+                    </ul>
+                </div>
+                <div class="single-post job-experience">
+                    <h4 class="single-title">Additional Information</h4>
+                    <p>
+                        Posted: @postedAgoText | Company Phone: @Model.PhoneNumber | Employer: @Model.EmployerFirstName @Model.EmployerLastName
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
-    <hr/>
-    <div class="company-details">
-        <h2>Company Information</h2>
-        <p>Company Name: @Model.CompanyName<span id="company-name"></span></p>
-        <p>Phone Number: @Model.PhoneNumber<span id="company-phone"></span></p>
-        <p>Address: @Model.Address<span id="company-address"></span></p>
-    </div>
-    <hr/>
-    <div class="employer-details">
-        <h2>Employer Information</h2>
-        <p>First Name: @Model.EmployerFirstName<span id="employer-firstname"></span></p>
-        <p>Last Name: @Model.EmployerLastName<span id="employer-lastname"></span></p>
-    </div>
-</body>*@
+</section>

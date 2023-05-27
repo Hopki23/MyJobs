@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyJobs.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using MyJobs.Infrastructure.Data;
 namespace MyJobs.Infrastructure.Migrations
 {
     [DbContext(typeof(MyJobsDbContext))]
-    partial class MyJobsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230527080847_RemovedFilePathNameFromJobTableAndAddedAdditionalPropertiesToCvTable")]
+    partial class RemovedFilePathNameFromJobTableAndAddedAdditionalPropertiesToCvTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace MyJobs.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("CVJob", b =>
-                {
-                    b.Property<int>("JobsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ResumesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("JobsId", "ResumesId");
-
-                    b.HasIndex("ResumesId");
-
-                    b.ToTable("CVJob");
-                });
 
             modelBuilder.Entity("EmployeeJob", b =>
                 {
@@ -353,6 +340,9 @@ namespace MyJobs.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(13)
@@ -384,6 +374,8 @@ namespace MyJobs.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("JobId");
 
                     b.ToTable("CVs");
                 });
@@ -552,21 +544,6 @@ namespace MyJobs.Infrastructure.Migrations
                     b.ToTable("Jobs");
                 });
 
-            modelBuilder.Entity("CVJob", b =>
-                {
-                    b.HasOne("MyJobs.Infrastructure.Models.Job", null)
-                        .WithMany()
-                        .HasForeignKey("JobsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyJobs.Infrastructure.Models.CV", null)
-                        .WithMany()
-                        .HasForeignKey("ResumesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("EmployeeJob", b =>
                 {
                     b.HasOne("MyJobs.Infrastructure.Models.Employee", null)
@@ -641,7 +618,15 @@ namespace MyJobs.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MyJobs.Infrastructure.Models.Job", "Job")
+                        .WithMany("Resumes")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Employee");
+
+                    b.Navigation("Job");
                 });
 
             modelBuilder.Entity("MyJobs.Infrastructure.Models.Employee", b =>
@@ -754,6 +739,11 @@ namespace MyJobs.Infrastructure.Migrations
                     b.Navigation("EmployeeEmployments");
 
                     b.Navigation("Jobs");
+                });
+
+            modelBuilder.Entity("MyJobs.Infrastructure.Models.Job", b =>
+                {
+                    b.Navigation("Resumes");
                 });
 #pragma warning restore 612, 618
         }

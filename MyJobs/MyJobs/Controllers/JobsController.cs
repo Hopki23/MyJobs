@@ -6,6 +6,7 @@
     using Microsoft.AspNetCore.Mvc;
 
     using MyJobs.Core.Models.Job;
+    using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services;
     using MyJobs.Infrastructure.Models;
@@ -77,10 +78,64 @@
             return View(model);
         }
 
+        [HttpGet]
         public IActionResult GetById(int id)
         {
             var model = this.jobService.GetSingleJob(id);
             return View(model);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Apply(int id)
+        {
+            var model = new UploadResumeViewModel()
+            {
+                Id = id
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Apply(UploadResumeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            var employee = this.repository.All<Employee>()
+                .FirstOrDefault(e => e.UserId == userId);
+
+            if (employee == null)
+            {
+                //Change all NotFound with the proper error handling!
+                return NotFound();
+            }
+
+            await this.jobService.Apply(model, employee);
+
+            return RedirectToAction("All");
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Employer")]
+        public IActionResult ReceivedResumes(JobsWithCVsViewModel model)
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var employer = this.repository.All<Employer>()
+                            .FirstOrDefault(e => e.UserId == userId);
+
+            if (employer == null)
+            {
+                return NotFound();
+            }
+
+            var jobViewModels = this.jobService.GetJobsWithCV(model, employer);
+            
+            return View(jobViewModels);
         }
     }
 }

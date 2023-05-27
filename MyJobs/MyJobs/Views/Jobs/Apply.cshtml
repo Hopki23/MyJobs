@@ -1,0 +1,13 @@
+﻿@using MyJobs.Core.Models.Resume
+@model UploadResumeViewModel
+
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="Id" value="@Model.Id">
+    <div class="form-group">
+        <label for="resumeFile">Upload Resume:</label>
+        <input type="file" id="resumeFile" name="ResumeFile" required>
+    </div>
+    <button type="submit">Upload</button>
+</form>
+
+@*name="Id" value="@Model.Id"*@

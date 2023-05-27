@@ -45,18 +45,20 @@
             }
 
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var result = this.repository.All<Employee>()
-                .Where(e => e.UserId == userId)
-                .Select(e => new { e.EmployeeId })
-                .FirstOrDefault();
+            var employee = this.repository.All<Employee>()
+                            .FirstOrDefault(e => e.UserId == userId);
 
-            int employeeId = result!.EmployeeId;
+            if (employee == null)
+            {
+                // Handle the case when the employee is not found
+                return NotFound();
+            }
+
+            await this.resumeService.SaveResume(model, employee.EmployeeId);
 
             byte[] resume = this.resumeService.GenerateResumePDF(model);
 
-            await this.resumeService.SaveResume(model, employeeId);
-
-            return File(resume, "application/pdf", "resume.pdf");
+            return File(resume, "application/pdf", $"{employee.FirstName}_{employee.LastName}.pdf");
         }
     }
 }

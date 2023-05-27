@@ -3,6 +3,7 @@
     using System.Collections.Generic;
 
     using MyJobs.Core.Models.Job;
+    using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
     using MyJobs.Infrastructure.Models;
 
@@ -13,6 +14,22 @@
         public JobService(IDbRepository repository)
         {
             this.repository = repository;
+        }
+
+        public async Task Apply(UploadResumeViewModel model, Employee employee)
+        { 
+            int jobId = model.Id;
+
+            var resume = this.repository.AllReadonly<CV>()
+                .Where(c => c.EmployeeId == employee.EmployeeId)
+                .FirstOrDefault();
+
+            var job = await this.repository.GetByIdAsync<Job>(jobId);
+
+            resume!.Jobs.Add(job);
+            job.Resumes.Add(resume);
+
+            await this.repository.SaveChangesAsync();
         }
 
         public async Task CreateAsync(CreateJobViewModel model, int employerId, int companyId)
@@ -53,12 +70,42 @@
             return jobs;
         }
 
+        public IEnumerable<JobsWithCVsViewModel> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer)
+        {
+            var jobs = this.repository.AllReadonly<Job>()
+            .Where(x => x.EmployerId == employer.EmployerId)
+            .ToList();
+
+            var jobViewModels = new List<JobsWithCVsViewModel>();
+
+            foreach (var job in jobs)
+            {
+                var cvs = this.repository.AllReadonly<CV>()
+                    .Where(c => c.Jobs.Contains(job))
+                    .ToList();
+
+                if (cvs.Count > 0)
+                {
+                    var jobViewModel = new JobsWithCVsViewModel
+                    {
+                        Job = job,
+                        CVs = cvs
+                    };
+
+                    jobViewModels.Add(jobViewModel);
+                }
+            }
+
+            return jobViewModels;
+        }
+
         public SingleJobViewModel GetSingleJob(int id)
         {
             return this.repository.AllReadonly<Job>()
                 .Where(j => j.Id == id)
                 .Select(j => new SingleJobViewModel
                 {
+                    Id = j.Id,
                     Title = j.Title,
                     Town = j.Town,
                     Description = j.Description,
@@ -69,7 +116,9 @@
                     PhoneNumber = j.Company.PhoneNumber,
                     Address = j.Company.Address,
                     EmployerFirstName = j.Employer.FirstName,
-                    EmployerLastName = j.Employer.LastName
+                    EmployerLastName = j.Employer.LastName,
+                    Category = j.Category.Name,
+                    Responsibilities = j.Responsibilities
                 })
                 .FirstOrDefault()!;
         }

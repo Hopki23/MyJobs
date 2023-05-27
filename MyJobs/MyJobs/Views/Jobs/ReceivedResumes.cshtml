@@ -1,0 +1,40 @@
+﻿@using MyJobs.Core.Models.Job
+@model List<JobsWithCVsViewModel>
+
+
+<div class="card-container">
+    @foreach (var jobViewModel in Model)
+    {
+        <h3>@jobViewModel.Job.Title</h3>
+
+        @foreach (var cv in jobViewModel.CVs)
+        {
+            string formattedDate = cv.DateOfBirth.ToString("dd.MM.yyyy");
+            <div class="card" style="width: 18rem;">
+                <img src="data:image/jpeg;base64,@cv.Image" class="card-img-top" alt="CV Image">
+                <div class="card-body">
+                    <h5 class="card-title">@cv.Title</h5>
+                    <p class="card-text">Summary: @cv.Summary</p>
+                    <p class="card-text">Date of Birth: @formattedDate</p>
+                    <p class="card-text">Gender: @cv.Gender</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Education: @cv.Education</li>
+                    <li class="list-group-item">Experience: @cv.Experience</li>
+                    <li class="list-group-item">Skills: @cv.Skills</li>
+                    <li class="list-group-item">Phone Number: @cv.PhoneNumber</li>
+                </ul>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary btn-block">Approve</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-danger btn-block">Reject</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

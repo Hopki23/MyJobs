@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyJobs.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using MyJobs.Infrastructure.Data;
 namespace MyJobs.Infrastructure.Migrations
 {
     [DbContext(typeof(MyJobsDbContext))]
-    partial class MyJobsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230525123037_FilePathNameAddedToJobsTable")]
+    partial class FilePathNameAddedToJobsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace MyJobs.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("CVJob", b =>
-                {
-                    b.Property<int>("JobsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ResumesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("JobsId", "ResumesId");
-
-                    b.HasIndex("ResumesId");
-
-                    b.ToTable("CVJob");
-                });
 
             modelBuilder.Entity("EmployeeJob", b =>
                 {
@@ -358,14 +345,6 @@ namespace MyJobs.Infrastructure.Migrations
                         .HasMaxLength(13)
                         .HasColumnType("nvarchar(13)");
 
-                    b.Property<byte[]>("ResumeFile")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("ResumeFileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Skills")
                         .IsRequired()
                         .HasMaxLength(700)
@@ -531,6 +510,9 @@ namespace MyJobs.Infrastructure.Migrations
                         .HasMaxLength(600)
                         .HasColumnType("nvarchar(600)");
 
+                    b.Property<string>("ResumeFilePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -550,21 +532,6 @@ namespace MyJobs.Infrastructure.Migrations
                     b.HasIndex("EmployerId");
 
                     b.ToTable("Jobs");
-                });
-
-            modelBuilder.Entity("CVJob", b =>
-                {
-                    b.HasOne("MyJobs.Infrastructure.Models.Job", null)
-                        .WithMany()
-                        .HasForeignKey("JobsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyJobs.Infrastructure.Models.CV", null)
-                        .WithMany()
-                        .HasForeignKey("ResumesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("EmployeeJob", b =>

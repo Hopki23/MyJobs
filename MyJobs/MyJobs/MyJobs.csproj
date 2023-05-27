@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\" />
+    <Folder Include="wwwroot\resumes\" />
   </ItemGroup>
 
 </Project>

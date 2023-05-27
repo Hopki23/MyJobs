@@ -11,6 +11,7 @@
         public Job()
         {
             this.Employees = new HashSet<Employee>();
+            this.Resumes = new HashSet<CV>();
         }
 
         [Key]
@@ -51,5 +52,6 @@
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; } = null!;
         public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<CV> Resumes { get; set; }
     }
 }
