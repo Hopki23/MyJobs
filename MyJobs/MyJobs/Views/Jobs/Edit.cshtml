@@ -1,0 +1,70 @@
+﻿@using MyJobs.Core.Models.Job
+@model EditJobViewModel
+@{
+    this.ViewData["Title"] = "Edit job";
+    var categoryItems = this.Model.CategoryItems.Select(x => new SelectListItem(x.Value, x.Key));
+}
+
+<h2 class="text-center">@this.ViewData["Title"]</h2>
+
+<form method="post" class="col-md-6 offset-md-3">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control">
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Requirements"></label>
+        <textarea asp-for="Requirements" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Requirements" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Responsibilities"></label>
+        <textarea asp-for="Responsibilities" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Responsibilities" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="TownName"></label>
+        <input asp-for="TownName" class="form-control">
+        <span asp-validation-for="TownName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="WorkingTime"></label>
+        <input asp-for="WorkingTime" class="form-control">
+        <span asp-validation-for="WorkingTime" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Salary"></label>
+        <input asp-for="Salary" class="form-control">
+        <span asp-validation-for="Salary" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Offering"></label>
+        <textarea asp-for="Offering" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Offering" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CategoryId"></label>
+        <select asp-for="CategoryId" class="form-control" asp-items="categoryItems"></select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class='text-center'>
+                <input type="submit" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

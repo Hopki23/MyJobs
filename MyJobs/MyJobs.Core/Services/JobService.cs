@@ -54,9 +54,20 @@
             await this.repository.SaveChangesAsync();
         }
 
+        public async Task Delete(int id)
+        {
+            var job = this.repository.All<Job>()
+                .FirstOrDefault(x => x.Id == id);
+
+            job!.IsDeleted = true;
+            //this.repository.Delete(job!);
+            await this.repository.SaveChangesAsync();
+        }
+
         public IEnumerable<JobsViewModel> GetAllJobs(int page, int itemsToTake)
         {
             var jobs = this.repository.AllReadonly<Job>()
+                 .Where(x => x.IsDeleted == false)
                  .OrderByDescending(j => j.CreatedOn)
                  .Skip((page - 1) * itemsToTake)
                  .Take(itemsToTake)
@@ -70,6 +81,24 @@
                  .ToList();
 
             return jobs;
+        }
+
+        public EditJobViewModel GetById(int id)
+        {
+            return this.repository.AllReadonly<Job>()
+                .Where(j => j.Id == id)
+                .Select(j => new EditJobViewModel
+                {
+                    Title = j.Title,
+                    Description = j.Description,
+                    Requirements = j.Requirements,
+                    Responsibilities = j.Responsibilities,
+                    TownName = j.Town,
+                    WorkingTime = j.WorkingTime,
+                    Salary = j.Salary,
+                    Offering = j.Offering
+                })
+                .FirstOrDefault()!;
         }
 
         public IEnumerable<JobsWithCVsViewModel> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer)
@@ -131,6 +160,24 @@
         public int GetTotalJobCount()
         {
             return this.repository.AllReadonly<Job>().Count();
+        }
+
+        public async Task Update(int id, EditJobViewModel model)
+        {
+            var job = this.repository.All<Job>()
+                .FirstOrDefault(x => x.Id == id);
+
+            job.Title = model.Title;
+            job.Description = model.Description;
+            job.Requirements = model.Requirements;
+            job.Responsibilities = model.Responsibilities;
+            job.Town = model.TownName;
+            job.WorkingTime = model.WorkingTime;
+            job.Salary = model.Salary;
+            job.Offering = model.Offering;
+            job.CategoryId = model.CategoryId;
+
+            await this.repository.SaveChangesAsync();
         }
     }
 }

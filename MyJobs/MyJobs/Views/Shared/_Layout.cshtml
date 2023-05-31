@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
 </head>
 <body>
     <header>
@@ -69,13 +70,13 @@
     </footer>
 </body>
 
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/jquery/dist/jquery.nav.js"></script>
+<script src="~/js/site.js"></script>
+@*<script src="~/lib/jquery/dist/jquery.nav.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/jquery/dist/jquery-1.11.0.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js"></script>
-<script src="~/js/custom.js"></script>
+<script src="~/js/custom.js"></script>*@
 @await RenderSectionAsync("Scripts", required: false)
 
 </html>

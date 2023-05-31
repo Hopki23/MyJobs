@@ -144,8 +144,39 @@
             }
 
             var jobViewModels = this.jobService.GetJobsWithCV(model, employer);
-            
+
             return View(jobViewModels);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = RoleConstants.Employer)]
+        public IActionResult Edit(int id)
+        {
+            var model = jobService.GetById(id);
+            model.CategoryItems = categoriesService.GetAllCategories();
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = RoleConstants.Employer)]
+        public async Task<IActionResult> Edit(int id, EditJobViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            await this.jobService.Update(id, model);
+
+            return RedirectToAction(nameof(GetById), new { id });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = RoleConstants.Employer)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await this.jobService.Delete(id);
+            return RedirectToAction(nameof(All));
         }
     }
 }

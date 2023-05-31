@@ -18,5 +18,11 @@
         Task Apply(UploadResumeViewModel model, Employee employee);
 
         IEnumerable<JobsWithCVsViewModel> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer);
+
+        EditJobViewModel GetById(int id);
+
+        Task Update(int id, EditJobViewModel model);
+
+        Task Delete(int id);
     }
 }

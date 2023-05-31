@@ -19,24 +19,7 @@
         postedAgoText = $"{daysPostedAgo} days ago";
     }
 }
-
-@* <div class="single-post job-experience">
-                    <h4 class="single-title">Requirements</h4>
-                    <ul>
-                        <li>
-                            @foreach (var req in Model.Requirements.Split(new char[] { '●', ';', '.' }))
-                            {
-                                if (!string.IsNullOrWhiteSpace(req))
-                                {
-                                    <span>&#8226; @req.Trim()</span>
-                                    <br />
-                                }
-                            }
-                        </li>
-                    </ul>
-    </div>
-*@
-
+@*<a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-primary">Delete</a>*@
 <div class="job-post-company pt-120 pb-120">
     <div class="container">
         <div class="row justify-content-between">
@@ -44,14 +27,14 @@
                 <div class="single-job-items mb-50">
                     <div class="job-items">
                         <div>
-                            <a href="#">
-                                <h2 class="justify-content center">@this.ViewData["Title"]</h2>
-                                @if (Model.IsOwner)
-                                {
-                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Delete</a>
-                                }
-                            </a>
+                            <h2 class="justify-content center">@this.ViewData["Title"]</h2>
+                            @if (Model.IsOwner)
+                            {
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+                                 <form id="deleteForm" asp-action="Delete" asp-route-id="@Model.Id">
+                        <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmationModal">Delete</button>
+                    </form>
+                            }
                             <hr />
                         </div>
                     </div>
@@ -68,25 +51,40 @@
                         <div class="small-section-tittle">
                             <h3>Required Knowledge, Skills, and Abilities</h3>
                         </div>
-                        <ul>
-                            <li>@Model.Requirements</li>
-                        </ul>
+                        @foreach (var req in Model.Requirements.Split(';'))
+                        {
+                            if (!string.IsNullOrWhiteSpace(req))
+                            {
+                                <span>&#8226; @req.Trim()</span>
+                                <br />
+                            }
+                        }
                     </div>
                     <div class="post-details2  mb-50">
                         <div class="small-section-tittle">
                             <h3>Responsibilities</h3>
                         </div>
-                        <ul>
-                            <li>@Model.Responsibilities</li>
-                        </ul>
+                        @foreach (var req in Model.Responsibilities.Split(';'))
+                        {
+                            if (!string.IsNullOrWhiteSpace(req))
+                            {
+                                <span>&#8226; @req.Trim()</span>
+                                <br />
+                            }
+                        }
                     </div>
                     <div class="post-details2  mb-50">
                         <div class="small-section-tittle">
                             <h3>Offering</h3>
                         </div>
-                        <ul>
-                            <li>@Model.Offering</li>
-                        </ul>
+                        @foreach (var req in Model.Offering.Split(';'))
+                        {
+                            if (!string.IsNullOrWhiteSpace(req))
+                            {
+                                <span>&#8226; @req.Trim()</span>
+                                <br />
+                            }
+                        }
                     </div>
                 </div>
 
@@ -119,3 +117,27 @@
         </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="deleteConfirmationModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete job</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete @Model.Title?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger" onclick="deleteForm.submit()">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}*@
