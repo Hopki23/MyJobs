@@ -63,6 +63,10 @@
                 .HasForeignKey(j => j.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Job>()
+               .Property(j => j.Salary)
+               .HasColumnType("decimal(18,2)");
+
             modelBuilder.Entity<Company>()
                 .HasMany(c => c.Jobs)
                 .WithOne(j => j.Company)

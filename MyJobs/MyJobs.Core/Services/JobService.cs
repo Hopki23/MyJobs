@@ -17,7 +17,7 @@
         }
 
         public async Task Apply(UploadResumeViewModel model, Employee employee)
-        { 
+        {
             int jobId = model.Id;
 
             var resume = this.repository.AllReadonly<CV>()
@@ -45,7 +45,9 @@
                 Responsibilities = model.Responsibilities,
                 Offering = model.Offering,
                 EmployerId = employerId,
-                CompanyId = companyId
+                CompanyId = companyId,
+                Salary = model.Salary,
+                WorkingTime = model.WorkingTime
             };
 
             await this.repository.AddAsync(job);
@@ -99,7 +101,7 @@
             return jobViewModels;
         }
 
-        public SingleJobViewModel GetSingleJob(int id)
+        public SingleJobViewModel GetSingleJob(int id, Employer employer)
         {
             return this.repository.AllReadonly<Job>()
                 .Where(j => j.Id == id)
@@ -118,7 +120,10 @@
                     EmployerFirstName = j.Employer.FirstName,
                     EmployerLastName = j.Employer.LastName,
                     Category = j.Category.Name,
-                    Responsibilities = j.Responsibilities
+                    Responsibilities = j.Responsibilities,
+                    Salary = j.Salary,
+                    WorkingTime = j.WorkingTime,
+                    IsOwner = (employer != null && j.EmployerId == employer.EmployerId)
                 })
                 .FirstOrDefault()!;
         }

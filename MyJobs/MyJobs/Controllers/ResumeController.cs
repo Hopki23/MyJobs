@@ -2,14 +2,16 @@
 {
     using System.Security.Claims;
 
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services;
+    using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Models;
 
-    public class ResumeController : BaseController
+    public class ResumeController : Controller
     {
         private readonly IResumeService resumeService;
         private readonly IDbRepository repository;
@@ -23,12 +25,14 @@
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleConstants.Employee)]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleConstants.Employee)]
         public async Task<IActionResult> Create(ResumeViewModel model, IFormFile imageFile)
         {
             if (!ModelState.IsValid)

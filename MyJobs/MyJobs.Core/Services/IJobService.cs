@@ -13,7 +13,7 @@
 
         int GetTotalJobCount();
 
-        SingleJobViewModel GetSingleJob(int id);
+        SingleJobViewModel GetSingleJob(int id, Employer employer);
 
         Task Apply(UploadResumeViewModel model, Employee employee);
 

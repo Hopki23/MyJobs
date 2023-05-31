@@ -20,38 +20,7 @@
     }
 }
 
-<section class="post-area section-gap">
-    <div class="container">
-        <div class="row justify-content-center d-flex">
-            <div class="col-lg-8 post-list">
-                <div class="single-post d-flex flex-row">
-                    <div class="thumb">
-                        <ul class="tags">
-                            <li>
-                                <a>@Model.Category</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="details">
-                        <div class="title d-flex flex-row justify-content-between">
-                            <div class="titles">
-                                <h2>@this.ViewData["Title"]</h2>
-                                <hr />
-                            </div>
-                            <ul class="btns">
-                                <li><a asp-action="Apply" asp-route-id="@Model.Id">Apply</a></li>
-                            </ul>
-
-                        </div>
-                        <br />
-                        <p>
-                            @Model.Description
-                        </p>
-                        <h4>Address</h4>
-                        <p class="address"><span class="lnr lnr-map"></span> @Model.Address</p>
-                    </div>
-                </div>
-                <div class="single-post job-experience">
+@* <div class="single-post job-experience">
                     <h4 class="single-title">Requirements</h4>
                     <ul>
                         <li>
@@ -65,44 +34,88 @@
                             }
                         </li>
                     </ul>
-                </div>
-                <div class="single-post job-experience">
-                    <h4 class="single-title">Responsibilities</h4>
-                    <ul>
-                        <li>
-                            @foreach (var res in Model.Responsibilities.Split(new char[] { '●', ';', '.' }))
-                            {
-                                if (!string.IsNullOrWhiteSpace(res))
+    </div>
+*@
+
+<div class="job-post-company pt-120 pb-120">
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-xl-7 col-lg-8">
+                <div class="single-job-items mb-50">
+                    <div class="job-items">
+                        <div>
+                            <a href="#">
+                                <h2 class="justify-content center">@this.ViewData["Title"]</h2>
+                                @if (Model.IsOwner)
                                 {
-                                    <span>&#8226; @res.Trim()</span>
-                                    <br />
+                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Delete</a>
                                 }
-                            }
-                        </li>
-                    </ul>
+                            </a>
+                            <hr />
+                        </div>
+                    </div>
                 </div>
-                <div class="single-post job-experience">
-                    <h4 class="single-title">What we offer</h4>
+
+                <div class="job-post-details">
+                    <div class="post-details1 mb-50">
+                        <div class="small-section-tittle">
+                            <h3>Job Description</h3>
+                        </div>
+                        <p>@Model.Description</p>
+                    </div>
+                    <div class="post-details2  mb-50">
+                        <div class="small-section-tittle">
+                            <h3>Required Knowledge, Skills, and Abilities</h3>
+                        </div>
+                        <ul>
+                            <li>@Model.Requirements</li>
+                        </ul>
+                    </div>
+                    <div class="post-details2  mb-50">
+                        <div class="small-section-tittle">
+                            <h3>Responsibilities</h3>
+                        </div>
+                        <ul>
+                            <li>@Model.Responsibilities</li>
+                        </ul>
+                    </div>
+                    <div class="post-details2  mb-50">
+                        <div class="small-section-tittle">
+                            <h3>Offering</h3>
+                        </div>
+                        <ul>
+                            <li>@Model.Offering</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-xl-4 col-lg-4">
+                <div class="post-details3  mb-50">
+                    <div class="small-section-tittle">
+                        <h4>Job Overview</h4>
+                    </div>
                     <ul>
-                        <li>
-                            @foreach (var offer in Model.Offering.Split(new char[] { '●', ';', '.' }))
-                            {
-                                if (!string.IsNullOrWhiteSpace(offer))
-                                {
-                                    <span>&#8226; @offer.Trim()</span>
-                                    <br />
-                                }
-                            }
-                        </li>
+                        <li>Posted : <span>@postedAgoText</span></li>
+                        <li>Location : <span>@Model.Town</span></li>
+                        <li>Salary : <span>$@Model.Salary</span></li>
+                        <li>Working Time : <span>@Model.WorkingTime</span></li>
                     </ul>
+                    <div class="apply-btn2">
+                        <a asp-action="Apply" asp-route-id="@Model.Id" class="btn btn-primary">Apply Now</a>
+                    </div>
                 </div>
-                <div class="single-post job-experience">
-                    <h4 class="single-title">Additional Information</h4>
-                    <p>
-                        Posted: @postedAgoText | Company Phone: @Model.PhoneNumber | Employer: @Model.EmployerFirstName @Model.EmployerLastName
-                    </p>
+                <div class="post-details4  mb-50">
+                    <div class="small-section-tittle">
+                        <h4>Company Information</h4>
+                    </div>
+                    <ul>
+                        <li>Name: <span>@Model.CompanyName </span></li>
+                        <li>Employer Name : <span> @Model.EmployerFirstName @Model.EmployerLastName</span></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>

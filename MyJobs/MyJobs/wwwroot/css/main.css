@@ -6,6 +6,20 @@
 /* =================================== */
 /*  Basic Style 
 /* =================================== */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-wrap {
+    flex-grow: 1;
+}
+
+
 .card-container {
     display: flex;
     flex-direction: column;
@@ -54,7 +68,7 @@
   font-weight: 300;
 }
 
-::-ms-input-placeholder {
+:-ms-input-placeholder {
   /* Microsoft Edge */
   color: #777777;
   font-weight: 300;

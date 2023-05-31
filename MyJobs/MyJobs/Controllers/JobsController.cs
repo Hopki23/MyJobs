@@ -9,6 +9,7 @@
     using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services;
+    using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Models;
 
     public class JobsController : Controller
@@ -28,7 +29,7 @@
         }
 
         [HttpGet]
-        [Authorize(Roles = "Employer")]
+        [Authorize(Roles = RoleConstants.Employer)]
         public IActionResult Create()
         {
             var model = new CreateJobViewModel
@@ -40,7 +41,7 @@
         }
 
         [HttpPost]
-        [Authorize(Roles = "Employer")]
+        [Authorize(Roles = RoleConstants.Employer)]
         public IActionResult Create(CreateJobViewModel model)
         {
             if (!ModelState.IsValid)
@@ -81,7 +82,16 @@
         [HttpGet]
         public IActionResult GetById(int id)
         {
-            var model = this.jobService.GetSingleJob(id);
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var employer = this.repository.All<Employer>()
+                                         .FirstOrDefault(e => e.UserId == userId);
+
+            //if (employer == null)
+            //{
+            //    return NotFound();
+            //}
+
+            var model = this.jobService.GetSingleJob(id, employer);
             return View(model);
         }
 
@@ -117,11 +127,11 @@
 
             await this.jobService.Apply(model, employee);
 
-            return RedirectToAction("All");
+            return RedirectToAction(nameof(All));
         }
 
         [HttpGet]
-        [Authorize(Roles = "Employer")]
+        [Authorize(Roles = RoleConstants.Employer)]
         public IActionResult ReceivedResumes(JobsWithCVsViewModel model)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

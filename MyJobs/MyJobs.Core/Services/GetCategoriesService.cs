@@ -24,16 +24,41 @@
 
         public IndexViewModel GetCategories()
         {
-           return new IndexViewModel
+            Dictionary<string, string> categoryIcons = GetCategoryIcons();
+
+            return new IndexViewModel
             {
                 Categories = this.dbRepository.AllReadonly<Category>()
-                .Select(c => new CategoryViewModel
-                {
-                    CategoryName = c.Name,
-                    JobCount = c.Jobs.Count
-                })
-                .ToList()
+                 .Select(c => new CategoryViewModel
+                 {
+                     CategoryName = c.Name,
+                     JobCount = c.Jobs.Count,
+                     IconClass = categoryIcons.ContainsKey(c.Name) ? categoryIcons[c.Name] : null
+                 })
+                 .OrderByDescending(x => x.JobCount)
+                 .ToList()
             };
         }
+
+        private Dictionary<string, string> GetCategoryIcons()
+        {
+            Dictionary<string, string> categoryIcons = new()
+            {
+                { "Software Engineer", "fa-brain" },
+                { "Food and Hospitality", "fa-pizza-slice" },
+                { "Aviation and Aerospace", "fa-plane" },
+                { "Real Estate","fa-hotel" },
+                { "Education and Training", "fa-book-open" },
+                { "Marketing and Advertising", "fa-ad" },
+                { "Healthcare and Medical", "fa-notes-medical" },
+                { "Full-Stack Developer", "fa-terminal" },
+                { "Back-End Developer", "fa-code" },
+                { "Front-End Developer", "fa-cube" },
+                { "QA Tester", "fa-bug" }
+            };
+
+            return categoryIcons;
+        }
+
     }
 }

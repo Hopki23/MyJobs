@@ -32,7 +32,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
 });
 
-
 builder.Services.AddScoped<IDbRepository, DbRepository>();
 builder.Services.AddScoped<IGetCategoriesService, GetCategoriesService>();
 builder.Services.AddScoped<IJobService, JobService>();

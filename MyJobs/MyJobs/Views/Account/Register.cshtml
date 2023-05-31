@@ -5,22 +5,26 @@
 }
 
 <h1 class="text-center">@ViewData["Title"]</h1>
+<hr />
 
-
-<div id="registrationFormId" class="form-group">
-  <label asp-for="UserType">User Type:</label>
-  <div class="btn-group" data-toggle="buttons">
-    <label class="btn btn-secondary active">
-      <input type="radio" asp-for="UserType" value="Employee"> Employee
-    </label>
-    <label class="btn btn-secondary">
-      <input type="radio" asp-for="UserType" value="Employer"> Employer
-    </label>
-  </div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div id="registrationFormId" class="col-md-6">
+            <label for="UserType">User Type:</label>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-secondary active">
+                    <input type="radio" asp-for="UserType" value="Employee"> Employee
+                </label>
+                <label class="btn btn-secondary">
+                    <input type="radio" asp-for="UserType" value="Employer"> Employer
+                </label>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="form-group">
-  <button type="button" class="btn btn-primary" id="nextButton">Next</button>
+<div class="form-group justify-content-center">
+    <button type="button" class="btn btn-primary" id="nextButton">Next</button>
 </div>
 
 <div id="employeeRegistration" style="display:none">
@@ -30,7 +34,6 @@
     <partial name="_RegisterEmployerPartial" />
 </div>
 
-
 <script>
     const button = document.getElementById("nextButton");
     button.addEventListener("click", () => {
@@ -39,15 +42,14 @@
         if (userType === "Employee") {
             document.getElementById("employeeRegistration").style.display = "block";
             document.getElementById("employerRegistration").style.display = "none";
-            button.style.visibility= 'hidden';
-        }else if(userType === "Employer"){
+        } else if (userType === "Employer") {
             document.getElementById("employeeRegistration").style.display = "none";
             document.getElementById("employerRegistration").style.display = "block";
-            console.log(userType)
-            button.style.visibility= 'hidden';
         }
+        button.style.visibility = 'hidden';
     });
 </script>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

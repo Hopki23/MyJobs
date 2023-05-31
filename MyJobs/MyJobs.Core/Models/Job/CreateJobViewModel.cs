@@ -25,6 +25,8 @@
         public string TownName { get; set; } = null!;
 
         public DateTime CreatedOn { get; set; }
+        public string? WorkingTime { get; set; }
+        public decimal? Salary { get; set; }
 
         [Required]
         [MaxLength(JobConstants.OfferingMaxLength)]

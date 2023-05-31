@@ -16,5 +16,8 @@
         public string EmployerFirstName { get; set; } = null!;
         public string EmployerLastName { get; set; } = null!;
         public string Category { get; set; } = null!;
+        public string? WorkingTime { get; set; } 
+        public decimal? Salary { get; set; }
+        public bool IsOwner { get; set; }
     }
 }

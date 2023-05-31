@@ -43,7 +43,8 @@
         public string Offering { get; set; } = null!;
         public bool IsApproved { get; set; }
         public bool IsDeleted { get; set; }
-
+        public string? WorkingTime { get; set; }
+        public decimal? Salary { get; set; }
         [ForeignKey(nameof(Company))]
         public int CompanyId { get; set; }
         public Company Company { get; set; } = null!;

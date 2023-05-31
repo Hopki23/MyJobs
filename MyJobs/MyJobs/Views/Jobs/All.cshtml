@@ -12,13 +12,13 @@
             <div class="card-body">
                 <h5 class="card-title">@job.Title</h5>
                 <p class="card-text">@job.CategoryName</p>
-                <a asp-action="GetById" asp-route-id="@job.Id" class="btn btn-primary">Details</a>
-                <hr />
+                <a asp-action="GetById" asp-route-id="@job.Id" class="btn">Details</a>
             </div>
         }
     </div>
 </div>
 
+<hr />
 <nav>
     <ul class="pagination justify-content-center">
         <li class="page-item @if(!Model.HasPreviousPage) {<text>disabled</text>}">

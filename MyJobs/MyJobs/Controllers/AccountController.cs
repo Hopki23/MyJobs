@@ -51,7 +51,7 @@
 
             if (doesUsernameExist)
             {
-                this.ModelState.AddModelError(nameof(model.Username), "Username already exists!");
+                this.ModelState.AddModelError(nameof(model.Username), ErrorConstants.UsernameExist);
                 return View(model);
             }
 
@@ -98,7 +98,7 @@
                     {
                         FirstName = model.FirstName,
                         LastName = model.LastName,
-                        IsDeleted=false,
+                        IsDeleted = false,
                         User = user,
                         Company = company
                     };
@@ -159,7 +159,7 @@
                 }
             }
 
-            this.ModelState.AddModelError(string.Empty, "Invalid Login!");
+            this.ModelState.AddModelError(string.Empty, ErrorConstants.InvalidLogin);
             return this.View(model);
         }
 
@@ -188,4 +188,5 @@
             }
         }
     }
+    
 }
