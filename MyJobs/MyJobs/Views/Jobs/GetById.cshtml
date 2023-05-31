@@ -19,7 +19,6 @@
         postedAgoText = $"{daysPostedAgo} days ago";
     }
 }
-@*<a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-primary">Delete</a>*@
 <div class="job-post-company pt-120 pb-120">
     <div class="container">
         <div class="row justify-content-between">
@@ -31,9 +30,10 @@
                             @if (Model.IsOwner)
                             {
                                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-                                 <form id="deleteForm" asp-action="Delete" asp-route-id="@Model.Id">
-                        <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmationModal">Delete</button>
-                    </form>
+                                <hr />
+                                <form asp-action="Delete" id="deleteForm" asp-route-id="@Model.Id">
+                                </form>
+                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">Delete</button>
                             }
                             <hr />
                         </div>
@@ -123,21 +123,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Delete job</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete @Model.Title?</p>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-danger" onclick="deleteForm.submit()">Delete</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-
-@*@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}*@
