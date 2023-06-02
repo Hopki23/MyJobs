@@ -67,7 +67,7 @@
         [HttpGet]
         public IActionResult All(int page = 1)
         {
-            const int ItemsPerPage = 5;
+            const int ItemsPerPage = 7;
             var model = new JobsListViewModel()
             {
                 PageNumber = page,

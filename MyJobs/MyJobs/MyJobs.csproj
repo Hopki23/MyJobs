@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\resumes\**" />
+    <Content Remove="wwwroot\resumes\**" />
+    <EmbeddedResource Remove="wwwroot\resumes\**" />
+    <None Remove="wwwroot\resumes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="itext7" Version="8.0.0" />
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.6" />
@@ -25,7 +32,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\" />
-    <Folder Include="wwwroot\resumes\" />
   </ItemGroup>
 
 </Project>
