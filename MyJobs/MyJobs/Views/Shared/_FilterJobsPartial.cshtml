@@ -1,0 +1,52 @@
+﻿@using MyJobs.Core.Models.Job
+@model JobsListViewModel
+
+<div id="filterSection">
+    <div class="job-category-listing mb-50">
+        <div class="single-listing">
+            <div class="small-section-tittle2">
+                <h4>Job Category</h4>
+            </div>
+            <div class="select-job-items2">
+                <select id="categorySelect" name="select">
+                    <option value="">All Category</option>
+                    @foreach (var category in Model.JobFilter.Categories)
+                    {
+                        <option value="@category.Key">@category.Value</option>
+                    }
+                </select>
+            </div>
+            <div class="select-Categories pt-80 pb-50">
+                <div class="small-section-tittle2">
+                    <h4>Job Type</h4>
+                </div>
+                @foreach (var workingTime in Model.JobFilter.WorkingTimes)
+                {
+                    <label class="container">
+                        @workingTime
+                        <input type="checkbox" name="selectedWorkingTimes" value="@workingTime">
+                        <span class="checkmark"></span>
+                    </label>
+                }
+            </div>
+        </div>
+        <div class="single-listing">
+            <div class="small-section-tittle2">
+                <h4>Job Location</h4>
+            </div>
+            <div class="select-job-items2">
+                <select id="locationSelect" name="select">
+                    <option value="">Anywhere</option>
+                    @foreach (var townName in Model.JobFilter.TownNames)
+                    {
+                        <option value="@townName">@townName</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <br />
+        <div class="text-center">
+            <button  id="applyFiltersBtn" class="btn btn-primary">Apply Filters</button>
+        </div>
+    </div>
+</div>

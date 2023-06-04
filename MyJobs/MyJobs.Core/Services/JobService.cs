@@ -10,10 +10,14 @@
     public class JobService : IJobService
     {
         private readonly IDbRepository repository;
+        private readonly IGetCategoriesService categoriesService;
 
-        public JobService(IDbRepository repository)
+        public JobService(
+            IDbRepository repository,
+            IGetCategoriesService categoriesService)
         {
             this.repository = repository;
+            this.categoriesService = categoriesService;
         }
 
         public async Task Apply(UploadResumeViewModel model, Employee employee)
@@ -60,8 +64,35 @@
                 .FirstOrDefault(x => x.Id == id);
 
             job!.IsDeleted = true;
-            //this.repository.Delete(job!);
             await this.repository.SaveChangesAsync();
+        }
+
+        public IEnumerable<Job> FilterJobOffers(string select, string[] selectedWorkingTimes, string locationSelect)
+        {
+            var filteredJobOffers = new List<Job>();
+
+            if (!string.IsNullOrEmpty(select))
+            {
+                filteredJobOffers = this.repository.AllReadonly<Job>().Where(j => j.Category.Id.ToString() == select).ToList();
+            }
+            if (selectedWorkingTimes != null && selectedWorkingTimes.Length > 0)
+            {
+                filteredJobOffers = this.repository.AllReadonly<Job>()
+                    .Where(j => selectedWorkingTimes.Contains(j.WorkingTime))
+                    .ToList();
+            }
+
+            if (!string.IsNullOrEmpty(locationSelect))
+            {
+                filteredJobOffers = this.repository.AllReadonly<Job>().Where(j => j.Town == locationSelect).ToList();
+            }
+
+            foreach (var job in filteredJobOffers)
+            {
+                job.Category = this.repository.AllReadonly<Infrastructure.Data.Models.Category>().FirstOrDefault(c => c.Id == job.CategoryId);
+            }
+
+            return filteredJobOffers;
         }
 
         public IEnumerable<JobsViewModel> GetAllJobs(int page, int itemsToTake)
@@ -76,7 +107,8 @@
                      Id = j.Id,
                      Title = j.Title,
                      CategoryName = j.Category.Name,
-                     CategoryId = j.CategoryId
+                     CategoryId = j.CategoryId,
+                     
                  })
                  .ToList();
 
@@ -99,6 +131,31 @@
                     Offering = j.Offering
                 })
                 .FirstOrDefault()!;
+        }
+
+        public JobFilterViewModel GetJobFilterViewModel()
+        {
+            var categories = this.categoriesService.GetAllCategories();
+
+            var workingTimes = this.repository
+                .AllReadonly<Job>()
+                .Select(j => j.WorkingTime)
+                .Distinct()
+                .ToList();
+            var townNames = this.repository
+                .AllReadonly<Job>()
+                .Select(j => j.Town)
+                .Distinct()
+                .ToList();
+
+            var jobFilterModel = new JobFilterViewModel()
+            {
+                Categories = categories.ToList(),
+                WorkingTimes = workingTimes,
+                TownNames = townNames
+            };
+
+            return jobFilterModel;
         }
 
         public IEnumerable<JobsWithCVsViewModel> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer)

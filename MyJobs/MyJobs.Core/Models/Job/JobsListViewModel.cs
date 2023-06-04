@@ -11,5 +11,6 @@
         public int PageNumber { get; set; }
         public int JobsTotalCount { get; set; }
         public int ItemsPerPage { get; set; }
+        public JobFilterViewModel JobFilter { get; set; }
     }
 }

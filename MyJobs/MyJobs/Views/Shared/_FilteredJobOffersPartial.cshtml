@@ -1,0 +1,34 @@
+﻿@using MyJobs.Infrastructure.Models
+@model List<Job>
+
+<div class="container">
+    @if (Model.Count > 0)
+    {
+        <div id="jobListingSection" class="col-xl-9 col-lg-9 col-md-8">
+            <section class="featured-job-area">
+                <div class="container">
+                    @foreach (var job in Model)
+                    {
+                        <div class="single-job-items mb-30">
+                            <div class="job-items">
+                                <div class="job-tittle job-tittle2">
+                                    <h4>@job.Title</h4>
+                                    <ul>
+                                        <li>@(job.Category != null ? job.Category.Name : "")</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="items-link items-link2 f-right">
+                                <a asp-action="GetById" asp-route-id="@job.Id">Details</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+    }
+    else
+    {
+        <p>No job offers matching the selected filters.</p>
+    }
+</div>

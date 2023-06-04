@@ -68,16 +68,20 @@
         public IActionResult All(int page = 1)
         {
             const int ItemsPerPage = 7;
-            var model = new JobsListViewModel()
+            var filterViewModel = this.jobService.GetJobFilterViewModel();
+
+            var model = new JobsListViewModel
             {
                 PageNumber = page,
                 ItemsPerPage = ItemsPerPage,
                 Jobs = this.jobService.GetAllJobs(page, ItemsPerPage),
-                JobsTotalCount = this.jobService.GetTotalJobCount()
+                JobsTotalCount = this.jobService.GetTotalJobCount(),
+                JobFilter = filterViewModel,
+                
             };
-
             return View(model);
         }
+
 
         [HttpGet]
         public IActionResult GetById(int id)
@@ -177,6 +181,14 @@
         {
             await this.jobService.Delete(id);
             return RedirectToAction(nameof(All));
+        }
+
+        [HttpPost]
+        public IActionResult Filter(string select, string[] selectedWorkingTimes, string locationSelect)
+        {
+            var filteredJobOffers =this.jobService.FilterJobOffers(select, selectedWorkingTimes, locationSelect);
+
+            return PartialView("_FilteredJobOffersPartial", filteredJobOffers);
         }
     }
 }

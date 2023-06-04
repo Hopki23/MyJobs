@@ -1,6 +1,5 @@
 ﻿namespace MyJobs.Core.Services
 {
-
     using MyJobs.Core.Models.Job;
     using MyJobs.Core.Models.Resume;
     using MyJobs.Infrastructure.Models;
@@ -24,5 +23,9 @@
         Task Update(int id, EditJobViewModel model);
 
         Task Delete(int id);
+
+        JobFilterViewModel GetJobFilterViewModel();
+
+        IEnumerable<Job> FilterJobOffers(string select, string[] selectedWorkingTimes, string locationSelect);
     }
 }
