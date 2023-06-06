@@ -1,0 +1,76 @@
+﻿@{
+    this.ViewData["Title"] = "My Profile";
+}
+<h1 class='text-center'>@ViewData["Title"]</h1>
+<hr />
+
+<div class="row">
+    <div class="col-4">
+        <nav id="navbar-example3" class="h-100 flex-column align-items-stretch pe-4 border-end">
+            <nav class="nav nav-pills flex-column">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <a class="nav-link" id="personalInfoId" asp-action="PersonalInformation" asp-controller="Profile">
+                            <h5 class="card-title">Personal Information</h5>
+                        </a>
+                    </div>
+                </div>
+
+                @if (User.IsInRole("Employer"))
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <a class="nav-link" asp-action="Index" asp-controller="Profile">
+                                <h5 class="card-title">My Jobs</h5>
+                            </a>
+                        </div>
+                    </div>
+                }
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <a class="nav-link" asp-action="Index" asp-controller="Profile">
+                            <h5 class="card-title">Personal Information</h5>
+                        </a>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <a class="nav-link" asp-action="Index" asp-controller="Profile">
+                            <h5 class="card-title">Notifications</h5>
+                        </a>
+                    </div>
+                </div>
+                @if (User.IsInRole("Employee"))
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <a class="nav-link" asp-action="Index" asp-controller="Profile">
+                                <h5 class="card-title">My Applications</h5>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </nav>
+        </nav>
+    </div>
+    <div class="col-8">
+        <div id="partialContainer"></div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function() {
+            // Handle click event for Personal Information link
+            $("#personalInfoId").click(function(e) {
+                e.preventDefault();
+
+                // Load the partial view content
+                $.get("@Url.Action("PersonalInformation", "Profile")", function(data) {
+                    // Inject the partial view content into the designated container
+                    $("#partialContainer").html(data);
+                });
+            });
+        });
+    </script>
+}

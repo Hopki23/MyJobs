@@ -61,7 +61,7 @@
                 .HasOne(j => j.Company)
                 .WithMany(c => c.Jobs)
                 .HasForeignKey(j => j.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Job>()
                .Property(j => j.Salary)
@@ -71,7 +71,7 @@
                 .HasMany(c => c.Jobs)
                 .WithOne(j => j.Company)
                 .HasForeignKey(j => j.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             //modelBuilder.ApplyConfiguration(new CategoryConfiguration());
 

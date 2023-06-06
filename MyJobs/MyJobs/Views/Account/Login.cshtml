@@ -12,12 +12,12 @@
             <hr />
             <input type="hidden" asp-for="ReturnUrl" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-             <div class="text-center mb-3">
+            <div class="text-center mb-3">
                 <label asp-for="@Model.Email">Email</label>
                 <input class="form-control " autocomplete="username" aria-required="true" asp-for="@Model.Email" />
                 <span asp-validation-for="@Model.Email" class="text-danger"></span>
             </div>
-             <div class="text-center mb-3">
+            <div class="text-center mb-3">
                 <label asp-for="@Model.Password">Password</label>
                 <input class="form-control " autocomplete="username" aria-required="true" asp-for="@Model.Password" />
                 <span asp-validation-for="@Model.Password" class="text-danger"></span>
@@ -26,6 +26,9 @@
                 <button id="loginSubmit" type="submit" class="btn btn-primary">Login</button>
             </div>
         </form>
+        <div class="text-center mt-3">
+            <p>If you do not have an account, <a href="@Url.Action("Register", "Account")">register here</a>.</p>
+        </div>
     </div>
 </div>
 

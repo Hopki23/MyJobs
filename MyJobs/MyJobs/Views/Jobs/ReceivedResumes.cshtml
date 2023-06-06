@@ -2,6 +2,10 @@
 @model List<JobsWithCVsViewModel>
 
 
+@if (Model.Count() == 0)
+{
+    <h2 class="text-center">No received resumes yet!</h2>
+}
 <div class="card-container">
     @foreach (var jobViewModel in Model)
     {

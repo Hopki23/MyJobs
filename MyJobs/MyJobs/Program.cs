@@ -36,6 +36,7 @@ builder.Services.AddScoped<IDbRepository, DbRepository>();
 builder.Services.AddScoped<IGetCategoriesService, GetCategoriesService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IResumeService, ResumeService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddControllersWithViews();
 
