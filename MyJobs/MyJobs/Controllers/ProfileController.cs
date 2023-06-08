@@ -101,7 +101,7 @@
                 throw new ArgumentException("Employee not found!");
             }
 
-            var jobs = await this.jobService.GetJobsByEmployeeId(employee.EmployeeId);
+            var jobs = await this.jobService.GetJobsByEmployeeId(employee.Id);
 
             return PartialView("_MyApplicationsPartial", jobs);
         }

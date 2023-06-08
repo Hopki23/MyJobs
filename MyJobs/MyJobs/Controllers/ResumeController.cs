@@ -58,7 +58,7 @@
                 return NotFound();
             }
 
-            await this.resumeService.SaveResume(model, employee.EmployeeId);
+            await this.resumeService.SaveResume(model, employee.Id);
 
             byte[] resume = this.resumeService.GenerateResumePDF(model);
 

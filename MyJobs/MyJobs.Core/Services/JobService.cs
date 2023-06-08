@@ -27,7 +27,7 @@
             int jobId = model.Id;
 
             var resume = this.repository.AllReadonly<CV>()
-                .Where(c => c.EmployeeId == employee.EmployeeId)
+                .Where(c => c.EmployeeId == employee.Id)
                 .FirstOrDefault();
 
             var job = await this.repository.GetByIdAsync<Job>(jobId);
@@ -172,7 +172,7 @@
         public async Task<IEnumerable<JobsViewModel>> GetJobsForCertainEmployer(Employer employer)
         {
             return await this.repository.AllReadonly<Job>()
-            .Where(j => j.EmployerId == employer.EmployerId)
+            .Where(j => j.EmployerId == employer.Id)
             .Select(x => new JobsViewModel()
             {
                 Id = x.Id,
@@ -185,7 +185,7 @@
         public IEnumerable<JobsWithCVsViewModel> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer)
         {
             var jobs = this.repository.AllReadonly<Job>()
-            .Where(x => x.EmployerId == employer.EmployerId)
+            .Where(x => x.EmployerId == employer.Id)
             .ToList();
 
             var jobViewModels = new List<JobsWithCVsViewModel>();
@@ -193,7 +193,7 @@
             foreach (var job in jobs)
             {
                 var cvs = this.repository.AllReadonly<CV>()
-                    .Where(c => c.Jobs.Contains(job))
+                    .Where(c => c.Jobs.Contains(job) && !c.IsDeleted)
                     .ToList();
 
                 if (cvs.Count > 0)
@@ -233,7 +233,7 @@
                     Responsibilities = j.Responsibilities,
                     Salary = j.Salary,
                     WorkingTime = j.WorkingTime,
-                    IsOwner = (employer != null && j.EmployerId == employer.EmployerId)
+                    IsOwner = (employer != null && j.EmployerId == employer.Id)
                 })
                 .FirstOrDefault()!;
         }

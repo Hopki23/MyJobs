@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyJobs.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using MyJobs.Infrastructure.Data;
 namespace MyJobs.Infrastructure.Migrations
 {
     [DbContext(typeof(MyJobsDbContext))]
-    partial class MyJobsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230608150848_ChangedPrimaryKeysNames")]
+    partial class ChangedPrimaryKeysNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -299,7 +301,13 @@ namespace MyJobs.Infrastructure.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("EmployeeId1")
+                        .HasColumnType("int");
+
                     b.Property<int>("EmployerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EmployerId1")
                         .HasColumnType("int");
 
                     b.Property<string>("Message")
@@ -310,7 +318,11 @@ namespace MyJobs.Infrastructure.Migrations
 
                     b.HasIndex("EmployeeId");
 
+                    b.HasIndex("EmployeeId1");
+
                     b.HasIndex("EmployerId");
+
+                    b.HasIndex("EmployerId1");
 
                     b.ToTable("Notifications");
                 });
@@ -672,16 +684,24 @@ namespace MyJobs.Infrastructure.Migrations
             modelBuilder.Entity("MyJobs.Infrastructure.Data.Models.Notification", b =>
                 {
                     b.HasOne("MyJobs.Infrastructure.Models.Employee", "Employee")
-                        .WithMany("Notifications")
+                        .WithMany()
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyJobs.Infrastructure.Models.Employer", "Employer")
+                    b.HasOne("MyJobs.Infrastructure.Models.Employee", null)
                         .WithMany("Notifications")
+                        .HasForeignKey("EmployeeId1");
+
+                    b.HasOne("MyJobs.Infrastructure.Models.Employer", "Employer")
+                        .WithMany()
                         .HasForeignKey("EmployerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MyJobs.Infrastructure.Models.Employer", null)
+                        .WithMany("Notifications")
+                        .HasForeignKey("EmployerId1");
 
                     b.Navigation("Employee");
 

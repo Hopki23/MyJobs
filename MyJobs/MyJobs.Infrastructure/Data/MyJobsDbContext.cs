@@ -1,7 +1,7 @@
 ﻿namespace MyJobs.Infrastructure.Data
 {
-    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
     using MyJobs.Infrastructure.Data.Models;
     using MyJobs.Infrastructure.Data.Models.Identity;
@@ -21,6 +21,7 @@
         public DbSet<Job> Jobs { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<EmployeeEmployment> EmployeeEmployments { get; set; } = null!;
+        public DbSet<Notification> Notifications { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,8 +74,19 @@
                 .HasForeignKey(j => j.CompanyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+            modelBuilder.Entity<Notification>()
+                 .HasOne(n => n.Employer)
+                 .WithMany(e => e.Notifications)
+                 .HasForeignKey(n => n.EmployerId)
+                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Employee)
+                .WithMany(e => e.Notifications)
+                .HasForeignKey(n => n.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //modelBuilder.ApplyConfiguration(new CategoryConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

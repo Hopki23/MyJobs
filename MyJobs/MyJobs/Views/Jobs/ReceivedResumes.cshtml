@@ -10,7 +10,6 @@
     @foreach (var jobViewModel in Model)
     {
         <h3>@jobViewModel.Job.Title</h3>
-
         @foreach (var cv in jobViewModel.CVs)
         {
             string formattedDate = cv.DateOfBirth.ToString("dd.MM.yyyy");
@@ -29,14 +28,19 @@
                     <li class="list-group-item">Phone Number: @cv.PhoneNumber</li>
                 </ul>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <button class="btn">Approve</button>
+                    <form method="post" asp-action="Approve" asp-controller="EmployeeEmployment">
+                        <input type="hidden" name="employeeId" value="@cv.EmployeeId" />
+                        <input type="hidden" name="employerId" value="@jobViewModel.Job.EmployerId" />
+                        <input type="hidden" name="companyId" value="@jobViewModel.Job.CompanyId" />
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" class="btn">Approve</button>
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn-danger btn-block">Reject</button>
+                            </div>
                         </div>
-                        <div class="col">
-                            <button class="btn btn-danger btn-block">Reject</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         }

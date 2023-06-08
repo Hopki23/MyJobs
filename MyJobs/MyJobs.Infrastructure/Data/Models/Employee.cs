@@ -4,6 +4,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
 
     using MyJobs.Infrastructure.Constants;
+    using MyJobs.Infrastructure.Data.Models;
     using MyJobs.Infrastructure.Data.Models.Identity;
 
     public class Employee
@@ -13,10 +14,11 @@
             this.CVs = new HashSet<CV>();
             this.Jobs = new HashSet<Job>();
             this.Employments = new HashSet<EmployeeEmployment>();
+            this.Notifications = new HashSet<Notification>();
         }
 
         [Key]
-        public int EmployeeId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(EmployeeConstants.EmployeeFirstNameMaxLength)]
@@ -33,6 +35,7 @@
         public ApplicationUser User { get; set; } = null!;
         public virtual ICollection<CV> CVs { get; set; }
         public virtual ICollection<Job> Jobs { get; set; }
-        public ICollection<EmployeeEmployment> Employments { get; set; }
+        public virtual ICollection<EmployeeEmployment> Employments { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

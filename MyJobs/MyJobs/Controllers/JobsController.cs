@@ -53,10 +53,10 @@
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var result = this.repository.All<Employer>()
                 .Where(e => e.UserId == userId)
-                .Select(e => new { e.EmployerId, e.CompanyId })
+                .Select(e => new { e.Id, e.CompanyId })
                 .FirstOrDefault();
 
-            int employerId = result!.EmployerId;
+            int employerId = result!.Id;
             int companyId = result.CompanyId;
 
             this.jobService.CreateAsync(model, employerId, companyId);
