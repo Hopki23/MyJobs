@@ -27,5 +27,9 @@
         JobFilterViewModel GetJobFilterViewModel();
 
         IEnumerable<Job> FilterJobOffers(string select, string[] selectedWorkingTimes, string locationSelect);
+
+        Task<IEnumerable<JobsViewModel>> GetJobsForCertainEmployer(Employer employer);
+
+        Task<IEnumerable<Job>> GetJobsByEmployeeId(int employeeId);
     }
 }

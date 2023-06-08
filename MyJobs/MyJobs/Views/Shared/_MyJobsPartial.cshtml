@@ -1,0 +1,32 @@
+﻿@using MyJobs.Core.Models.Job
+@{
+    this.ViewData["Title"] = "My posted jobs.";
+}
+@model List<JobsViewModel>
+
+<h1 class='text-center'>@ViewData["Title"]</h1>
+<br />
+
+@if (Model != null && Model.Any())
+{
+    @foreach (var job in Model)
+    {
+        <div class="single-job-items mb-30">
+            <div class="job-items">
+                <div class="job-tittle job-tittle2">
+                    <h4>@job.Title</h4>
+                    <ul>
+                        <li>@job.CategoryName</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="items-link items-link2 f-right">
+                <a asp-action="GetById" asp-controller="Jobs" asp-route-id="@job.Id">Details</a>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <h2 class="text-center">No jobs found!</h2>
+}

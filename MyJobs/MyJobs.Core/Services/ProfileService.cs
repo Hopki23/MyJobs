@@ -1,6 +1,7 @@
 ﻿namespace MyJobs.Core.Services
 {
     using Microsoft.EntityFrameworkCore;
+
     using MyJobs.Core.Models.Profile;
     using MyJobs.Core.Repositories;
     using MyJobs.Infrastructure.Constants;

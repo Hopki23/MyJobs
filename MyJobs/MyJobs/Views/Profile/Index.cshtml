@@ -10,7 +10,7 @@
             <nav class="nav nav-pills flex-column">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <a class="nav-link" id="personalInfoId" asp-action="PersonalInformation" asp-controller="Profile">
+                        <a class="nav-link" id="personalInfo" asp-action="PersonalInformation" asp-controller="Profile">
                             <h5 class="card-title">Personal Information</h5>
                         </a>
                     </div>
@@ -20,19 +20,12 @@
                 {
                     <div class="card mb-3">
                         <div class="card-body">
-                            <a class="nav-link" asp-action="Index" asp-controller="Profile">
+                            <a class="nav-link" id="myJobs" asp-action="MyJobs" asp-controller="Profile">
                                 <h5 class="card-title">My Jobs</h5>
                             </a>
                         </div>
                     </div>
                 }
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <a class="nav-link" asp-action="Index" asp-controller="Profile">
-                            <h5 class="card-title">Personal Information</h5>
-                        </a>
-                    </div>
-                </div>
                 <div class="card mb-3">
                     <div class="card-body">
                         <a class="nav-link" asp-action="Index" asp-controller="Profile">
@@ -44,7 +37,7 @@
                 {
                     <div class="card mb-3">
                         <div class="card-body">
-                            <a class="nav-link" asp-action="Index" asp-controller="Profile">
+                            <a class="nav-link" id="myApplications" asp-action="MyApplications" asp-controller="Profile">
                                 <h5 class="card-title">My Applications</h5>
                             </a>
                         </div>
@@ -61,13 +54,30 @@
 @section Scripts{
     <script>
         $(document).ready(function() {
-            // Handle click event for Personal Information link
-            $("#personalInfoId").click(function(e) {
+            $("#personalInfo").click(function(e) {
                 e.preventDefault();
 
-                // Load the partial view content
                 $.get("@Url.Action("PersonalInformation", "Profile")", function(data) {
-                    // Inject the partial view content into the designated container
+                    $("#partialContainer").html(data);
+                });
+            });
+        });
+
+        $(document).ready(function() {
+            $("#myJobs").click(function(e) {
+                e.preventDefault();
+
+                $.get("@Url.Action("MyJobs", "Profile")", function(data) {
+                    $("#partialContainer").html(data);
+                });
+            });
+        });
+
+        $(document).ready(function() {
+            $("#myApplications").click(function(e) {
+                e.preventDefault();
+
+                $.get("@Url.Action("MyApplications", "Profile")", function(data) {
                     $("#partialContainer").html(data);
                 });
             });

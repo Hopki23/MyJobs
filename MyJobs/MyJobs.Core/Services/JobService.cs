@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
 
+    using Microsoft.EntityFrameworkCore;
+
     using MyJobs.Core.Models.Job;
     using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
@@ -156,6 +158,28 @@
             };
 
             return jobFilterModel;
+        }
+
+        public async Task<IEnumerable<Job>> GetJobsByEmployeeId(int employeeId)
+        {
+            return await this.repository.AllReadonly<Job>()
+                 .Where(j => j.Resumes.Any(r => r.EmployeeId == employeeId))
+                 .Include(j => j.Category)
+                 .Include(j => j.Company)
+                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<JobsViewModel>> GetJobsForCertainEmployer(Employer employer)
+        {
+            return await this.repository.AllReadonly<Job>()
+            .Where(j => j.EmployerId == employer.EmployerId)
+            .Select(x => new JobsViewModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                CategoryName = x.Category.Name
+            })
+            .ToListAsync();
         }
 
         public IEnumerable<JobsWithCVsViewModel> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer)

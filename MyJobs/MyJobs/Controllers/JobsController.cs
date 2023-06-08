@@ -90,10 +90,10 @@
             var employer = this.repository.All<Employer>()
                                          .FirstOrDefault(e => e.UserId == userId);
 
-            //if (employer == null)
-            //{
-            //    return NotFound();
-            //}
+            if (employer == null)
+            {
+                return NotFound();
+            }
 
             var model = this.jobService.GetSingleJob(id, employer);
             return View(model);
