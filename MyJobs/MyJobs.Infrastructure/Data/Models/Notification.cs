@@ -13,6 +13,7 @@
         [Required]
         public string Message { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
+        public bool IsRead { get; set; }
 
         [ForeignKey(nameof(Employee))]
         public int EmployeeId { get; set; }

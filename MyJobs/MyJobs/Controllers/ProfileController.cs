@@ -10,6 +10,7 @@
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services;
     using MyJobs.Infrastructure.Constants;
+    using MyJobs.Infrastructure.Data.Models;
     using MyJobs.Infrastructure.Data.Models.Identity;
     using MyJobs.Infrastructure.Models;
 
@@ -41,7 +42,7 @@
         [HttpGet]
         public async Task<IActionResult> PersonalInformation()
         {
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;    
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var user = await this.userManager.FindByIdAsync(userId);
 
@@ -104,6 +105,24 @@
             var jobs = await this.jobService.GetJobsByEmployeeId(employee.Id);
 
             return PartialView("_MyApplicationsPartial", jobs);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = RoleConstants.Employee)]
+        public async Task<IActionResult> Notifications()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var employee = await this.repository.AllReadonly<Employee>()
+                .FirstOrDefaultAsync(e => e.UserId == userId);
+
+            var notifications = await this.repository.AllReadonly<Notification>()
+                .Include(n => n.Employer)
+                .Include(n => n.Employer.Company)
+                .Where(n => n.EmployeeId == employee.Id)
+                .ToListAsync();
+
+            return PartialView("_MyNotificationsPartial", notifications);
         }
     }
 }

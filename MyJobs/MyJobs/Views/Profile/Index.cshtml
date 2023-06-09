@@ -26,19 +26,20 @@
                         </div>
                     </div>
                 }
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <a class="nav-link" asp-action="Index" asp-controller="Profile">
-                            <h5 class="card-title">Notifications</h5>
-                        </a>
-                    </div>
-                </div>
                 @if (User.IsInRole("Employee"))
                 {
                     <div class="card mb-3">
                         <div class="card-body">
                             <a class="nav-link" id="myApplications" asp-action="MyApplications" asp-controller="Profile">
                                 <h5 class="card-title">My Applications</h5>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <a class="nav-link" id="myNotifications" asp-action="Index" asp-controller="Profile">
+                                <h5 class="card-title">Notifications</h5>
                             </a>
                         </div>
                     </div>
@@ -78,6 +79,16 @@
                 e.preventDefault();
 
                 $.get("@Url.Action("MyApplications", "Profile")", function(data) {
+                    $("#partialContainer").html(data);
+                });
+            });
+        });
+
+         $(document).ready(function() {
+            $("#myNotifications").click(function(e) {
+                e.preventDefault();
+
+                $.get("@Url.Action("Notifications", "Profile")", function(data) {
                     $("#partialContainer").html(data);
                 });
             });

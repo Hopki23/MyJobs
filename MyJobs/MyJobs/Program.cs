@@ -38,6 +38,7 @@ builder.Services.AddScoped<IGetCategoriesService, GetCategoriesService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IResumeService, ResumeService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IEmploymentService, EmploymentService>();
 
 builder.Services.AddControllersWithViews(options =>
 {

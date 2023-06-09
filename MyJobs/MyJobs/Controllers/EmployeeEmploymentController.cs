@@ -2,58 +2,28 @@
 {
     using Microsoft.AspNetCore.Mvc;
 
-    using MyJobs.Core.Repositories;
-    using MyJobs.Infrastructure.Data.Models;
-    using MyJobs.Infrastructure.Models;
+    using MyJobs.Core.Services;
 
     public class EmployeeEmploymentController : BaseController
     {
-        private readonly IDbRepository repository;
+        private readonly IEmploymentService employmentService;
 
         public EmployeeEmploymentController(
-            IDbRepository repository)
+            IEmploymentService employmentService)
         {
-            this.repository = repository;
+            this.employmentService = employmentService;
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> Approve(int employeeId, int employerId, int companyId)
+        public async Task<IActionResult> Approve(int employeeId, int employerId, int companyId, int jobId)
         {
-            var cv = this.repository.AllReadonly<CV>()
-                .Where(c => c.EmployeeId == employeeId)
-                .FirstOrDefault();
+            var isApproved = await this.employmentService.Approve(employeeId, employerId, companyId, jobId);
 
-            if (cv != null)
+            if (!isApproved)
             {
-                cv.IsDeleted = true;
+                return NotFound();
             }
-
-            var employeeEmployment = new EmployeeEmployment
-            {
-                EmployeeId = employeeId,
-                EmployerId = employerId,
-                CompanyId = companyId
-            };
-
-            await this.repository.AddAsync(employeeEmployment);
-
-            var notification = new Notification()
-            {
-                EmployeeId = employeeId,
-                EmployerId = employerId,
-                Message = "Congrats, you are approved to work with us!",
-                CreatedAt = DateTime.Now
-            };
-
-            await this.repository.AddAsync(notification);
-
-            var employee = await this.repository.GetByIdAsync<Employee>(employeeId);
-            var employer = await this.repository.GetByIdAsync<Employer>(employerId);
-
-            employee.Notifications.Add(notification);
-            employer.Notifications.Add(notification);
-
-            await this.repository.SaveChangesAsync();
 
             return RedirectToAction("All", "Jobs");
         }
