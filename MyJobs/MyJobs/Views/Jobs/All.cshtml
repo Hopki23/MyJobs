@@ -23,6 +23,7 @@
             <div id="jobListingSection" class="col-xl-9 col-lg-9 col-md-8">
                 <section class="featured-job-area">
                     <div class="container">
+                        @Html.AntiForgeryToken()
                         @foreach (var job in Model.Jobs)
                         {
                             <div class="single-job-items mb-30">
@@ -84,7 +85,8 @@
 @section Scripts{
     <script>
         $(document).ready(function() {
-            var originalJobListing = $("#jobListingSection").html();
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
 
             $("#applyFiltersBtn").click(function() {
                 var selectedCategory = $("#categorySelect").val();
@@ -104,6 +106,9 @@
                 $.ajax({
                     url: "/Jobs/Filter",
                     type: "POST",
+                    headers: {
+                        "RequestVerificationToken": token
+                    },
                     data: {
                         select: selectedCategory,
                         selectedWorkingTimes: selectedWorkingTimes,

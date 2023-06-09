@@ -88,12 +88,7 @@
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var employer = this.repository.All<Employer>()
-                                         .FirstOrDefault(e => e.UserId == userId);
-
-            if (employer == null)
-            {
-                return NotFound();
-            }
+                                        .FirstOrDefault(e => e.UserId == userId);
 
             var model = this.jobService.GetSingleJob(id, employer);
             return View(model);
@@ -186,7 +181,7 @@
         [HttpPost]
         public IActionResult Filter(string select, string[] selectedWorkingTimes, string locationSelect)
         {
-            var filteredJobOffers =this.jobService.FilterJobOffers(select, selectedWorkingTimes, locationSelect);
+            var filteredJobOffers = this.jobService.FilterJobOffers(select, selectedWorkingTimes, locationSelect);
 
             return PartialView("_FilteredJobOffersPartial", filteredJobOffers);
         }

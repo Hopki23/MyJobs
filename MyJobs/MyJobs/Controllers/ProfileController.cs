@@ -116,13 +116,23 @@
             var employee = await this.repository.AllReadonly<Employee>()
                 .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            var notifications = await this.repository.AllReadonly<Notification>()
-                .Include(n => n.Employer)
-                .Include(n => n.Employer.Company)
-                .Where(n => n.EmployeeId == employee.Id)
-                .ToListAsync();
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            var notifications = await this.profileService.GetUnreadNotificationsForEmployee(employee.Id);
 
             return PartialView("_MyNotificationsPartial", notifications);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkAsRead(int notificationId)
+        {
+            var notification = this.profileService.MarkNotificationAsRead(notificationId);
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

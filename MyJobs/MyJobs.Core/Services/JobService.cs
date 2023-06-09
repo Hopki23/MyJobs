@@ -71,30 +71,26 @@
 
         public IEnumerable<Job> FilterJobOffers(string select, string[] selectedWorkingTimes, string locationSelect)
         {
-            var filteredJobOffers = new List<Job>();
+            IQueryable<Job> filteredJobOffers = this.repository.AllReadonly<Job>();
 
             if (!string.IsNullOrEmpty(select))
             {
-                filteredJobOffers = this.repository.AllReadonly<Job>().Where(j => j.Category.Id.ToString() == select).ToList();
+                filteredJobOffers = filteredJobOffers.Where(j => j.Category.Id.ToString() == select);
             }
+
             if (selectedWorkingTimes != null && selectedWorkingTimes.Length > 0)
             {
-                filteredJobOffers = this.repository.AllReadonly<Job>()
-                    .Where(j => selectedWorkingTimes.Contains(j.WorkingTime))
-                    .ToList();
+                filteredJobOffers = filteredJobOffers.Where(j => selectedWorkingTimes.Contains(j.WorkingTime));
             }
 
             if (!string.IsNullOrEmpty(locationSelect))
             {
-                filteredJobOffers = this.repository.AllReadonly<Job>().Where(j => j.Town == locationSelect).ToList();
+                filteredJobOffers = filteredJobOffers.Where(j => j.Town == locationSelect);
             }
 
-            foreach (var job in filteredJobOffers)
-            {
-                job.Category = this.repository.AllReadonly<Infrastructure.Data.Models.Category>().FirstOrDefault(c => c.Id == job.CategoryId);
-            }
+            filteredJobOffers = filteredJobOffers.Include(j => j.Category);
 
-            return filteredJobOffers;
+            return filteredJobOffers.ToList();
         }
 
         public IEnumerable<JobsViewModel> GetAllJobs(int page, int itemsToTake)

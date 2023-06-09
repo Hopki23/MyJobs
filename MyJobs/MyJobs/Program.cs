@@ -42,7 +42,7 @@ builder.Services.AddScoped<IEmploymentService, EmploymentService>();
 
 builder.Services.AddControllersWithViews(options =>
 {
-    options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });
 
 var app = builder.Build();
