@@ -34,6 +34,11 @@
         [AllowAnonymous]
         public IActionResult Register()
         {
+            if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             var model = new RegisterViewModel();
             return View(model);
         }
@@ -124,6 +129,11 @@
         [AllowAnonymous]
         public IActionResult Login(string? returnUrl)
         {
+            if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             var model = new LoginViewModel
             {
                 ReturnUrl = returnUrl

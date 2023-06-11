@@ -7,7 +7,7 @@
 
     using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
-    using MyJobs.Core.Services;
+    using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Models;
 

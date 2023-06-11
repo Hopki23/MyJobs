@@ -1,4 +1,4 @@
-﻿namespace MyJobs.Core.Services
+﻿namespace MyJobs.Core.Services.Contracts
 {
     using MyJobs.Core.Models.Resume;
     public interface IResumeService

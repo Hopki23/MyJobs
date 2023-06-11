@@ -1,8 +1,7 @@
 ﻿namespace MyJobs.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
-
-    using MyJobs.Core.Services;
+    using MyJobs.Core.Services.Contracts;
 
     public class EmployeeEmploymentController : BaseController
     {

@@ -1,6 +1,9 @@
-﻿@{
+﻿@using System.Security.Claims
+@{
     this.ViewData["Title"] = "My Profile";
 }
+
+
 <h1 class='text-center'>@ViewData["Title"]</h1>
 <hr />
 
@@ -10,6 +13,7 @@
             <nav class="nav nav-pills flex-column">
                 <div class="card mb-3">
                     <div class="card-body">
+                        <input type="hidden" id="id" name="id" value="@ViewBag.UserId" />
                         <a class="nav-link" id="personalInfo" asp-action="PersonalInformation" asp-controller="Profile">
                             <h5 class="card-title">Personal Information</h5>
                         </a>
@@ -58,7 +62,9 @@
             $("#personalInfo").click(function(e) {
                 e.preventDefault();
 
-                $.get("@Url.Action("PersonalInformation", "Profile")", function(data) {
+                var id = $("#id").val();
+
+                $.get("@Url.Action("PersonalInformation", "Profile")", {id: id}, function(data) {
                     $("#partialContainer").html(data);
                 });
             });

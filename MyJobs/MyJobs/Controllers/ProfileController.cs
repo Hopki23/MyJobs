@@ -4,33 +4,36 @@
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Mvc;
 
-    using MyJobs.Core.Repositories;
-    using MyJobs.Core.Services;
-    using MyJobs.Infrastructure.Constants;
-    using MyJobs.Infrastructure.Data.Models;
     using MyJobs.Infrastructure.Data.Models.Identity;
+    using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Models;
+    using MyJobs.Core.Repositories;
+    using MyJobs.Core.Models.Profile;
+    using MyJobs.Core.Services.Contracts;
 
     public class ProfileController : BaseController
     {
-        private readonly UserManager<ApplicationUser> userManager;
         private readonly IProfileService profileService;
         private readonly IDbRepository repository;
         private readonly IJobService jobService;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
 
         public ProfileController(
-            UserManager<ApplicationUser> userManager,
             IProfileService profileService,
             IDbRepository repository,
-            IJobService jobService)
+            IJobService jobService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             this.userManager = userManager;
             this.profileService = profileService;
             this.repository = repository;
             this.jobService = jobService;
+            this.roleManager = roleManager;
         }
 
         [HttpGet]
@@ -57,6 +60,9 @@
             try
             {
                 var userProfile = this.profileService.GetUserById(user.Id, role);
+
+                ViewBag.UserId = userProfile.Id;
+
                 return PartialView("_PersonalInformationPartial", userProfile);
             }
             catch (Exception)
@@ -92,7 +98,7 @@
         [Authorize(Roles = RoleConstants.Employee)]
         public async Task<IActionResult> MyApplications()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var employee = await this.repository.AllReadonly<Employee>()
                 .FirstOrDefaultAsync(e => e.UserId == userId);
@@ -111,7 +117,7 @@
         [Authorize(Roles = RoleConstants.Employee)]
         public async Task<IActionResult> Notifications()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var employee = await this.repository.AllReadonly<Employee>()
                 .FirstOrDefaultAsync(e => e.UserId == userId);
@@ -129,10 +135,55 @@
         [HttpPost]
         public async Task<IActionResult> MarkAsRead(int notificationId)
         {
-            var notification = this.profileService.MarkNotificationAsRead(notificationId);
+            var notification = await this.profileService.MarkNotificationAsRead(notificationId);
 
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditProfile(int id)
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+                var model = await this.profileService.GetProfileForEditing(id, userId);
+                model.Id = id;
+                return View(model);
+            }
+            catch (Exception)
+            {
+                //TODO: implement error handling
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProfile(int id, UserProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                await this.profileService.EditProfile(model, id, userId);
+                return RedirectToAction(nameof(Index), new { id });
+            }
+            catch (Exception)
+            {
+                //TODO: implement error handling
+                throw;
+            }
+
+        }
     }
 }

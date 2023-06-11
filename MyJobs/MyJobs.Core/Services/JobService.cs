@@ -7,6 +7,7 @@
     using MyJobs.Core.Models.Job;
     using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
+    using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Models;
 
     public class JobService : IJobService
@@ -149,7 +150,7 @@
             var jobFilterModel = new JobFilterViewModel()
             {
                 Categories = categories.ToList(),
-                WorkingTimes = workingTimes,
+                WorkingTimes = workingTimes!,
                 TownNames = townNames
             };
 

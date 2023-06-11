@@ -1,8 +1,9 @@
 ﻿namespace MyJobs.Core.Services
 {
     using Microsoft.EntityFrameworkCore;
-    
+
     using MyJobs.Core.Repositories;
+    using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Data.Models;
     using MyJobs.Infrastructure.Models;
     public class EmploymentService : IEmploymentService

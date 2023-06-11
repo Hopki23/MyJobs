@@ -1,4 +1,4 @@
-﻿namespace MyJobs.Core.Services
+﻿namespace MyJobs.Core.Services.Contracts
 {
     public interface IEmploymentService
     {

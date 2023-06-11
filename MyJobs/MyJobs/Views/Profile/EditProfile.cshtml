@@ -1,0 +1,50 @@
+﻿@using MyJobs.Core.Models.Profile
+@model UserProfileViewModel
+@{
+    this.ViewData["Title"] = "Edit profile";
+}
+
+<h1 class='text-center'>@this.ViewData["Title"]</h1>
+<hr />
+<form asp-action="EditProfile" method="post" class="col-md-6 offset-md-3">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input type="hidden" id="id" name="id" value="@Model.Id" />
+
+    <div class="form-group">
+        <label asp-for="FirstName"></label>
+        <input asp-for="FirstName" class="form-control">
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName"></label>
+        <input asp-for="LastName" class="form-control">
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    @if (!Model.IsEmployee)
+    {
+        <div class="form-group">
+            <label asp-for="CompanyAddress"></label>
+            <input asp-for="CompanyAddress" class="form-control">
+            <span asp-validation-for="CompanyAddress" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CompanyName"></label>
+            <input asp-for="CompanyName" class="form-control">
+            <span asp-validation-for="CompanyName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CompanyPhoneNumber"></label>
+            <input asp-for="CompanyPhoneNumber" class="form-control">
+            <span asp-validation-for="CompanyPhoneNumber" class="text-danger"></span>
+        </div>
+    }
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary">Edit</button>
+    </div>
+</form>

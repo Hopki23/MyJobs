@@ -8,7 +8,7 @@
     using MyJobs.Core.Models.Job;
     using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
-    using MyJobs.Core.Services;
+    using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Models;
 
@@ -77,7 +77,7 @@
                 Jobs = this.jobService.GetAllJobs(page, ItemsPerPage),
                 JobsTotalCount = this.jobService.GetTotalJobCount(),
                 JobFilter = filterViewModel,
-                
+
             };
             return View(model);
         }
@@ -120,13 +120,20 @@
 
             if (employee == null)
             {
-                //Change all NotFound with the proper error handling!
-                return NotFound();
+                return RedirectToAction(nameof(All));
             }
 
-            await this.jobService.Apply(model, employee);
+            try
+            {
+                await this.jobService.Apply(model, employee);
+                return RedirectToAction(nameof(All));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
 
-            return RedirectToAction(nameof(All));
+                return View("Error");
+            }
         }
 
         [HttpGet]
@@ -139,7 +146,7 @@
 
             if (employer == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(All));
             }
 
             var jobViewModels = this.jobService.GetJobsWithCV(model, employer);
@@ -151,8 +158,8 @@
         [Authorize(Roles = RoleConstants.Employer)]
         public IActionResult Edit(int id)
         {
-            var model = jobService.GetById(id);
-            model.CategoryItems = categoriesService.GetAllCategories();
+            var model = this.jobService.GetById(id);
+            model.CategoryItems = this.categoriesService.GetAllCategories();
             return View(model);
         }
 
@@ -162,10 +169,17 @@
         {
             if (!ModelState.IsValid)
             {
-                return View();
+                return View(model);
             }
 
-            await this.jobService.Update(id, model);
+            try
+            {
+                await this.jobService.Update(id, model);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(string.Empty, "An unexpected error occurred");
+            }
 
             return RedirectToAction(nameof(GetById), new { id });
         }
@@ -174,7 +188,15 @@
         [Authorize(Roles = RoleConstants.Employer)]
         public async Task<IActionResult> Delete(int id)
         {
-            await this.jobService.Delete(id);
+            try
+            {
+                await this.jobService.Delete(id);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(string.Empty, "An unexpected error occurred");
+            }
+
             return RedirectToAction(nameof(All));
         }
 

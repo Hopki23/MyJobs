@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 using MyJobs.Core.Repositories;
 using MyJobs.Core.Services;
+using MyJobs.Core.Services.Contracts;
 using MyJobs.Infrastructure.Data;
 using MyJobs.Infrastructure.Data.Models.Identity;
 

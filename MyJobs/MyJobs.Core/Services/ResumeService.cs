@@ -9,6 +9,7 @@
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Models.Resume;
     using MyJobs.Infrastructure.Models;
+    using MyJobs.Core.Services.Contracts;
 
     public class ResumeService : IResumeService
     {

@@ -5,7 +5,7 @@
     using Microsoft.AspNetCore.Mvc;
 
     using MyJobs.Core.Models;
-    using MyJobs.Core.Services;
+    using MyJobs.Core.Services.Contracts;
 
     public class HomeController : Controller
     {
@@ -19,7 +19,7 @@
         [HttpGet]
         public IActionResult Index()
         {
-            var viewModel = categoriesService.GetCategories();
+            var viewModel = this.categoriesService.GetCategories();
             return View(viewModel);
         }
 

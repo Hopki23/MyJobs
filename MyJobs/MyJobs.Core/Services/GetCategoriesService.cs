@@ -4,6 +4,7 @@
 
     using MyJobs.Core.Models.Category;
     using MyJobs.Core.Repositories;
+    using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Data.Models;
 
     public class GetCategoriesService : IGetCategoriesService
