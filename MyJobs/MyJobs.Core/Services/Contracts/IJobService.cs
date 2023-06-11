@@ -18,7 +18,7 @@
 
         IEnumerable<JobsWithCVsViewModel> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer);
 
-        EditJobViewModel GetById(int id);
+        EditJobViewModel GetById(int id, string userId);
 
         Task Update(int id, EditJobViewModel model);
 

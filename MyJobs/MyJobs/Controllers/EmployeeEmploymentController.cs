@@ -1,6 +1,7 @@
 ﻿namespace MyJobs.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
+
     using MyJobs.Core.Services.Contracts;
 
     public class EmployeeEmploymentController : BaseController
@@ -17,14 +18,20 @@
         [HttpPost]
         public async Task<IActionResult> Approve(int employeeId, int employerId, int companyId, int jobId)
         {
-            var isApproved = await this.employmentService.Approve(employeeId, employerId, companyId, jobId);
-
-            if (!isApproved)
+            try
             {
-                return NotFound();
-            }
+                var isApproved = await this.employmentService.Approve(employeeId, employerId, companyId, jobId);
+                if (!isApproved)
+                {
+                    return View("CustomError");
+                }
 
-            return RedirectToAction("All", "Jobs");
+                return RedirectToAction("All", "Jobs");
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
         }
     }
 }

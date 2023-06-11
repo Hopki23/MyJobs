@@ -31,9 +31,19 @@
                 .Where(c => c.EmployeeId == employee.Id)
                 .FirstOrDefault();
 
+            if (resume == null)
+            {
+                throw new ArgumentException("The requested resume was not found.");
+            }
+
             var job = await this.repository.GetByIdAsync<Job>(jobId);
 
-            resume!.Jobs.Add(job);
+            if (job == null)
+            {
+                throw new ArgumentException("The requested job was not found.");
+            }
+
+            resume.Jobs.Add(job);
             job.Resumes.Add(resume);
 
             await this.repository.SaveChangesAsync();
@@ -65,6 +75,11 @@
         {
             var job = this.repository.All<Job>()
                 .FirstOrDefault(x => x.Id == id);
+
+            if (job == null)
+            {
+                throw new ArgumentException("The requested job was not found.");
+            }
 
             job!.IsDeleted = true;
             await this.repository.SaveChangesAsync();
@@ -114,10 +129,10 @@
             return jobs;
         }
 
-        public EditJobViewModel GetById(int id)
+        public EditJobViewModel GetById(int id, string userId)
         {
-            return this.repository.AllReadonly<Job>()
-                .Where(j => j.Id == id)
+            var job =  this.repository.AllReadonly<Job>()
+                .Where(j => j.Id == id && j.Employer.UserId == userId)
                 .Select(j => new EditJobViewModel
                 {
                     Title = j.Title,
@@ -129,7 +144,14 @@
                     Salary = j.Salary,
                     Offering = j.Offering
                 })
-                .FirstOrDefault()!;
+                .FirstOrDefault();
+
+            if (job == null)
+            {
+                throw new ArgumentException("The requested job was not found.");
+            }
+
+            return job;
         }
 
         public JobFilterViewModel GetJobFilterViewModel()
@@ -210,7 +232,7 @@
 
         public SingleJobViewModel GetSingleJob(int id, Employer employer)
         {
-            return this.repository.AllReadonly<Job>()
+            var job = this.repository.AllReadonly<Job>()
                 .Where(j => j.Id == id)
                 .Select(j => new SingleJobViewModel
                 {
@@ -232,7 +254,14 @@
                     WorkingTime = j.WorkingTime,
                     IsOwner = (employer != null && j.EmployerId == employer.Id)
                 })
-                .FirstOrDefault()!;
+                .FirstOrDefault();
+
+            if (job == null)
+            {
+                throw new ArgumentException("The requested job was not found.");
+            }
+
+            return job;
         }
 
         public int GetTotalJobCount()
@@ -244,6 +273,11 @@
         {
             var job = this.repository.All<Job>()
                 .FirstOrDefault(x => x.Id == id);
+
+            if (job == null)
+            {
+                throw new ArgumentException("The requested job was not found.");
+            }
 
             job.Title = model.Title;
             job.Description = model.Description;

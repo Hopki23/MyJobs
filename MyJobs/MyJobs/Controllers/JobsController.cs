@@ -56,12 +56,24 @@
                 .Select(e => new { e.Id, e.CompanyId })
                 .FirstOrDefault();
 
-            int employerId = result!.Id;
+            if (result == null)
+            {
+                return View(nameof(All));
+            }
+
+            int employerId = result.Id;
             int companyId = result.CompanyId;
 
-            this.jobService.CreateAsync(model, employerId, companyId);
+            try
+            {
+                this.jobService.CreateAsync(model, employerId, companyId);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
 
-            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -115,6 +127,7 @@
             }
 
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
             var employee = this.repository.All<Employee>()
                 .FirstOrDefault(e => e.UserId == userId);
 
@@ -128,11 +141,9 @@
                 await this.jobService.Apply(model, employee);
                 return RedirectToAction(nameof(All));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
-
-                return View("Error");
+                return View("CustomError");
             }
         }
 
@@ -149,18 +160,35 @@
                 return RedirectToAction(nameof(All));
             }
 
-            var jobViewModels = this.jobService.GetJobsWithCV(model, employer);
+            try
+            {
+                var jobViewModels = this.jobService.GetJobsWithCV(model, employer);
 
-            return View(jobViewModels);
+                return View(jobViewModels);
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
         }
 
         [HttpGet]
         [Authorize(Roles = RoleConstants.Employer)]
         public IActionResult Edit(int id)
         {
-            var model = this.jobService.GetById(id);
-            model.CategoryItems = this.categoriesService.GetAllCategories();
-            return View(model);
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+                var model = this.jobService.GetById(id, userId);
+                model.CategoryItems = this.categoriesService.GetAllCategories();
+
+                return View(model);
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
         }
 
         [HttpPost]
@@ -178,7 +206,7 @@
             }
             catch (Exception)
             {
-                ModelState.AddModelError(string.Empty, "An unexpected error occurred");
+                return View("CustomError");
             }
 
             return RedirectToAction(nameof(GetById), new { id });
@@ -194,7 +222,7 @@
             }
             catch (Exception)
             {
-                ModelState.AddModelError(string.Empty, "An unexpected error occurred");
+                return View("CustomError");
             }
 
             return RedirectToAction(nameof(All));
@@ -203,9 +231,16 @@
         [HttpPost]
         public IActionResult Filter(string select, string[] selectedWorkingTimes, string locationSelect)
         {
-            var filteredJobOffers = this.jobService.FilterJobOffers(select, selectedWorkingTimes, locationSelect);
+            try
+            {
+                var filteredJobOffers = this.jobService.FilterJobOffers(select, selectedWorkingTimes, locationSelect);
 
-            return PartialView("_FilteredJobOffersPartial", filteredJobOffers);
+                return PartialView("_FilteredJobOffersPartial", filteredJobOffers);
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
         }
     }
 }

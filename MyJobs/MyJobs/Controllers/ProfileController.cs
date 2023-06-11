@@ -145,6 +145,11 @@
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            if (userId == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             try
             {
                 var model = await this.profileService.GetProfileForEditing(id, userId);
@@ -153,8 +158,7 @@
             }
             catch (Exception)
             {
-                //TODO: implement error handling
-                throw;
+                return View("CustomError");
             }
         }
 
@@ -170,7 +174,7 @@
 
             if (userId == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             try
@@ -180,8 +184,7 @@
             }
             catch (Exception)
             {
-                //TODO: implement error handling
-                throw;
+                return View("CustomError");
             }
 
         }

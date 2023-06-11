@@ -57,9 +57,9 @@
                      .Include(x => x.Company)
                      .FirstOrDefaultAsync();
 
-                if (employer == null)
+                if (employer == null )
                 {
-                    throw new ArgumentException("Invalid employer");
+                    throw new ArgumentException("Invalid employee");
                 }
 
                 employer.FirstName = model.FirstName;
@@ -94,7 +94,7 @@
                     .Include(e => e.User)
                     .FirstOrDefaultAsync();
 
-                if (employee == null)
+                if (employee == null || employee.UserId != userId)
                 {
                     throw new ArgumentException("Invalid employee!");
                 }
@@ -115,7 +115,7 @@
                     .Include(x => x.Company)
                     .FirstOrDefaultAsync();
 
-                if (employer == null)
+                if (employer == null || employer.UserId != userId)
                 {
                     throw new ArgumentException("Invalid employer!");
                 }

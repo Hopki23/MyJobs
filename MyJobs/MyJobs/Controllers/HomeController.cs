@@ -19,8 +19,15 @@
         [HttpGet]
         public IActionResult Index()
         {
-            var viewModel = this.categoriesService.GetCategories();
-            return View(viewModel);
+            try
+            {
+                var viewModel = this.categoriesService.GetCategories();
+                return View(viewModel);
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

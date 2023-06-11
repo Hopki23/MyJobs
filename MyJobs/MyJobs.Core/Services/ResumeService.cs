@@ -55,6 +55,12 @@
         public async Task SaveResume(ResumeViewModel model, int employeeId)
         {
             var employee = await this.repository.GetByIdAsync<Employee>(employeeId);
+
+            if (employee == null)
+            {
+                throw new ArgumentException("Invalid employee");
+            }
+
             string fileName = $"{employee.FirstName}_{employee.LastName}.pdf";        
 
             var resume = new CV
