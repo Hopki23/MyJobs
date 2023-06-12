@@ -39,30 +39,35 @@
             {
                 return View();
             }
-
-            if (imageFile != null && imageFile.Length > 0)
+            try
             {
-                using var memoryStream = new MemoryStream();
-                await imageFile.CopyToAsync(memoryStream);
-                byte[] imageBytes = memoryStream.ToArray();
-                model.Image = Convert.ToBase64String(imageBytes);
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    using var memoryStream = new MemoryStream();
+                    await imageFile.CopyToAsync(memoryStream);
+                    byte[] imageBytes = memoryStream.ToArray();
+                    model.Image = Convert.ToBase64String(imageBytes);
+                }
+
+                var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+                var employee = this.repository.All<Employee>()
+                                .FirstOrDefault(e => e.UserId == userId);
+
+                if (employee == null)
+                {
+                    throw new ArgumentException("The requested employee was not found.");
+                }
+
+                await this.resumeService.SaveResume(model, employee.Id);
+
+                byte[] resume = this.resumeService.GenerateResumePDF(model);
+
+                return File(resume, "application/pdf", $"{employee.FirstName}_{employee.LastName}.pdf");
             }
-
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var employee = this.repository.All<Employee>()
-                            .FirstOrDefault(e => e.UserId == userId);
-
-            if (employee == null)
+            catch (Exception)
             {
-                // Handle the case when the employee is not found
-                return NotFound();
+                return View("CustomError");
             }
-
-            await this.resumeService.SaveResume(model, employee.Id);
-
-            byte[] resume = this.resumeService.GenerateResumePDF(model);
-
-            return File(resume, "application/pdf", $"{employee.FirstName}_{employee.LastName}.pdf");
         }
     }
 }

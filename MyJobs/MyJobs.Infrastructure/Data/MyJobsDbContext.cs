@@ -88,6 +88,24 @@
 
             //modelBuilder.ApplyConfiguration(new CategoryConfiguration());
 
+            //var hasher = new PasswordHasher<ApplicationUser>();
+
+            //var user = new ApplicationUser()
+            //{
+            //    Id = "dea12856-c198-4129-b3f3-b893d8395082",
+            //    UserName = "admin",
+            //    NormalizedUserName = "ADMIN",
+            //    Email = "admin@abv.bg",
+            //    NormalizedEmail = "ADMIN@ABV.BG",
+            //    FirstName = "Admin",
+            //    LastName = "Admin",
+            //};
+
+            //user.PasswordHash =
+            //     hasher.HashPassword(user, "admin123");
+
+            //modelBuilder.Entity<ApplicationUser>().HasData(user);
+
             base.OnModelCreating(modelBuilder);
         }
     }

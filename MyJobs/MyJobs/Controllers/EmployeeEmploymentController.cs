@@ -14,7 +14,6 @@
             this.employmentService = employmentService;
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Approve(int employeeId, int employerId, int companyId, int jobId)
         {
