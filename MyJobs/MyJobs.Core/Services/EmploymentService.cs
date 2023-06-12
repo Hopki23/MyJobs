@@ -17,13 +17,23 @@
 
         public async Task<bool> Approve(int employeeId, int employerId, int companyId, int jobId)
         {
-            var cv = await this.repository.AllReadonly<CV>()
-                .FirstOrDefaultAsync(c => c.EmployeeId == employeeId);
+            var job = await this.repository.All<Job>()
+                    .Include(j => j.Resumes)
+                    .FirstOrDefaultAsync(j => j.Id == jobId);
 
-            if (cv == null)
+            if (job == null)
             {
-                return false;
+                throw new ArgumentException("The requested job was not found.");
             }
+
+            var cvToRemove = job.Resumes.FirstOrDefault(c => c.EmployeeId == employeeId);
+
+            if (cvToRemove == null)
+            {
+                throw new ArgumentException("The requested resume was not found.");
+            }
+
+            job.Resumes.Remove(cvToRemove);
 
             var employeeEmployment = new EmployeeEmployment
             {
@@ -42,15 +52,53 @@
 
             var employee = await this.repository.GetByIdAsync<Employee>(employeeId);
             var employer = await this.repository.GetByIdAsync<Employer>(employerId);
-            var job = await this.repository.GetByIdAsync<Job>(jobId);
 
             employee.Jobs.Add(job);
             employer.Notifications.Add(notification);
             employee.Notifications.Add(notification);
             job.Employees.Add(employee);
 
-
             await this.repository.AddAsync(employeeEmployment);
+            await this.repository.AddAsync(notification);
+            await this.repository.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> Reject(int employeeId, int employerId, int jobId)
+        {
+            var job = await this.repository.All<Job>()
+                  .Include(j => j.Resumes)
+                  .FirstOrDefaultAsync(j => j.Id == jobId);
+
+            if (job == null)
+            {
+                throw new ArgumentException("The requested job was not found.");
+            }
+
+            var cvToRemove = job.Resumes.FirstOrDefault(c => c.EmployeeId == employeeId);
+
+            if (cvToRemove == null)
+            {
+                throw new ArgumentException("The requested resume was not found.");
+            }
+
+            job.Resumes.Remove(cvToRemove);
+
+            var notification = new Notification()
+            {
+                EmployeeId = employeeId,
+                EmployerId = employerId,
+                Message = "We are sorry, but you are not approved to work with us.",
+                CreatedAt = DateTime.Now
+            };
+
+            var employee = await this.repository.GetByIdAsync<Employee>(employeeId);
+            var employer = await this.repository.GetByIdAsync<Employer>(employerId);
+
+            employer.Notifications.Add(notification);
+            employee.Notifications.Add(notification);
+
             await this.repository.AddAsync(notification);
             await this.repository.SaveChangesAsync();
 

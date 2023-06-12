@@ -33,10 +33,22 @@
                         <input type="hidden" name="employerId" value="@jobViewModel.Job.EmployerId" />
                         <input type="hidden" name="companyId" value="@jobViewModel.Job.CompanyId" />
                         <input type="hidden" name="jobId" value="@jobViewModel.Job.Id" />
+
                         <div class="row">
                             <div class="col">
                                 <button type="submit" class="btn">Approve</button>
                             </div>
+                        </div>
+                    </form>
+
+                    <!-- Reject form -->
+                    <form method="post" asp-action="Reject" asp-controller="EmployeeEmployment">
+                        <input type="hidden" name="employeeId" value="@cv.EmployeeId" />
+                        <input type="hidden" name="employerId" value="@jobViewModel.Job.EmployerId" />
+                        <input type="hidden" name="companyId" value="@jobViewModel.Job.CompanyId" />
+                        <input type="hidden" name="jobId" value="@jobViewModel.Job.Id" />
+
+                        <div class="row">
                             <div class="col">
                                 <button type="submit" class="btn btn-danger btn-block">Reject</button>
                             </div>

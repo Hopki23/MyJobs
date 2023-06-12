@@ -27,9 +27,8 @@
         {
             int jobId = model.Id;
 
-            var resume = this.repository.AllReadonly<CV>()
-                .Where(c => c.EmployeeId == employee.Id)
-                .FirstOrDefault();
+            var resume = await this.repository.All<CV>()
+                .FirstOrDefaultAsync(c => c.EmployeeId == employee.Id);
 
             if (resume == null)
             {

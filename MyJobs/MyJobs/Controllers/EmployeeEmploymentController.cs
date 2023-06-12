@@ -26,7 +26,26 @@
                     return View("CustomError");
                 }
 
-                return RedirectToAction("All", "Jobs");
+                return RedirectToAction("ReceivedResumes", "Jobs");
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Reject(int employeeId, int employerId, int jobId)
+        {
+            try
+            {
+                var isApproved = await this.employmentService.Reject(employeeId, employerId, jobId);
+                if (!isApproved)
+                {
+                    return View("CustomError");
+                }
+
+                return RedirectToAction("ReceivedResumes", "Jobs");
             }
             catch (Exception)
             {

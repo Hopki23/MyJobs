@@ -4,7 +4,7 @@
 
     using Microsoft.AspNetCore.Mvc;
 
-    using MyJobs.Core.Models;
+    using MyJobs.Core.Models.Error;
     using MyJobs.Core.Services.Contracts;
 
     public class HomeController : Controller
