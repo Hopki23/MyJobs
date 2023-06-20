@@ -85,7 +85,7 @@
 @section Scripts{
     <script>
         $(document).ready(function() {
-
+            var originalJobListing = $("#jobListingSection").html();
             var token = $('input[name="__RequestVerificationToken"]').val();
 
             $("#applyFiltersBtn").click(function() {

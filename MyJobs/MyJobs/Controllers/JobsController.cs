@@ -4,6 +4,7 @@
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
 
     using MyJobs.Core.Models.Job;
     using MyJobs.Core.Models.Resume;
@@ -30,11 +31,11 @@
 
         [HttpGet]
         [Authorize(Roles = RoleConstants.Employer)]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             var model = new CreateJobViewModel
             {
-                CategoryItems = this.categoriesService.GetAllCategories(),
+                CategoryItems = await this.categoriesService.GetAllCategories(),
             };
 
             return View(model);
@@ -42,19 +43,19 @@
 
         [HttpPost]
         [Authorize(Roles = RoleConstants.Employer)]
-        public IActionResult Create(CreateJobViewModel model)
+        public async Task<IActionResult> Create(CreateJobViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.CategoryItems = this.categoriesService.GetAllCategories();
+                model.CategoryItems = await this.categoriesService.GetAllCategories();
                 return View(model);
             }
 
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var result = this.repository.All<Employer>()
+            var result = await this.repository.All<Employer>()
                 .Where(e => e.UserId == userId)
                 .Select(e => new { e.Id, e.CompanyId })
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (result == null)
             {
@@ -66,7 +67,7 @@
 
             try
             {
-                this.jobService.CreateAsync(model, employerId, companyId);
+                await this.jobService.CreateAsync(model, employerId, companyId);
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception)
@@ -77,16 +78,16 @@
         }
 
         [HttpGet]
-        public IActionResult All(int page = 1)
+        public async Task<IActionResult> All(int page = 1)
         {
             const int ItemsPerPage = 7;
-            var filterViewModel = this.jobService.GetJobFilterViewModel();
+            var filterViewModel = await this.jobService.GetJobFilterViewModel();
 
             var model = new JobsListViewModel
             {
                 PageNumber = page,
                 ItemsPerPage = ItemsPerPage,
-                Jobs = this.jobService.GetAllJobs(page, ItemsPerPage),
+                Jobs = await this.jobService.GetAllJobs(page, ItemsPerPage),
                 JobsTotalCount = this.jobService.GetTotalJobCount(),
                 JobFilter = filterViewModel,
 
@@ -96,13 +97,13 @@
 
 
         [HttpGet]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var employer = this.repository.All<Employer>()
-                                        .FirstOrDefault(e => e.UserId == userId);
+            var employer = await this.repository.All<Employer>()
+                                        .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            var model = this.jobService.GetSingleJob(id, employer);
+            var model = await this.jobService.GetSingleJob(id, employer);
             return View(model);
         }
 
@@ -128,8 +129,8 @@
 
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-            var employee = this.repository.All<Employee>()
-                .FirstOrDefault(e => e.UserId == userId);
+            var employee = await this.repository.All<Employee>()
+                .FirstOrDefaultAsync(e => e.UserId == userId);
 
             if (employee == null)
             {
@@ -149,11 +150,11 @@
 
         [HttpGet]
         [Authorize(Roles = RoleConstants.Employer)]
-        public IActionResult ReceivedResumes(JobsWithCVsViewModel model)
+        public async Task<IActionResult> ReceivedResumes(JobsWithCVsViewModel model)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var employer = this.repository.All<Employer>()
-                            .FirstOrDefault(e => e.UserId == userId);
+            var employer = await this.repository.All<Employer>()
+                            .FirstOrDefaultAsync(e => e.UserId == userId);
 
             if (employer == null)
             {
@@ -162,7 +163,7 @@
 
             try
             {
-                var jobViewModels = this.jobService.GetJobsWithCV(model, employer);
+                var jobViewModels = await this.jobService.GetJobsWithCV(model, employer);
 
                 return View(jobViewModels);
             }
@@ -174,14 +175,14 @@
 
         [HttpGet]
         [Authorize(Roles = RoleConstants.Employer)]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             try
             {
-                var model = this.jobService.GetById(id, userId);
-                model.CategoryItems = this.categoriesService.GetAllCategories();
+                var model = await this.jobService.GetById(id, userId);
+                model.CategoryItems = await this.categoriesService.GetAllCategories();
 
                 return View(model);
             }

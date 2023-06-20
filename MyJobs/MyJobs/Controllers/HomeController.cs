@@ -17,11 +17,11 @@
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             try
             {
-                var viewModel = this.categoriesService.GetCategories();
+                var viewModel = await this.categoriesService.GetCategories();
                 return View(viewModel);
             }
             catch (Exception)

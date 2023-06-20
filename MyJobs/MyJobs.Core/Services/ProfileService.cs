@@ -148,17 +148,17 @@
            .ToListAsync();
         }
 
-        public UserProfileViewModel GetUserById(string id, string role)
+        public async Task<UserProfileViewModel> GetUserById(string id, string role)
         {
             var userProfile = new UserProfileViewModel();
 
             if (role == RoleConstants.Employee)
             {
-                var employee = this.repository
+                var employee = await this.repository
                     .AllReadonly<Employee>()
                     .Include(e => e.User)
                     .Where(e => e.UserId == id.ToString())
-                    .FirstOrDefault();
+                    .FirstOrDefaultAsync();
 
                 userProfile.Id = employee!.Id;
                 userProfile.FirstName = employee!.FirstName;
@@ -168,11 +168,11 @@
             }
             else if (role == RoleConstants.Employer)
             {
-                var employer = this.repository.AllReadonly<Employer>()
+                var employer = await this.repository.AllReadonly<Employer>()
                     .Include(e => e.Company)
                     .Include(e => e.User)
                     .Where(e => e.UserId == id.ToString())
-                    .FirstOrDefault();
+                    .FirstOrDefaultAsync();
                 if (employer == null)
                 {
                     throw new InvalidOperationException();

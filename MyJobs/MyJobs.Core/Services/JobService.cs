@@ -72,8 +72,8 @@
 
         public async Task Delete(int id)
         {
-            var job = this.repository.All<Job>()
-                .FirstOrDefault(x => x.Id == id);
+            var job = await this.repository.All<Job>()
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (job == null)
             {
@@ -108,9 +108,9 @@
             return filteredJobOffers.ToList();
         }
 
-        public IEnumerable<JobsViewModel> GetAllJobs(int page, int itemsToTake)
+        public async Task<IEnumerable<JobsViewModel>> GetAllJobs(int page, int itemsToTake)
         {
-            var jobs = this.repository.AllReadonly<Job>()
+            var jobs = await this.repository.AllReadonly<Job>()
                  .Where(x => x.IsDeleted == false)
                  .OrderByDescending(j => j.CreatedOn)
                  .Skip((page - 1) * itemsToTake)
@@ -123,14 +123,14 @@
                      CategoryId = j.CategoryId,
                      
                  })
-                 .ToList();
+                 .ToListAsync();
 
             return jobs;
         }
 
-        public EditJobViewModel GetById(int id, string userId)
+        public async Task<EditJobViewModel> GetById(int id, string userId)
         {
-            var job =  this.repository.AllReadonly<Job>()
+            var job = await this.repository.AllReadonly<Job>()
                 .Where(j => j.Id == id && j.Employer.UserId == userId)
                 .Select(j => new EditJobViewModel
                 {
@@ -143,7 +143,7 @@
                     Salary = j.Salary,
                     Offering = j.Offering
                 })
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (job == null)
             {
@@ -153,20 +153,20 @@
             return job;
         }
 
-        public JobFilterViewModel GetJobFilterViewModel()
+        public async Task<JobFilterViewModel> GetJobFilterViewModel()
         {
-            var categories = this.categoriesService.GetAllCategories();
+            var categories = await this.categoriesService.GetAllCategories();
 
-            var workingTimes = this.repository
+            var workingTimes = await this.repository
                 .AllReadonly<Job>()
                 .Select(j => j.WorkingTime)
                 .Distinct()
-                .ToList();
-            var townNames = this.repository
+                .ToListAsync();
+            var townNames = await this.repository
                 .AllReadonly<Job>()
                 .Select(j => j.Town)
                 .Distinct()
-                .ToList();
+                .ToListAsync();
 
             var jobFilterModel = new JobFilterViewModel()
             {
@@ -200,19 +200,19 @@
             .ToListAsync();
         }
 
-        public IEnumerable<JobsWithCVsViewModel> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer)
+        public async Task<IEnumerable<JobsWithCVsViewModel>> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer)
         {
-            var jobs = this.repository.AllReadonly<Job>()
+            var jobs = await this.repository.AllReadonly<Job>()
             .Where(x => x.EmployerId == employer.Id)
-            .ToList();
+            .ToListAsync();
 
             var jobViewModels = new List<JobsWithCVsViewModel>();
 
             foreach (var job in jobs)
             {
-                var cvs = this.repository.AllReadonly<CV>()
+                var cvs = await this.repository.AllReadonly<CV>()
                     .Where(c => c.Jobs.Contains(job) && !c.IsDeleted)
-                    .ToList();
+                    .ToListAsync();
 
                 if (cvs.Count > 0)
                 {
@@ -229,9 +229,9 @@
             return jobViewModels;
         }
 
-        public SingleJobViewModel GetSingleJob(int id, Employer employer)
+        public async Task<SingleJobViewModel> GetSingleJob(int id, Employer employer)
         {
-            var job = this.repository.AllReadonly<Job>()
+            var job = await this.repository.AllReadonly<Job>()
                 .Where(j => j.Id == id)
                 .Select(j => new SingleJobViewModel
                 {
@@ -253,7 +253,7 @@
                     WorkingTime = j.WorkingTime,
                     IsOwner = (employer != null && j.EmployerId == employer.Id)
                 })
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (job == null)
             {
@@ -270,8 +270,8 @@
 
         public async Task Update(int id, EditJobViewModel model)
         {
-            var job = this.repository.All<Job>()
-                .FirstOrDefault(x => x.Id == id);
+            var job = await this.repository.All<Job>()
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (job == null)
             {

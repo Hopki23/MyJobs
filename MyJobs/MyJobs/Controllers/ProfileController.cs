@@ -67,10 +67,7 @@
             }
             catch (Exception)
             {
-                //Add error.
-                ModelState.AddModelError(string.Empty, "");
-
-                return View();
+                return View("CustomError");
             }
 
         }
@@ -91,7 +88,12 @@
 
             var jobs = await this.jobService.GetJobsForCertainEmployer(employer);
 
-            return PartialView("_MyJobsPartial", jobs);
+            if (jobs != null)
+            {
+                return PartialView("_MyJobsPartial", jobs);
+            }
+
+            return View("CustomError");
         }
 
         [HttpGet]
@@ -110,7 +112,12 @@
 
             var jobs = await this.jobService.GetJobsByEmployeeId(employee.Id);
 
-            return PartialView("_MyApplicationsPartial", jobs);
+            if (jobs != null)
+            {
+                return PartialView("_MyApplicationsPartial", jobs);
+            }
+
+            return View("CustomError");
         }
 
         [HttpGet]
@@ -129,7 +136,13 @@
 
             var notifications = await this.profileService.GetUnreadNotificationsForEmployee(employee.Id);
 
-            return PartialView("_MyNotificationsPartial", notifications);
+            if (notifications != null)
+            {
+                return PartialView("_MyNotificationsPartial", notifications);
+            }
+
+            return View("CustomError");
+
         }
 
         [HttpPost]

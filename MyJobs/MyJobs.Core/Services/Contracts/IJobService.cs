@@ -8,23 +8,23 @@
     {
         Task CreateAsync(CreateJobViewModel model, int employerId, int companyId);
 
-        IEnumerable<JobsViewModel> GetAllJobs(int page, int itemsToTake = 5);
+        Task<IEnumerable<JobsViewModel>> GetAllJobs(int page, int itemsToTake = 5);
 
         int GetTotalJobCount();
 
-        SingleJobViewModel GetSingleJob(int id, Employer employer);
+        Task<SingleJobViewModel> GetSingleJob(int id, Employer employer);
 
         Task Apply(UploadResumeViewModel model, Employee employee);
 
-        IEnumerable<JobsWithCVsViewModel> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer);
+        Task<IEnumerable<JobsWithCVsViewModel>> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer);
 
-        EditJobViewModel GetById(int id, string userId);
+        Task<EditJobViewModel> GetById(int id, string userId);
 
         Task Update(int id, EditJobViewModel model);
 
         Task Delete(int id);
 
-        JobFilterViewModel GetJobFilterViewModel();
+        Task<JobFilterViewModel> GetJobFilterViewModel();
 
         IEnumerable<Job> FilterJobOffers(string select, string[] selectedWorkingTimes, string locationSelect);
 

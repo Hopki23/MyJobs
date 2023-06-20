@@ -1,6 +1,8 @@
 ﻿namespace MyJobs.Core.Services
 {
     using System.Collections.Generic;
+    
+    using Microsoft.EntityFrameworkCore;
 
     using MyJobs.Core.Models.Category;
     using MyJobs.Core.Repositories;
@@ -16,20 +18,20 @@
             this.dbRepository = dbRepository;
         }
 
-        public IEnumerable<KeyValuePair<string, string>> GetAllCategories()
+        public async Task<IEnumerable<KeyValuePair<string, string>>> GetAllCategories()
         {
-            return dbRepository.AllReadonly<Category>()
+            return await this.dbRepository.AllReadonly<Category>()
                     .Select(c => new KeyValuePair<string, string>(c.Id.ToString(), c.Name))
-                    .ToList();
+                    .ToListAsync();
         }
 
-        public IndexViewModel GetCategories()
+        public async Task<IndexViewModel> GetCategories()
         {
             Dictionary<string, string> categoryIcons = GetCategoryIcons();
 
             return new IndexViewModel
             {
-                Categories = this.dbRepository.AllReadonly<Category>()
+                Categories = await this.dbRepository.AllReadonly<Category>()
                  .Select(c => new CategoryViewModel
                  {
                      CategoryName = c.Name,
@@ -37,7 +39,7 @@
                      IconClass = categoryIcons.ContainsKey(c.Name) ? categoryIcons[c.Name] : null
                  })
                  .OrderByDescending(x => x.JobCount)
-                 .ToList()
+                 .ToListAsync()
             };
         }
 
