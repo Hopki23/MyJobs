@@ -5,6 +5,8 @@
     using iText.Layout.Properties;
     using iText.Layout.Element;
     using iText.IO.Image;
+    using iText.Kernel.Font;
+    using iText.IO.Font.Constants;
 
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Models.Resume;
@@ -27,6 +29,9 @@
             using PdfDocument pdfDocument = new(writer);
             using Document document = new(pdfDocument);
 
+            PdfFont sectionFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+
             if (!string.IsNullOrEmpty(model.Image))
             {
                 byte[] photoBytes = Convert.FromBase64String(model.Image);
@@ -35,17 +40,31 @@
                 document.Add(image);
             }
 
-            document.Add(new Paragraph("First Name: " + model.FirstName));
-            document.Add(new Paragraph("Last Name: " + model.LastName));
-            document.Add(new Paragraph("Title: " + model.Title));
-            document.Add(new Paragraph("Summary: " + model.Summary));
-            document.Add(new Paragraph("Education: " + model.Education));
-            document.Add(new Paragraph("Experience: " + model.Experience));
-            document.Add(new Paragraph("Address: " + model.Address));
-            document.Add(new Paragraph("Phone Number: " + model.PhoneNumber));
-            document.Add(new Paragraph("Date of Birth: " + model.DateOfBirth.ToShortDateString()));
-            document.Add(new Paragraph("Gender: " + model.Gender));
-            document.Add(new Paragraph("Skills: " + model.Skills));
+            Dictionary<string, string> resumeContent = new()
+                {
+                    { "First Name", model.FirstName },
+                    { "Last Name", model.LastName },
+                    { "Title", model.Title },
+                    { "Summary", model.Summary },
+                    { "Education", model.Education },
+                    { "Experience", model.Experience },
+                    { "Address", model.Address },
+                    { "Phone Number", model.PhoneNumber },
+                    { "Date of Birth", model.DateOfBirth.ToShortDateString() },
+                    { "Gender", model.Gender },
+                    { "Skills", model.Skills }
+                };
+
+            document.Add(new Paragraph("Resume")
+                .SetFont(sectionFont)
+                .SetFontSize(16)
+                .SetBold()
+                .SetTextAlignment(TextAlignment.CENTER));
+
+            foreach (var item in resumeContent)
+            {
+                document.Add(new Paragraph($"{item.Key}: {item.Value}"));
+            }
 
             document.Close();
 
@@ -61,7 +80,7 @@
                 throw new ArgumentException("Invalid employee");
             }
 
-            string fileName = $"{employee.FirstName}_{employee.LastName}.pdf";        
+            string fileName = $"{employee.FirstName}_{employee.LastName}.pdf";
 
             var resume = new CV
             {

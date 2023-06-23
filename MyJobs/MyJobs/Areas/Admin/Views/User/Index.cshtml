@@ -23,6 +23,7 @@
                 <th>First name</th>
                 <th>Last name</th>
                 <th>E-mail</th>
+                <th>Role</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -35,6 +36,7 @@
                     <td>@user.FirstName</td>
                     <td>@user.LastName</td>
                     <td>@user.Email</td>
+                    <td>@user.RoleName</td>
                     <td>
                         <a asp-area="Admin" asp-action="Edit" asp-controller="User" asp-route-id="@user.Id" class="btn btn-block btn-outline-info">Edit</a>
                         <a asp-area="Admin" asp-action="Roles" asp-controller="User" asp-route-id="@user.Id" class="btn btn-block btn-outline-info">Roles</a>

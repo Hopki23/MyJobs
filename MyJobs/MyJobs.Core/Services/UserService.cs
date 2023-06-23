@@ -1,5 +1,6 @@
 ﻿namespace MyJobs.Core.Services
 {
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
 
     using MyJobs.Core.Models.User;
@@ -10,15 +11,19 @@
     public class UserService : IUserService
     {
         private readonly IDbRepository repository;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public UserService(IDbRepository repository)
+        public UserService(
+            IDbRepository repository,
+            UserManager<ApplicationUser> userManager)
         {
             this.repository = repository;
+            this.userManager = userManager;
         }
 
         public async Task<IEnumerable<UserListViewModel>> GetAllUsers()
         {
-            return await this.repository.AllReadonly<ApplicationUser>()
+            var users =  await this.repository.AllReadonly<ApplicationUser>()
                 .Select(u => new UserListViewModel()
                 {
                     Id = u.Id,
@@ -28,6 +33,16 @@
                     Username = u.UserName,
                 })
                 .ToListAsync();
+
+            foreach (var user in users)
+            {
+                var appUser = await this.userManager.FindByIdAsync(user.Id);
+                var role = await this.userManager.GetRolesAsync(appUser);
+
+                user.RoleName = role.FirstOrDefault()!;
+            }
+
+            return users;
         }
     }
 }

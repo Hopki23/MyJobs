@@ -4,7 +4,7 @@
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-
+    using Microsoft.EntityFrameworkCore;
     using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services.Contracts;
@@ -33,7 +33,7 @@
 
         [HttpPost]
         [Authorize(Roles = RoleConstants.Employee)]
-        public async Task<IActionResult> Create(ResumeViewModel model, IFormFile imageFile)
+        public async Task<IActionResult> Create(ResumeViewModel model, IFormFile? imageFile)
         {
             if (!ModelState.IsValid)
             {
@@ -50,8 +50,8 @@
                 }
 
                 var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-                var employee = this.repository.All<Employee>()
-                                .FirstOrDefault(e => e.UserId == userId);
+                var employee = await this.repository.All<Employee>()
+                                .FirstOrDefaultAsync(e => e.UserId == userId);
 
                 if (employee == null)
                 {
