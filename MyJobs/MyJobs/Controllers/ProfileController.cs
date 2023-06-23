@@ -59,7 +59,7 @@
 
             try
             {
-                var userProfile = this.profileService.GetUserById(user.Id, role);
+                var userProfile = await this.profileService.GetUserById(user.Id, role);
 
                 ViewBag.UserId = userProfile.Id;
 

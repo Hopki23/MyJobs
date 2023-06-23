@@ -31,6 +31,8 @@
         [Required]
         [MaxLength(JobConstants.OfferingMaxLength)]
         public string Offering { get; set; } = null!;
+
+        [Display(Name = "Category")]
         public int CategoryId { get; set; }
         public IEnumerable<KeyValuePair<string, string>>? CategoryItems { get; set; }
     }

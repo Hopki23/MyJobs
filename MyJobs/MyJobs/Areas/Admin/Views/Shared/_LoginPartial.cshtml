@@ -11,17 +11,6 @@
             <a class="nav-link text-dark" title="Manage">Hello, @User.Identity?.Name!</a>
         </li>
 
-        @if (User.IsInRole(RoleConstants.Administrator))
-        {
-            <a class="nav-link active" asp-area="Admin" asp-controller="Home" asp-action="Index" title="Admin" class="btn btn-danger">Admin Dashboard</a>
-        }
-        else
-        {
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Profile" asp-action="Index">My Profile</a>
-            </li>
-        }
-
         <li class="nav-item">
             <form class="form-inline" asp-controller="Account" asp-action="Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                 <button type="submit" class="btn-link text-dark">Logout</button>
