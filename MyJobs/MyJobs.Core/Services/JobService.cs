@@ -63,7 +63,8 @@
                 EmployerId = employerId,
                 CompanyId = companyId,
                 Salary = model.Salary,
-                WorkingTime = model.WorkingTime
+                WorkingTime = model.WorkingTime,
+                IsApproved = false
             };
 
             await this.repository.AddAsync(job);
@@ -110,7 +111,7 @@
 
         public async Task<IEnumerable<JobsViewModel>> GetAllJobs(int page, int itemsToTake)
         {
-            var jobs = await this.repository.AllReadonly<Job>()
+            return await this.repository.AllReadonly<Job>()
                  .Where(x => x.IsApproved == true)
                  .OrderByDescending(j => j.CreatedOn)
                  .Skip((page - 1) * itemsToTake)
@@ -124,8 +125,21 @@
                      
                  })
                  .ToListAsync();
+        }
 
-            return jobs;
+        public async Task<IEnumerable<JobsViewModel>> GetAllJobs()
+        {
+            return await this.repository.AllReadonly<Job>()
+                 .OrderByDescending(j => j.Id)
+                 .Select(j => new JobsViewModel
+                 {
+                     Id = j.Id,
+                     Title = j.Title,
+                     CategoryName = j.Category.Name,
+                     CategoryId = j.CategoryId,
+                     IsApproved = j.IsApproved
+                 })
+                 .ToListAsync();
         }
 
         public async Task<EditJobViewModel> GetById(int id, string userId)
@@ -195,8 +209,10 @@
             {
                 Id = x.Id,
                 Title = x.Title,
-                CategoryName = x.Category.Name
+                CategoryName = x.Category.Name,
+                IsApproved = x.IsApproved
             })
+            .OrderByDescending(x => x.Id)
             .ToListAsync();
         }
 
