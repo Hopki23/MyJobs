@@ -111,7 +111,7 @@
         public async Task<IEnumerable<JobsViewModel>> GetAllJobs(int page, int itemsToTake)
         {
             var jobs = await this.repository.AllReadonly<Job>()
-                 .Where(x => x.IsDeleted == false)
+                 .Where(x => x.IsApproved == true)
                  .OrderByDescending(j => j.CreatedOn)
                  .Skip((page - 1) * itemsToTake)
                  .Take(itemsToTake)
