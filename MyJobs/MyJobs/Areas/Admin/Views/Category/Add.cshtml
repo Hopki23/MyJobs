@@ -1,0 +1,28 @@
+﻿@model AddCategoryViewModel
+
+@{
+    ViewData["Title"] = "Add Category";
+}
+
+<h2 class='text-center'>@ViewData["Title"]</h2>
+
+<form asp-action="Add" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="Name">Category Name</label>
+        <input asp-for="Name" class="form-control" required>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div> 
+
+    <div class="container">
+        <div class="row">
+            <div class='text-center'>
+                <button type="submit" class="btn btn-primary">Add Category</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

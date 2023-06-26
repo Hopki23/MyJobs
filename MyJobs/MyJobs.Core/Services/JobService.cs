@@ -13,11 +13,11 @@
     public class JobService : IJobService
     {
         private readonly IDbRepository repository;
-        private readonly IGetCategoriesService categoriesService;
+        private readonly ICategoryService categoriesService;
 
         public JobService(
             IDbRepository repository,
-            IGetCategoriesService categoriesService)
+            ICategoryService categoriesService)
         {
             this.repository = repository;
             this.categoriesService = categoriesService;
@@ -165,6 +165,21 @@
             }
 
             return job;
+        }
+
+        public async Task GetById(int id)
+        {
+           var job = await this.repository.All<Job>()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (job == null)
+            {
+                throw new ArgumentException("Job not found!");
+            }
+
+            job.IsApproved = true;
+
+            await this.repository.SaveChangesAsync();
         }
 
         public async Task<JobFilterViewModel> GetJobFilterViewModel()

@@ -10,7 +10,6 @@ using MyJobs.Infrastructure.Data.Models.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 IServiceCollection serviceCollection = builder.Services.AddDbContext<MyJobsDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -35,7 +34,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddScoped<IDbRepository, DbRepository>();
-builder.Services.AddScoped<IGetCategoriesService, GetCategoriesService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IResumeService, ResumeService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
@@ -49,8 +48,6 @@ builder.Services.AddControllersWithViews(options =>
 
 var app = builder.Build();
 
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -79,14 +76,6 @@ app.UseEndpoints(endpoints =>
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 });
-
-//app.MapControllerRoute(
-//  name: "areas",
-//  pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 

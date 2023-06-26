@@ -15,7 +15,7 @@
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(JobConstants.CategoryMaxLenght)]
+        [MaxLength(CategoryConstants.CategoryMaxLenght)]
         public string Name { get; set; } = null!;
         public virtual ICollection<Job> Jobs { get; set; }
     }

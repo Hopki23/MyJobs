@@ -15,12 +15,12 @@
 
     public class JobsController : Controller
     {
-        private readonly IGetCategoriesService categoriesService;
+        private readonly ICategoryService categoriesService;
         private readonly IDbRepository repository;
         private readonly IJobService jobService;
 
         public JobsController(
-            IGetCategoriesService categoriesService,
+            ICategoryService categoriesService,
             IDbRepository repository,
             IJobService jobService)
         {

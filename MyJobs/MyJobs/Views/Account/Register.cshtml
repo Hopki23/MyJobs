@@ -10,14 +10,20 @@
 <div class="container">
     <div class="row justify-content-center">
         <div id="registrationFormId" class="col-md-6">
-            <label for="UserType">User Type:</label>
-            <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                    <input type="radio" asp-for="UserType" value="Employee"> Employee
-                </label>
-                <label class="btn btn-secondary">
-                    <input type="radio" asp-for="UserType" value="Employer"> Employer
-                </label>
+            <div class="card text-center">
+                <div class="card-header">
+                    <label for="UserType">Registration User Type</label>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                            <input type="radio" asp-for="UserType" value="Employee"> Employee
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" asp-for="UserType" value="Employer"> Employer
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -26,35 +32,55 @@
 <div class="form-group d-flex justify-content-center">
     <button type="button" class="btn btn-primary" id="nextButton">Next</button>
 </div>
+
+
+<div id="registrationContainer" style="display:none">
+    <div id="employeeRegistration">
+        <partial name="_RegisterEmployeePartial" />
+    </div>
+    <div id="employerRegistration">
+        <partial name="_RegisterEmployerPartial" />
+    </div>
+    <div class="form-group d-flex justify-content-center">
+        <button type="button" class="btn btn-secondary mt-3" id="goBackButton">Go Back</button>
+    </div>
+</div>
 <div class="text-center mt-3">
     <p>If you already have an account, <a href="@Url.Action("Login", "Account")">login here</a>.</p>
 </div>
 
 
-<div id="employeeRegistration" style="display:none">
-    <partial name="_RegisterEmployeePartial" />
-</div>
-<div id="employerRegistration" style="display:none">
-    <partial name="_RegisterEmployerPartial" />
-</div>
-
-<script>
-    const button = document.getElementById("nextButton");
-    button.addEventListener("click", () => {
-        const userType = document.querySelector('input[name="UserType"]:checked').value;
-        document.getElementById("registrationFormId").style.display = "none";
-        if (userType === "Employee") {
-            document.getElementById("employeeRegistration").style.display = "block";
-            document.getElementById("employerRegistration").style.display = "none";
-        } else if (userType === "Employer") {
-            document.getElementById("employeeRegistration").style.display = "none";
-            document.getElementById("employerRegistration").style.display = "block";
-        }
-        button.style.visibility = 'hidden';
-    });
-</script>
-
-
 @section Scripts {
+    <script>
+        const nextButton = document.getElementById("nextButton");
+        const goBackButton = document.getElementById("goBackButton");
+        const employeeRegistration = document.getElementById("employeeRegistration");
+        const employerRegistration = document.getElementById("employerRegistration");
+
+        nextButton.addEventListener("click", () => {
+            const userType = document.querySelector('input[name="UserType"]:checked').value;
+            document.getElementById("registrationFormId").style.display = "none";
+            document.getElementById("registrationContainer").style.display = "block";
+
+            if (userType === "Employee") {
+                employeeRegistration.style.display = "block";
+                employerRegistration.style.display = "none";
+            } else if (userType === "Employer") {
+                employeeRegistration.style.display = "none";
+                employerRegistration.style.display = "block";
+            }
+
+            nextButton.style.display = "none";
+            goBackButton.style.display = "inline-block";
+        });
+
+        goBackButton.addEventListener("click", () => {
+            document.getElementById("registrationFormId").style.display = "block";
+            document.getElementById("registrationContainer").style.display = "none";
+            nextButton.style.display = "inline-block";
+            goBackButton.style.display = "none";
+        });
+    </script>
+
     <partial name="_ValidationScriptsPartial" />
 }

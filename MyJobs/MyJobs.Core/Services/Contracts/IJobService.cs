@@ -20,6 +20,8 @@
 
         Task<EditJobViewModel> GetById(int id, string userId);
 
+        Task GetById(int id);
+
         Task Update(int id, EditJobViewModel model);
 
         Task Delete(int id);

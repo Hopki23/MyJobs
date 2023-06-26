@@ -2,9 +2,6 @@
 {
     public class JobConstants
     {
-        public const int CategoryMaxLenght = 60;
-        public const int CategoryMinLenght = 2;
-
         public const int JobTitleMaxLength = 200;
 
         public const int JobDescriptionMaxLength = 600;

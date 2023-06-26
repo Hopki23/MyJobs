@@ -12,6 +12,7 @@
             this.userService = userService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var users = await this.userService.GetAllUsers();

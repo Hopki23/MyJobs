@@ -9,13 +9,19 @@
     using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Data.Models;
 
-    public class GetCategoriesService : IGetCategoriesService
+    public class CategoryService : ICategoryService
     {
         private readonly IDbRepository dbRepository;
 
-        public GetCategoriesService(IDbRepository dbRepository)
+        public CategoryService(IDbRepository dbRepository)
         {
             this.dbRepository = dbRepository;
+        }
+
+        public async Task AddCategoryAsync(Category category)
+        {
+            await this.dbRepository.AddAsync(category);
+            await this.dbRepository.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<KeyValuePair<string, string>>> GetAllCategories()
@@ -27,7 +33,6 @@
 
         public async Task<IndexViewModel> GetCategories()
         {
-            Dictionary<string, string> categoryIcons = GetCategoryIcons();
 
             return new IndexViewModel
             {
@@ -36,31 +41,10 @@
                  {
                      CategoryName = c.Name,
                      JobCount = c.Jobs.Count,
-                     IconClass = categoryIcons.ContainsKey(c.Name) ? categoryIcons[c.Name] : null
                  })
                  .OrderByDescending(x => x.JobCount)
                  .ToListAsync()
             };
-        }
-
-        private Dictionary<string, string> GetCategoryIcons()
-        {
-            Dictionary<string, string> categoryIcons = new()
-            {
-                { "Software Engineer", "fa-brain" },
-                { "Food and Hospitality", "fa-pizza-slice" },
-                { "Aviation and Aerospace", "fa-plane" },
-                { "Real Estate","fa-hotel" },
-                { "Education and Training", "fa-book-open" },
-                { "Marketing and Advertising", "fa-ad" },
-                { "Healthcare and Medical", "fa-notes-medical" },
-                { "Full-Stack Developer", "fa-terminal" },
-                { "Back-End Developer", "fa-code" },
-                { "Front-End Developer", "fa-cube" },
-                { "QA Tester", "fa-bug" }
-            };
-
-            return categoryIcons;
         }
     }
 }

@@ -9,9 +9,9 @@
 
     public class HomeController : Controller
     {
-        private readonly IGetCategoriesService categoriesService;
+        private readonly ICategoryService categoriesService;
 
-        public HomeController(IGetCategoriesService categoriesService)
+        public HomeController(ICategoryService categoriesService)
         {
             this.categoriesService = categoriesService;
         }
