@@ -33,5 +33,20 @@
                 return View("CustomError");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await this.jobService.Delete(id);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
+        }
     }
 }

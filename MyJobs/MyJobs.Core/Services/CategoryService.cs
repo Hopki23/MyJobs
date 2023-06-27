@@ -80,7 +80,7 @@
                  .Select(c => new CategoryViewModel
                  {
                      CategoryName = c.Name,
-                     JobCount = c.Jobs.Count,
+                     JobCount = c.Jobs.Count(j => !j.IsDeleted)
                  })
                  .OrderByDescending(x => x.JobCount)
                  .ToListAsync()
