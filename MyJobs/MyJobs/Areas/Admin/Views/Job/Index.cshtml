@@ -21,7 +21,8 @@
                 <th>ID</th>
                 <th>Title</th>
                 <th>Category Name</th>
-                <th>Is approved</th>
+                <th>Is Approved</th>
+                <th>Is Deleted</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -33,6 +34,7 @@
                     <td>@user.Title</td>
                     <td>@user.CategoryName</td>
                     <td>@user.IsApproved</td>
+                    <td>@user.IsDeleted</td>
                     <td>
                         @if (!user.IsApproved)
                         {

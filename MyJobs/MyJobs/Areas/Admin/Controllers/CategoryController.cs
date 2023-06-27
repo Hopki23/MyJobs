@@ -1,6 +1,7 @@
 ﻿namespace MyJobs.Areas.Admin.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
+
     using MyJobs.Core.Models.Category;
     using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Data.Models;
@@ -17,7 +18,7 @@
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var categories = await this.categoryService.GetAllCategories();
+            var categories = await this.categoryService.GetAll();
             return View(categories);
         }
 
@@ -45,10 +46,38 @@
             return RedirectToAction(nameof(Index));
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var category = 
-        //}
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                //First delete the jobs
+                await this.categoryService.DeleteCategoryJobsAsync(id);
+
+                //Then the category
+                await this.categoryService.DeleteCategoryAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Restore(int id)
+        {
+            try
+            {
+                await this.categoryService.RestoreCategoryJobsAsync(id);
+
+                await this.categoryService.RestoreCategoryAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
+        }
     }
 }

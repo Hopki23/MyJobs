@@ -90,7 +90,6 @@
                 Jobs = await this.jobService.GetAllJobs(page, ItemsPerPage),
                 JobsTotalCount = this.jobService.GetTotalJobCount(),
                 JobFilter = filterViewModel,
-
             };
             return View(model);
         }

@@ -1,8 +1,9 @@
 ﻿@using MyJobs.Core.Models.Job
-@model IEnumerable<KeyValuePair<string, string>>
+@model IEnumerable<CategoryViewModel>
+@*@model IEnumerable<KeyValuePair<string, string>>*@
 
 @{
-    ViewData["Title"] = "Categoreis Page";
+    ViewData["Title"] = "Categories Page";
 }
 
 
@@ -20,6 +21,7 @@
             <tr class="table-info">
                 <th>ID</th>
                 <th>Category Name</th>
+                <th>Is Deleted</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -27,11 +29,25 @@
             @foreach (var category in Model)
             {
                 <tr>
-                    <td>@category.Key</td>
-                    <td>@category.Value</td>
-                    <td>
-                        <a asp-area="Admin" asp-action="Delete" asp-controller="Category" asp-route-id="@category.Key" class="btn btn-block btn-outline-info">Remove category</a>
-                    </td>
+                    <td>@category.Id</td>
+                    <td>@category.CategoryName</td>
+                    <td>@category.IsDeleted</td>
+                    @if (!category.IsDeleted)
+                    {
+                        <td>
+                            <form method="post" asp-area="Admin" asp-action="Delete" asp-controller="Category" asp-route-id="@category.Id">
+                               <button type="submit" class="btn btn-block btn-outline-info">Remove category</button>
+                            </form>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <form method="post" asp-area="Admin" asp-action="Restore" asp-controller="Category" asp-route-id="@category.Id">
+                               <button type="submit" class="btn btn-block btn-outline-info">Restore category</button>
+                            </form>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>

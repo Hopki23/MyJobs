@@ -81,13 +81,14 @@
                 throw new ArgumentException("The requested job was not found.");
             }
 
-            job!.IsDeleted = true;
+            job.IsDeleted = true;
             await this.repository.SaveChangesAsync();
         }
 
         public IEnumerable<Job> FilterJobOffers(string select, string[] selectedWorkingTimes, string locationSelect)
         {
-            IQueryable<Job> filteredJobOffers = this.repository.AllReadonly<Job>();
+            IQueryable<Job> filteredJobOffers = this.repository.AllReadonly<Job>()
+                .Where(x => !x.IsDeleted);
 
             if (!string.IsNullOrEmpty(select))
             {
@@ -112,7 +113,7 @@
         public async Task<IEnumerable<JobsViewModel>> GetAllJobs(int page, int itemsToTake)
         {
             return await this.repository.AllReadonly<Job>()
-                 .Where(x => x.IsApproved == true)
+                 .Where(x => x.IsApproved == true && !x.IsDeleted)
                  .OrderByDescending(j => j.CreatedOn)
                  .Skip((page - 1) * itemsToTake)
                  .Take(itemsToTake)
@@ -122,7 +123,7 @@
                      Title = j.Title,
                      CategoryName = j.Category.Name,
                      CategoryId = j.CategoryId,
-                     
+                     IsDeleted = j.IsDeleted
                  })
                  .ToListAsync();
         }
@@ -137,7 +138,8 @@
                      Title = j.Title,
                      CategoryName = j.Category.Name,
                      CategoryId = j.CategoryId,
-                     IsApproved = j.IsApproved
+                     IsApproved = j.IsApproved,
+                     IsDeleted = j.IsDeleted
                  })
                  .ToListAsync();
         }
@@ -169,8 +171,8 @@
 
         public async Task GetById(int id)
         {
-           var job = await this.repository.All<Job>()
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var job = await this.repository.All<Job>()
+                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (job == null)
             {

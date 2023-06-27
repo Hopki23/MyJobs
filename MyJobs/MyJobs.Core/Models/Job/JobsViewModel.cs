@@ -7,5 +7,6 @@
         public string CategoryName { get; set; }
         public int CategoryId { get; set; }
         public bool IsApproved { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }
