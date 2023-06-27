@@ -30,7 +30,7 @@
                     <td>@category.Key</td>
                     <td>@category.Value</td>
                     <td>
-                        <a asp-area="Admin" asp-action="Delete" asp-controller="Category" class="btn btn-block btn-outline-info">Remove category</a>
+                        <a asp-area="Admin" asp-action="Delete" asp-controller="Category" asp-route-id="@category.Key" class="btn btn-block btn-outline-info">Remove category</a>
                     </td>
                 </tr>
             }

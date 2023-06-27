@@ -24,6 +24,17 @@
             await this.dbRepository.SaveChangesAsync();
         }
 
+        public async Task DeleteCategoryAsync(int id)
+        {
+            var category = await this.dbRepository.All<Category>()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (category == null)
+            {
+                throw new ArgumentException("The requested category was not found.");
+            }
+        }
+
         public async Task<IEnumerable<KeyValuePair<string, string>>> GetAllCategories()
         {
             return await this.dbRepository.AllReadonly<Category>()

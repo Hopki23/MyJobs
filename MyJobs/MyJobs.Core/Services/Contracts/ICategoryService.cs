@@ -7,7 +7,7 @@
     {
         Task<IndexViewModel> GetCategories();
         Task<IEnumerable<KeyValuePair<string, string>>> GetAllCategories();
-
         Task AddCategoryAsync(Category category); 
+        Task DeleteCategoryAsync(int id);
     }
 }

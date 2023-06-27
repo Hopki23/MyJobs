@@ -17,6 +17,7 @@
         [Required]
         [MaxLength(CategoryConstants.CategoryMaxLenght)]
         public string Name { get; set; } = null!;
+        public bool IsDeleted { get; set; }
         public virtual ICollection<Job> Jobs { get; set; }
     }
 }
