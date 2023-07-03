@@ -21,9 +21,27 @@
             this.userManager = userManager;
         }
 
+        public async Task DisableUserAsync(string id)
+        {
+            var user = await this.repository.GetByIdAsync<ApplicationUser>(id);
+
+            user.IsDeleted = true;
+
+            await this.repository.SaveChangesAsync();
+        }
+
+        public async Task EnableUserAsync(string id)
+        {
+            var user = await this.repository.GetByIdAsync<ApplicationUser>(id);
+
+            user.IsDeleted = false;
+
+            await this.repository.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<UserListViewModel>> GetAllUsers()
         {
-            var users =  await this.repository.AllReadonly<ApplicationUser>()
+            var users =  await this.repository.All<ApplicationUser>()
                 .Select(u => new UserListViewModel()
                 {
                     Id = u.Id,
@@ -31,6 +49,7 @@
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     Username = u.UserName,
+                    IsDisabled = u.IsDeleted
                 })
                 .ToListAsync();
 

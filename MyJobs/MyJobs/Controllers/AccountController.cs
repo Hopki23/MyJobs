@@ -160,6 +160,12 @@
 
             if (user != null)
             {
+                if (user.IsDeleted)
+                {
+                    TempData[NotificationConstants.ErrorMessage] = "Your account has been disabled. Please contact the administrator.";
+                    return View(model);
+                }
+
                 var result = await this.signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)

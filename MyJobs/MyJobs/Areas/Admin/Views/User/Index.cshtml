@@ -38,8 +38,18 @@
                     <td>@user.Email</td>
                     <td>@user.RoleName</td>
                     <td>
-                        <a asp-area="Admin" asp-action="Edit" asp-controller="User" asp-route-id="@user.Id" class="btn btn-block btn-outline-info">Edit</a>
-                        <a asp-area="Admin" asp-action="Delete" asp-controller="User" asp-route-id="@user.Id" class="btn btn-block btn-outline-info">Delete</a>
+                        @if (user.IsDisabled)
+                        {
+                            <form asp-area="Admin" asp-action="Enable" asp-controller="User" asp-route-id="@user.Id" method="post">
+                                <button type="submit" class="btn btn-block btn-outline-info">Enable</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-area="Admin" asp-action="Disable" asp-controller="User" asp-route-id="@user.Id" method="post">
+                                <button type="submit" class="btn btn-block btn-outline-info">Disable</button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }

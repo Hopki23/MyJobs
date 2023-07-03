@@ -1,0 +1,19 @@
+﻿@if (TempData.ContainsKey(MyJobs.Infrastructure.Constants.NotificationConstants.ErrorMessage))
+{
+    <script>toastr.error('@TempData[NotificationConstants.ErrorMessage]');</script>
+}
+
+@if (TempData.ContainsKey(NotificationConstants.WarningMessage))
+{
+    <script>toastr.warning('@TempData[NotificationConstants.WarningMessage]');</script>
+}
+
+@if (TempData.ContainsKey(NotificationConstants.InformationMessage))
+{
+    <script>toastr.info('@TempData[NotificationConstants.InformationMessage]');</script>
+}
+
+@if (TempData.ContainsKey(NotificationConstants.SuccessMessage))
+{
+    <script>toastr.success('@TempData[NotificationConstants.SuccessMessage]');</script>
+}
