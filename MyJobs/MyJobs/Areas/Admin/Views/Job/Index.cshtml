@@ -42,9 +42,12 @@
                                 <button type="submit" class="btn btn-block btn-outline-info">Approve</button>
                             </form>
                         }
-                         <form asp-area="Admin" asp-action="Delete" asp-controller="Job" asp-route-id="@user.Id" method="post">
+                        @if (!user.IsDeleted)
+                        {
+                            <form asp-area="Admin" asp-action="Delete" asp-controller="Job" asp-route-id="@user.Id" method="post">
                                 <button type="submit" class="btn btn-block btn-outline-info">Delete</button>
                             </form>
+                        }
                         <a asp-area="" asp-action="GetById" asp-controller="Jobs" asp-route-id="@user.Id" class="btn btn-block btn-outline-info">Details</a>
                     </td>
                 </tr>

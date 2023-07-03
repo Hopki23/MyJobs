@@ -1,0 +1,17 @@
+﻿@*@using MyJobs.Core.Models.Notification
+@model List<NotificationViewModel>
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-envelope fa-2x"></i>
+        <span class="badge rounded-pill badge-notification bg-danger">@Model.Count()</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+        @foreach (var notification in Model)
+        {
+            <li><a class="dropdown-item">From: @notification.Sender</a></li>
+            <li><a class="dropdown-item">Content: @notification.Content</a></li>
+            <li><a class="dropdown-item">Sent date: @notification.SentOn</a></li>
+        }
+    </ul>
+</li>*@

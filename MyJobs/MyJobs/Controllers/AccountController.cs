@@ -10,6 +10,7 @@
     using MyJobs.Infrastructure.Data.Models.Identity;
     using MyJobs.Infrastructure.Models;
     using MyJobs.Core.Models.Account;
+    using MyJobs.Core.Services.Contracts;
 
     public class AccountController : BaseController
     {
@@ -17,17 +18,20 @@
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IDbRepository dbRepository;
+        private readonly IProfileService profileService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            IDbRepository dbRepository)
+            IDbRepository dbRepository,
+            IProfileService profileService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.roleManager = roleManager;
             this.dbRepository = dbRepository;
+            this.profileService = profileService;
         }
 
         [HttpGet]
@@ -198,5 +202,4 @@
             }
         }
     }
-    
 }

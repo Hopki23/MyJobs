@@ -1,5 +1,6 @@
 ﻿namespace MyJobs.Core.Models.Job
 {
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     
     using MyJobs.Infrastructure.Constants;
@@ -22,7 +23,10 @@
 
         [Required]
         [MaxLength(JobConstants.TownNameMaxLength)]
+        [DisplayName("Town Name")]
         public string TownName { get; set; } = null!;
+
+        [DisplayName("Working Time")]
         public string? WorkingTime { get; set; }
 
         [Range(300, 100000)]

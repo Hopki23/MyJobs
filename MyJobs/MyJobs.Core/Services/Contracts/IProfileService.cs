@@ -1,15 +1,15 @@
 ﻿namespace MyJobs.Core.Services.Contracts
 {
+    using MyJobs.Core.Models.Notification;
     using MyJobs.Core.Models.Profile;
-    using MyJobs.Infrastructure.Data.Models;
 
     public interface IProfileService
     {
         Task<UserProfileViewModel> GetUserById(string id, string role);
 
-        Task<IEnumerable<Notification>> GetUnreadNotificationsForEmployee(int employeeId);
+        Task<IEnumerable<NotificationViewModel>> GetUnreadNotifications(int id);
 
-        Task<Notification> MarkNotificationAsRead(int notificationId);
+        Task MarkNotificationAsRead(int id);
 
         Task<UserProfileViewModel> GetProfileForEditing(int id, string userId);
 

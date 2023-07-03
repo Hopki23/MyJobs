@@ -29,7 +29,7 @@
 
             var resume = await this.repository.All<CV>()
                 .FirstOrDefaultAsync(c => c.EmployeeId == employee.Id);
-
+            
             if (resume == null)
             {
                 throw new ArgumentException("The requested resume was not found.");
@@ -37,7 +37,7 @@
 
             var job = await this.repository.GetByIdAsync<Job>(jobId);
 
-            if (job == null)
+            if (job == null || job.IsDeleted)
             {
                 throw new ArgumentException("The requested job was not found.");
             }

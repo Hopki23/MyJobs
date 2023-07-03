@@ -5,7 +5,7 @@
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
-
+    using MyJobs.Core.Models.Notification;
     using MyJobs.Core.Models.Profile;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services.Contracts;
@@ -57,7 +57,7 @@
                      .Include(x => x.Company)
                      .FirstOrDefaultAsync();
 
-                if (employer == null )
+                if (employer == null)
                 {
                     throw new ArgumentException("Invalid employee");
                 }
@@ -139,13 +139,24 @@
             return model;
         }
 
-        public async Task<IEnumerable<Notification>> GetUnreadNotificationsForEmployee(int employeeId)
+        public async Task<IEnumerable<NotificationViewModel>> GetUnreadNotifications(int id)
         {
-            return await this.repository.AllReadonly<Notification>()
-           .Include(n => n.Employer)
-           .Include(n => n.Employer.Company)
-           .Where(n => n.EmployeeId == employeeId && !n.IsRead)
-           .ToListAsync();
+            var notifications = await this.repository.AllReadonly<Notification>()
+                .Include(n => n.Employer)
+                .Where(n => n.EmployeeId == id && !n.IsRead)
+                .ToListAsync();
+
+            var notificationViewModels = notifications
+                .Select(n => new NotificationViewModel
+                {
+                    Id = n.Id,
+                    Sender = $"{n.Employer.FirstName} {n.Employer.LastName}",
+                    NotificationsCount = notifications.Count,
+                    Content = n.Message,
+                    IsRead = n.IsRead
+                });
+
+            return notificationViewModels;
         }
 
         public async Task<UserProfileViewModel> GetUserById(string id, string role)
@@ -194,14 +205,12 @@
             return userProfile;
         }
 
-        public async Task<Notification> MarkNotificationAsRead(int notificationId)
+        public async Task MarkNotificationAsRead(int id)
         {
-            var notification = await this.repository.GetByIdAsync<Notification>(notificationId);
+            var notification = await this.repository.GetByIdAsync<Notification>(id);
 
             notification.IsRead = true;
             await this.repository.SaveChangesAsync();
-
-            return notification;
         }
     }
 }

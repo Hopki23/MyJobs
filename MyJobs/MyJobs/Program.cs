@@ -12,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 IServiceCollection serviceCollection = builder.Services.AddDbContext<MyJobsDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    
+options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>
@@ -40,6 +41,8 @@ builder.Services.AddScoped<IResumeService, ResumeService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IEmploymentService, EmploymentService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddMemoryCache();
 
 builder.Services.AddControllersWithViews(options =>
 {

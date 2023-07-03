@@ -1,8 +1,8 @@
-﻿using MyJobs.Infrastructure.Constants;
-using System.ComponentModel.DataAnnotations;
-
-namespace MyJobs.Core.Models.Profile
+﻿namespace MyJobs.Core.Models.Profile
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using MyJobs.Infrastructure.Constants;
     public class UserProfileViewModel
     {
         public int Id { get; set; }

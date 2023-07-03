@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
-
+@using MyJobs.Core.Models.Notification
 @using MyJobs.Infrastructure.Constants
 @using MyJobs.Infrastructure.Data.Models.Identity
 @inject SignInManager<ApplicationUser> SignInManager
@@ -12,11 +12,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MyJobs</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    @*<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />*@
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/logo.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
 </head>
 <body>
     <header>
@@ -25,11 +25,6 @@
                 <img src="~/images/MyJobs.png" alt="MyJobs Logo" class="logo">
             </a>
             <div class="container-fluid">
-                @* <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MyJobs</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>*@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1 justify-content-center">
                         <li class="nav-item">
@@ -55,6 +50,20 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Jobs" asp-action="All">All Jobs</a>
                         </li>
                     </ul>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole(RoleConstants.Employee))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-envelope fa-2x"></i>
+                                <span class="badge rounded-pill badge-notification bg-danger" id="notificationsCount"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                                <li>
+                                    <div id="notificationsContainer"></div>
+                                </li>
+                            </ul>
+                        </li>
+                    }
                     <partial name="_LoginPartial" />
                 </div>
             </div>
@@ -71,13 +80,111 @@
             &copy; @DateTime.UtcNow.Year - MyJobs
         </div>
     </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+
+    <script>
+        $(function() {
+            loadNotifications();
+
+            function loadNotifications() {
+                var cachedNotifications = sessionStorage.getItem('notifications');
+                if (cachedNotifications) {
+                    displayNotifications(JSON.parse(cachedNotifications));
+                    return;
+                }
+
+                fetchNotifications();
+            }
+
+            function fetchNotifications() {
+                $.ajax({
+                    url: '@Url.Action("Notifications", "Profile")',
+                    method: 'get',
+                    success: function(data) {
+                        updateCacheAndDisplayNotifications(data);
+                    },
+                    error: function() {
+                        console.error('Error occurred while fetching notifications data.');
+                    }
+                });
+            }
+
+            function updateCacheAndDisplayNotifications(notifications) {
+                sessionStorage.setItem('notifications', JSON.stringify(notifications));
+                displayNotifications(notifications);
+            }
+
+            function displayNotifications(notifications) {
+                var container = $('#notificationsContainer');
+                var countContainer = $('#notificationsCount');
+
+                container.empty();
+
+                if (notifications.length > 0) {
+                    countContainer.text(notifications.length);
+
+                    $.each(notifications, function(index, notification) {
+                        var notificationHtml =
+                            '<a class="dropdown-item">' +
+                            'From: ' + notification.sender + ', ' +
+                            'Content: ' + notification.content + ' ' +
+                            '<button class="btn btn-primary btn-sm mark-read-btn" data-notification-id="' + notification.id + '">Mark as Read</button>' +
+                            '</a>';
+
+                        container.append(notificationHtml);
+                    });
+                } else {
+                    container.append('<span class="dropdown-item">No new notifications</span>');
+                }
+
+                $('.mark-read-btn').click(function() {
+                    var notificationId = $(this).data('notification-id');
+                    markNotificationAsRead(notificationId);
+                });
+            }
+
+            function markNotificationAsRead(id) {
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                $.ajax({
+                    url: '@Url.Action("MarkAsRead", "Profile")',
+                    method: 'post',
+                    headers: {
+                        "RequestVerificationToken": token
+                    },
+                    data: { id: id },
+                    success: function(response) {
+
+                        // Retrieve cached notifications from sessionStorage
+                        var cachedNotifications = sessionStorage.getItem('notifications');
+
+                        // Check if there are cached notifications available
+                        if (cachedNotifications) {
+                            // Parse the cached notifications into a JavaScript object
+                            var notifications = JSON.parse(cachedNotifications);
+
+                            // Filter the notifications, excluding those with the corresponding id
+                            var updatedNotifications = notifications.filter(function(notification) {
+                                return notification.id !== id;
+                            });
+
+                            // Store the updated notifications back to sessionStorage
+                            sessionStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+                        }
+
+                        loadNotifications();
+                    },
+                    error: function() {
+                        console.error('Error occurred while marking notification as read:');
+                    }
+                });
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
-
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/js/site.js"></script>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-
-@await RenderSectionAsync("Scripts", required: false)
-
 </html>

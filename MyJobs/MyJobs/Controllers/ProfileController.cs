@@ -1,11 +1,13 @@
 ﻿namespace MyJobs.Controllers
 {
+    using System.Linq;
     using System.Security.Claims;
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Caching.Memory;
 
     using MyJobs.Infrastructure.Data.Models.Identity;
     using MyJobs.Infrastructure.Constants;
@@ -19,6 +21,7 @@
         private readonly IProfileService profileService;
         private readonly IDbRepository repository;
         private readonly IJobService jobService;
+        private readonly IMemoryCache cache;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
@@ -26,6 +29,7 @@
             IProfileService profileService,
             IDbRepository repository,
             IJobService jobService,
+            IMemoryCache cache,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
@@ -33,13 +37,8 @@
             this.profileService = profileService;
             this.repository = repository;
             this.jobService = jobService;
+            this.cache = cache;
             this.roleManager = roleManager;
-        }
-
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
         }
 
         [HttpGet]
@@ -63,7 +62,7 @@
 
                 ViewBag.UserId = userProfile.Id;
 
-                return PartialView("_PersonalInformationPartial", userProfile);
+                return View(userProfile);
             }
             catch (Exception)
             {
@@ -81,16 +80,11 @@
             var employer = await this.repository.AllReadonly<Employer>()
                 .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            if (employer == null)
-            {
-                throw new ArgumentException("Employer not found!");
-            }
-
-            var jobs = await this.jobService.GetJobsForCertainEmployer(employer);
+            var jobs = await this.jobService.GetJobsForCertainEmployer(employer!);
 
             if (jobs != null)
             {
-                return PartialView("_MyJobsPartial", jobs);
+                return View(jobs);
             }
 
             return View("CustomError");
@@ -105,16 +99,11 @@
             var employee = await this.repository.AllReadonly<Employee>()
                 .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            if (employee == null)
-            {
-                throw new ArgumentException("Employee not found!");
-            }
-
-            var jobs = await this.jobService.GetJobsByEmployeeId(employee.Id);
+            var jobs = await this.jobService.GetJobsByEmployeeId(employee!.Id);
 
             if (jobs != null)
             {
-                return PartialView("_MyApplicationsPartial", jobs);
+                return View(jobs);
             }
 
             return View("CustomError");
@@ -129,28 +118,31 @@
             var employee = await this.repository.AllReadonly<Employee>()
                 .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            if (employee == null)
+            try
             {
-                return NotFound();
+                var notifications = await this.profileService.GetUnreadNotifications(employee!.Id);
+                return Json(notifications);
             }
-
-            var notifications = await this.profileService.GetUnreadNotificationsForEmployee(employee.Id);
-
-            if (notifications != null)
+            catch (Exception)
             {
-                return PartialView("_MyNotificationsPartial", notifications);
+                return View("CustomError");
             }
-
-            return View("CustomError");
-
         }
 
         [HttpPost]
-        public async Task<IActionResult> MarkAsRead(int notificationId)
+        [Authorize(Roles = RoleConstants.Employee)]
+        public async Task<IActionResult> MarkAsRead(int id)
         {
-            var notification = await this.profileService.MarkNotificationAsRead(notificationId);
+            try
+            {
+                await this.profileService.MarkNotificationAsRead(id);
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Notifications));
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
         }
 
         [HttpGet]
