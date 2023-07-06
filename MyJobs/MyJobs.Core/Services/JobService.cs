@@ -8,6 +8,7 @@
     using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services.Contracts;
+    using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Models;
 
     public class JobService : IJobService
@@ -29,17 +30,33 @@
 
             var resume = await this.repository.All<CV>()
                 .FirstOrDefaultAsync(c => c.EmployeeId == employee.Id);
-            
+
+            //if user tries to apply with wrong resume(not created via the application)
             if (resume == null)
             {
-                throw new ArgumentException("The requested resume was not found.");
+                throw new ArgumentException(NotificationConstants.CreateResumeError);
             }
 
-            var job = await this.repository.GetByIdAsync<Job>(jobId);
+            var job = await this.repository.All<Job>()
+                .Include(j => j.Resumes)
+                .Include(e => e.Employees)
+                .FirstOrDefaultAsync(j => j.Id == jobId);
 
             if (job == null || job.IsDeleted)
             {
                 throw new ArgumentException("The requested job was not found.");
+            }
+
+            //If user tries to apply if he had already applied
+            if (job.Resumes.Any(x => x.Id == resume.Id))
+            {
+                throw new InvalidOperationException(NotificationConstants.AlreadyAppliedMessageError);
+            }
+
+            //if user tries to apply if he's already approved for work
+            if (job.Employees.Any(e => e.Id == employee.Id))
+            {
+                throw new ArgumentException(NotificationConstants.AlreadyApprovedMessageError);
             }
 
             resume.Jobs.Add(job);
@@ -237,6 +254,7 @@
         {
             var jobs = await this.repository.AllReadonly<Job>()
             .Where(x => x.EmployerId == employer.Id)
+            .OrderByDescending(x => x.CreatedOn)
             .ToListAsync();
 
             var jobViewModels = new List<JobsWithCVsViewModel>();

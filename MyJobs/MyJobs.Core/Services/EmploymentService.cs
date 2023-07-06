@@ -15,7 +15,7 @@
             this.repository = repository;
         }
 
-        public async Task<bool> Approve(int employeeId, int employerId, int companyId, int jobId)
+        public async Task Approve(int employeeId, int employerId, int companyId, int jobId)
         {
             var job = await this.repository.All<Job>()
                     .Include(j => j.Resumes)
@@ -32,6 +32,13 @@
             {
                 throw new ArgumentException("The requested resume was not found.");
             }
+
+            //var existingEmployment = employee.Employments.FirstOrDefault(c => c.EmployeeId == employeeId);
+
+            //if (existingEmployment != null)
+            //{
+            //    throw new InvalidOperationException("The user has already been approved for this job.");
+            //}
 
             job.Resumes.Remove(cvToRemove);
 
@@ -61,11 +68,9 @@
             await this.repository.AddAsync(employeeEmployment);
             await this.repository.AddAsync(notification);
             await this.repository.SaveChangesAsync();
-
-            return true;
         }
 
-        public async Task<bool> Reject(int employeeId, int employerId, int jobId)
+        public async Task Reject(int employeeId, int employerId, int jobId)
         {
             var job = await this.repository.All<Job>()
                   .Include(j => j.Resumes)
@@ -101,8 +106,6 @@
 
             await this.repository.AddAsync(notification);
             await this.repository.SaveChangesAsync();
-
-            return true;
         }
     }
 }

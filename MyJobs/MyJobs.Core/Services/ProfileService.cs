@@ -5,6 +5,7 @@
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
+
     using MyJobs.Core.Models.Notification;
     using MyJobs.Core.Models.Profile;
     using MyJobs.Core.Repositories;
@@ -139,6 +140,21 @@
             return model;
         }
 
+        public async Task<IEnumerable<NotificationViewModel>> GetReadNotifications(int id)
+        {
+            var notifications = await this.repository.AllReadonly<Notification>()
+                .Include(n => n.Employer)
+                .Where(n => n.EmployeeId == id && n.IsRead)
+                .ToListAsync();
+
+            return notifications
+                .Select(n => new NotificationViewModel
+                {
+                    Sender = $"{n.Employer.FirstName} {n.Employer.LastName}",
+                    Content = n.Message,
+                });
+        }
+
         public async Task<IEnumerable<NotificationViewModel>> GetUnreadNotifications(int id)
         {
             var notifications = await this.repository.AllReadonly<Notification>()
@@ -146,17 +162,15 @@
                 .Where(n => n.EmployeeId == id && !n.IsRead)
                 .ToListAsync();
 
-            var notificationViewModels = notifications
-                .Select(n => new NotificationViewModel
-                {
-                    Id = n.Id,
-                    Sender = $"{n.Employer.FirstName} {n.Employer.LastName}",
-                    NotificationsCount = notifications.Count,
-                    Content = n.Message,
-                    IsRead = n.IsRead
-                });
-
-            return notificationViewModels;
+            return notifications
+                 .Select(n => new NotificationViewModel
+                 {
+                     Id = n.Id,
+                     Sender = $"{n.Employer.FirstName} {n.Employer.LastName}",
+                     NotificationsCount = notifications.Count,
+                     Content = n.Message,
+                     IsRead = n.IsRead
+                 });
         }
 
         public async Task<UserProfileViewModel> GetUserById(string id, string role)

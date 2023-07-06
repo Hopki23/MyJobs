@@ -31,12 +31,10 @@
                     @if (User.IsInRole("Employee"))
                     {
                         <li><a class="dropdown-item" asp-controller="Profile" asp-action="MyApplications">My Applications</a></li>
+                        <li><a class="dropdown-item" asp-controller="Profile" asp-action="ReadNotifications">Read Notifications</a></li>
                     }
                 </ul>
             </li>
-            @* <li class="nav-item">
-    <a class="nav-link text-dark" asp-controller="Profile" asp-action="Index">My Profile</a>
-    </li>*@
         }
 
         <li class="nav-item">

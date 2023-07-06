@@ -193,5 +193,22 @@
             }
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ReadNotifications()
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            var employee = await this.repository.AllReadonly<Employee>()
+                .FirstOrDefaultAsync(e => e.UserId == userId);
+
+            var notifications = await this.profileService.GetReadNotifications(employee!.Id);
+
+            if (notifications != null)
+            {
+                return View(notifications);
+            }
+
+            return View("CustomError");
+        }
     }
 }

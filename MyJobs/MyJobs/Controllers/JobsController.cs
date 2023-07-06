@@ -131,19 +131,34 @@
             var employee = await this.repository.All<Employee>()
                 .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            if (employee == null)
-            {
-                return RedirectToAction(nameof(All));
-            }
-
             try
             {
-                await this.jobService.Apply(model, employee);
+                await this.jobService.Apply(model, employee!);
+                TempData[NotificationConstants.SuccessMessage] = NotificationConstants.SuccessApply;
                 return RedirectToAction(nameof(All));
             }
-            catch (Exception)
+            catch (ArgumentException ex)
             {
+                if (ex.Message == NotificationConstants.CreateResumeError)
+                {
+                    TempData[NotificationConstants.ErrorMessage] = ex.Message;
+
+                    return RedirectToAction("Create", "Resume");
+                }
+                else if (ex.Message == NotificationConstants.AlreadyApprovedMessageError)
+                {
+                    TempData[NotificationConstants.ErrorMessage] = ex.Message;
+
+                    return RedirectToAction(nameof(All));
+                }
+
                 return View("CustomError");
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData[NotificationConstants.ErrorMessage] = ex.Message;
+
+                return View(model);
             }
         }
 
@@ -155,14 +170,9 @@
             var employer = await this.repository.All<Employer>()
                             .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            if (employer == null)
-            {
-                return RedirectToAction(nameof(All));
-            }
-
             try
             {
-                var jobViewModels = await this.jobService.GetJobsWithCV(model, employer);
+                var jobViewModels = await this.jobService.GetJobsWithCV(model, employer!);
 
                 return View(jobViewModels);
             }
@@ -180,7 +190,7 @@
 
             try
             {
-                var model = await this.jobService.GetById(id, userId);
+                var model = await this.jobService.GetById(id, userId!);
                 model.CategoryItems = await this.categoriesService.GetAllCategories();
 
                 return View(model);

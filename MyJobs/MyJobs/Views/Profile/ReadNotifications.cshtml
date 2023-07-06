@@ -1,0 +1,30 @@
+﻿@using MyJobs.Core.Models.Notification
+@model IEnumerable<NotificationViewModel>
+@{
+    ViewData["Title"] = "Read notifications";
+}
+
+@if (Model.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Notification Sender</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var not in Model)
+            {
+                <tr>
+                    <td>@not.Sender</td>
+                    <td>@not.Content</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h2 class="text-center">No notifications found!</h2>
+}
