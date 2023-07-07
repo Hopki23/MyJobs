@@ -100,9 +100,12 @@
                         <li>Salary : <span>$@Model.Salary</span></li>
                         <li>Working Time : <span>@Model.WorkingTime</span></li>
                     </ul>
-                    <div class="apply-btn2">
-                        <a asp-action="Apply" asp-route-id="@Model.Id" class="btn btn-primary">Apply Now</a>
-                    </div>
+                    @if (!Model.IsOwner)
+                    {
+                        <div class="apply-btn2">
+                            <a asp-action="Apply" asp-route-id="@Model.Id" class="btn btn-primary">Apply Now</a>
+                        </div>
+                    }
                 </div>
                 <div class="post-details4  mb-50">
                     <div class="small-section-tittle">

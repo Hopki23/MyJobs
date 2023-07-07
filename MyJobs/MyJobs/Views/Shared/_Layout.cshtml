@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
 @using MyJobs.Core.Models.Notification
 @using MyJobs.Infrastructure.Constants
 @using MyJobs.Infrastructure.Data.Models.Identity
@@ -56,8 +57,10 @@
                     </ul>
                     @if (User.Identity.IsAuthenticated && User.IsInRole(RoleConstants.Employee))
                     {
+                        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"  data-user-id="@userId">
+                             
                                 <i class="fas fa-envelope fa-2x"></i>
                                 <span class="badge rounded-pill badge-notification bg-danger" id="notificationsCount"></span>
                             </a>
@@ -90,99 +93,105 @@
 
     <script>
         $(function() {
-            loadNotifications();
+            var userId = $('#notificationsDropdown').data('user-id');
 
-            function loadNotifications() {
-                var cachedNotifications = sessionStorage.getItem('notifications');
-                if (cachedNotifications) {
-                    displayNotifications(JSON.parse(cachedNotifications));
-                    return;
-                }
+            if (userId) {
+                loadNotifications();
 
-                fetchNotifications();
-            }
-
-            function fetchNotifications() {
-                $.ajax({
-                    url: '@Url.Action("Notifications", "Profile")',
-                    method: 'get',
-                    success: function(data) {
-                        updateCacheAndDisplayNotifications(data);
-                    },
-                    error: function() {
-                        console.error('Error occurred while fetching notifications data.');
+                function loadNotifications() {
+                    var cachedNotifications = sessionStorage.getItem('notifications_' + userId);
+                    if (cachedNotifications) {
+                        displayNotifications(JSON.parse(cachedNotifications));
+                        return;
                     }
-                });
-            }
 
-            function updateCacheAndDisplayNotifications(notifications) {
-                sessionStorage.setItem('notifications', JSON.stringify(notifications));
-                displayNotifications(notifications);
-            }
-
-            function displayNotifications(notifications) {
-                var container = $('#notificationsContainer');
-                var countContainer = $('#notificationsCount');
-
-                container.empty();
-
-                if (notifications.length > 0) {
-                    countContainer.text(notifications.length);
-
-                    $.each(notifications, function(index, notification) {
-                        var notificationHtml =
-                            '<a class="dropdown-item">' +
-                            'From: ' + notification.sender + ', ' +
-                            'Content: ' + notification.content + ' ' +
-                            '<button class="btn btn-primary btn-sm mark-read-btn" data-notification-id="' + notification.id + '">Mark as Read</button>' +
-                            '</a>';
-
-                        container.append(notificationHtml);
-                    });
-                } else {
-                    container.append('<span class="dropdown-item">No new notifications</span>');
+                    fetchNotifications();
                 }
 
-                $('.mark-read-btn').click(function() {
-                    var notificationId = $(this).data('notification-id');
-                    markNotificationAsRead(notificationId);
-                });
-            }
+                function fetchNotifications() {
+                    var token = $('input[name="__RequestVerificationToken"]').val();
 
-            function markNotificationAsRead(id) {
-                var token = $('input[name="__RequestVerificationToken"]').val();
-                $.ajax({
-                    url: '@Url.Action("MarkAsRead", "Profile")',
-                    method: 'post',
-                    headers: {
-                        "RequestVerificationToken": token
-                    },
-                    data: { id: id },
-                    success: function(response) {
-
-                        // Retrieve cached notifications from sessionStorage
-                        var cachedNotifications = sessionStorage.getItem('notifications');
-
-                        // Check if there are cached notifications available
-                        if (cachedNotifications) {
-                            // Parse the cached notifications into a JavaScript object
-                            var notifications = JSON.parse(cachedNotifications);
-
-                            // Filter the notifications, excluding those with the corresponding id
-                            var updatedNotifications = notifications.filter(function(notification) {
-                                return notification.id !== id;
-                            });
-
-                            // Store the updated notifications back to sessionStorage
-                            sessionStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+                    $.ajax({
+                        url: '@Url.Action("Notifications", "Profile")',
+                        method: 'get',
+                        headers: {
+                            "RequestVerificationToken": token,
+                            "User-ID": userId
+                        },
+                        success: function(data) {
+                            updateCacheAndDisplayNotifications(data);
+                        },
+                        error: function() {
+                            console.error('Error occurred while fetching notifications data.');
                         }
+                    });
+                }
 
-                        loadNotifications();
-                    },
-                    error: function() {
-                        console.error('Error occurred while marking notification as read:');
+                function updateCacheAndDisplayNotifications(notifications) {
+                    sessionStorage.setItem('notifications_' + userId, JSON.stringify(notifications));
+                    displayNotifications(notifications);
+                }
+
+                function displayNotifications(notifications) {
+                    var container = $('#notificationsContainer');
+                    var countContainer = $('#notificationsCount');
+
+                    container.empty();
+
+                    if (notifications.length > 0) {
+                        countContainer.text(notifications.length);
+
+                        $.each(notifications, function(index, notification) {
+                            var notificationHtml =
+                                '<a class="dropdown-item">' +
+                                'From: ' + notification.sender + ', ' +
+                                'Content: ' + notification.content + ' ' +
+                                '<button class="btn btn-primary btn-sm mark-read-btn" data-notification-id="' + notification.id + '">Mark as Read</button>' +
+                                '</a>';
+
+                            container.append(notificationHtml);
+                        });
+                    } else {
+                        container.append('<span class="dropdown-item">No new notifications</span>');
+                        countContainer.text('');
                     }
-                });
+
+                    $('.mark-read-btn').click(function() {
+                        var notificationId = $(this).data('notification-id');
+                        markNotificationAsRead(notificationId);
+                    });
+                }
+
+                function markNotificationAsRead(id) {
+                    var token = $('input[name="__RequestVerificationToken"]').val();
+
+                    $.ajax({
+                        url: '@Url.Action("MarkAsRead", "Profile")',
+                        method: 'post',
+                        headers: {
+                            "RequestVerificationToken": token,
+                            "User-ID": userId
+                        },
+                        data: { id: id },
+                        success: function(response) {
+                            var cachedNotifications = sessionStorage.getItem('notifications_' + userId);
+
+                            if (cachedNotifications) {
+                                var notifications = JSON.parse(cachedNotifications);
+                                var updatedNotifications = notifications.filter(function(notification) {
+                                    return notification.id !== id;
+                                });
+
+                                sessionStorage.setItem('notifications_' + userId, JSON.stringify(updatedNotifications));
+                            }
+
+                            loadNotifications();
+                        },
+                        error: function() {
+                            console.error('Error occurred while marking notification as read.');
+                        }
+                    });
+                }
             }
         });
     </script>
