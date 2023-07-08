@@ -7,12 +7,13 @@ using MyJobs.Core.Services;
 using MyJobs.Core.Services.Contracts;
 using MyJobs.Infrastructure.Data;
 using MyJobs.Infrastructure.Data.Models.Identity;
+using MyJobs.Infrastructure.ModelBinders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 IServiceCollection serviceCollection = builder.Services.AddDbContext<MyJobsDbContext>(options =>
-    
+
 options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -44,10 +45,15 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddMemoryCache();
 
-builder.Services.AddControllersWithViews(options =>
+builder.Services
+    .AddControllersWithViews(options =>
 {
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-});
+})
+    .AddMvcOptions(options =>
+    {
+        options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
+    });
 
 var app = builder.Build();
 
