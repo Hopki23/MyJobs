@@ -24,12 +24,15 @@
             this.categoriesService = categoriesService;
         }
 
-        public async Task Apply(UploadResumeViewModel model, Employee employee)
+        public async Task Apply(UploadResumeViewModel model, string userId)
         {
+            var employee = await this.repository.All<Employee>()
+                .FirstOrDefaultAsync(e => e.UserId == userId);
+
             int jobId = model.Id;
 
             var resume = await this.repository.All<CV>()
-                .FirstOrDefaultAsync(c => c.EmployeeId == employee.Id);
+                .FirstOrDefaultAsync(c => c.EmployeeId == employee!.Id);
 
             //if user tries to apply with wrong resume(not created via the application)
             if (resume == null)
@@ -54,7 +57,7 @@
             }
 
             //if user tries to apply if he's already approved for work
-            if (job.Employees.Any(e => e.Id == employee.Id))
+            if (job.Employees.Any(e => e.Id == employee!.Id))
             {
                 throw new ArgumentException(NotificationConstants.AlreadyApprovedMessageError);
             }
@@ -65,8 +68,13 @@
             await this.repository.SaveChangesAsync();
         }
 
-        public async Task CreateAsync(CreateJobViewModel model, int employerId, int companyId)
+        public async Task CreateAsync(CreateJobViewModel model, string userId)
         {
+            var employer = await this.repository.All<Employer>()
+                .Where(e => e.UserId == userId)
+                .Select(e => new { e.Id, e.CompanyId })
+                .FirstOrDefaultAsync();
+
             var job = new Job
             {
                 Title = model.Title,
@@ -77,8 +85,8 @@
                 Requirements = model.Requirements,
                 Responsibilities = model.Responsibilities,
                 Offering = model.Offering,
-                EmployerId = employerId,
-                CompanyId = companyId,
+                EmployerId = employer!.Id,
+                CompanyId = employer!.CompanyId,
                 Salary = model.Salary,
                 WorkingTime = model.WorkingTime,
                 IsApproved = false
@@ -226,17 +234,23 @@
             return jobFilterModel;
         }
 
-        public async Task<IEnumerable<Job>> GetJobsByEmployeeId(int employeeId)
+        public async Task<IEnumerable<Job>> GetJobsByEmployeeId(string userId)
         {
+            var employee = await this.repository.AllReadonly<Employee>()
+               .FirstOrDefaultAsync(e => e.UserId == userId);
+
             return await this.repository.AllReadonly<Job>()
-                 .Where(j => j.Resumes.Any(r => r.EmployeeId == employeeId))
+                 .Where(j => j.Resumes.Any(r => r.EmployeeId == employee!.Id))
                  .Include(j => j.Category)
                  .Include(j => j.Company)
                  .ToListAsync();
         }
 
-        public async Task<IEnumerable<JobsViewModel>> GetJobsForCertainEmployer(Employer employer)
+        public async Task<IEnumerable<JobsViewModel>> GetJobsForCertainEmployer(string userId)
         {
+            var employer = await this.repository.AllReadonly<Employer>()
+                .FirstOrDefaultAsync(e => e.UserId == userId);
+
             return await this.repository.AllReadonly<Job>()
             .Where(j => j.EmployerId == employer.Id)
             .Select(x => new JobsViewModel()
@@ -250,10 +264,13 @@
             .ToListAsync();
         }
 
-        public async Task<IEnumerable<JobsWithCVsViewModel>> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer)
+        public async Task<IEnumerable<JobsWithCVsViewModel>> GetJobsWithCV(JobsWithCVsViewModel model, string userId)
         {
+            var employer = await this.repository.All<Employer>()
+                           .FirstOrDefaultAsync(e => e.UserId == userId);
+
             var jobs = await this.repository.AllReadonly<Job>()
-            .Where(x => x.EmployerId == employer.Id)
+            .Where(x => x.EmployerId == employer!.Id)
             .OrderByDescending(x => x.CreatedOn)
             .ToListAsync();
 
@@ -280,8 +297,11 @@
             return jobViewModels;
         }
 
-        public async Task<SingleJobViewModel> GetSingleJob(int id, Employer employer)
+        public async Task<SingleJobViewModel> GetSingleJob(int id, string userId)
         {
+            var employer = await this.repository.All<Employer>()
+                                        .FirstOrDefaultAsync(e => e.UserId == userId);
+
             var job = await this.repository.AllReadonly<Job>()
                 .Where(j => j.Id == id)
                 .Select(j => new SingleJobViewModel

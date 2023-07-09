@@ -5,21 +5,17 @@
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Caching.Memory;
 
     using MyJobs.Infrastructure.Data.Models.Identity;
     using MyJobs.Infrastructure.Constants;
-    using MyJobs.Infrastructure.Models;
-    using MyJobs.Core.Repositories;
     using MyJobs.Core.Models.Profile;
     using MyJobs.Core.Services.Contracts;
 
     public class ProfileController : BaseController
     {
         private readonly IProfileService profileService;
-        private readonly IDbRepository repository;
         private readonly IJobService jobService;
         private readonly IMemoryCache cache;
         private readonly UserManager<ApplicationUser> userManager;
@@ -27,7 +23,6 @@
 
         public ProfileController(
             IProfileService profileService,
-            IDbRepository repository,
             IJobService jobService,
             IMemoryCache cache,
             UserManager<ApplicationUser> userManager,
@@ -35,7 +30,6 @@
         {
             this.userManager = userManager;
             this.profileService = profileService;
-            this.repository = repository;
             this.jobService = jobService;
             this.cache = cache;
             this.roleManager = roleManager;
@@ -75,12 +69,9 @@
         [Authorize(Roles = RoleConstants.Employer)]
         public async Task<IActionResult> MyJobs()
         {
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-            var employer = await this.repository.AllReadonly<Employer>()
-                .FirstOrDefaultAsync(e => e.UserId == userId);
-
-            var jobs = await this.jobService.GetJobsForCertainEmployer(employer!);
+            var jobs = await this.jobService.GetJobsForCertainEmployer(userId);
 
             if (jobs != null)
             {
@@ -94,12 +85,9 @@
         [Authorize(Roles = RoleConstants.Employee)]
         public async Task<IActionResult> MyApplications()
         {
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-            var employee = await this.repository.AllReadonly<Employee>()
-                .FirstOrDefaultAsync(e => e.UserId == userId);
-
-            var jobs = await this.jobService.GetJobsByEmployeeId(employee!.Id);
+            var jobs = await this.jobService.GetJobsByEmployeeId(userId);
 
             if (jobs != null)
             {
@@ -113,14 +101,11 @@
         [Authorize(Roles = RoleConstants.Employee)]
         public async Task<IActionResult> Notifications()
         {
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            var employee = await this.repository.AllReadonly<Employee>()
-                .FirstOrDefaultAsync(e => e.UserId == userId);
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
             try
             {
-                var notifications = await this.profileService.GetUnreadNotifications(employee!.Id);
+                var notifications = await this.profileService.GetUnreadNotifications(userId);
                 return Json(notifications);
             }
             catch (Exception)
@@ -148,7 +133,7 @@
         [HttpGet]
         public async Task<IActionResult> EditProfile(int id)
         {
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
             if (userId == null)
             {
@@ -175,7 +160,7 @@
                 return View(model);
             }
 
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
             if (userId == null)
             {
@@ -198,10 +183,8 @@
         public async Task<IActionResult> ReadNotifications()
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var employee = await this.repository.AllReadonly<Employee>()
-                .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            var notifications = await this.profileService.GetReadNotifications(employee!.Id);
+            var notifications = await this.profileService.GetReadNotifications(userId);
 
             if (notifications != null)
             {

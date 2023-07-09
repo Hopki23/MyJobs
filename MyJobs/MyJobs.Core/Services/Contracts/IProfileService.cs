@@ -7,8 +7,8 @@
     {
         Task<UserProfileViewModel> GetUserById(string id, string role);
 
-        Task<IEnumerable<NotificationViewModel>> GetUnreadNotifications(int id);
-        Task<IEnumerable<NotificationViewModel>> GetReadNotifications(int id);
+        Task<IEnumerable<NotificationViewModel>> GetUnreadNotifications(string userId);
+        Task<IEnumerable<NotificationViewModel>> GetReadNotifications(string userId);
 
         Task MarkNotificationAsRead(int id);
 

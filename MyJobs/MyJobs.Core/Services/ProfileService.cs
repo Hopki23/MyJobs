@@ -140,11 +140,14 @@
             return model;
         }
 
-        public async Task<IEnumerable<NotificationViewModel>> GetReadNotifications(int id)
+        public async Task<IEnumerable<NotificationViewModel>> GetReadNotifications(string userId)
         {
+            var employee = await this.repository.AllReadonly<Employee>()
+                .FirstOrDefaultAsync(e => e.UserId == userId);
+
             var notifications = await this.repository.AllReadonly<Notification>()
                 .Include(n => n.Employer)
-                .Where(n => n.EmployeeId == id && n.IsRead)
+                .Where(n => n.EmployeeId == employee!.Id && n.IsRead)
                 .ToListAsync();
 
             return notifications
@@ -155,11 +158,14 @@
                 });
         }
 
-        public async Task<IEnumerable<NotificationViewModel>> GetUnreadNotifications(int id)
+        public async Task<IEnumerable<NotificationViewModel>> GetUnreadNotifications(string userId)
         {
+            var employee = await this.repository.AllReadonly<Employee>()
+               .FirstOrDefaultAsync(e => e.UserId == userId);
+
             var notifications = await this.repository.AllReadonly<Notification>()
                 .Include(n => n.Employer)
-                .Where(n => n.EmployeeId == id && !n.IsRead)
+                .Where(n => n.EmployeeId == employee!.Id && !n.IsRead)
                 .ToListAsync();
 
             return notifications

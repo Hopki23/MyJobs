@@ -4,14 +4,12 @@
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
 
     using MyJobs.Core.Models.Job;
     using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Constants;
-    using MyJobs.Infrastructure.Models;
 
     public class JobsController : Controller
     {
@@ -52,22 +50,11 @@
             }
 
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var result = await this.repository.All<Employer>()
-                .Where(e => e.UserId == userId)
-                .Select(e => new { e.Id, e.CompanyId })
-                .FirstOrDefaultAsync();
-
-            if (result == null)
-            {
-                return View(nameof(All));
-            }
-
-            int employerId = result.Id;
-            int companyId = result.CompanyId;
 
             try
             {
-                await this.jobService.CreateAsync(model, employerId, companyId);
+                await this.jobService.CreateAsync(model, userId);
+                TempData[NotificationConstants.InformationMessage] = "Your job offer is under review by the admin. We will notify you once a decision has been made.";
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception)
@@ -99,10 +86,8 @@
         public async Task<IActionResult> GetById(int id)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var employer = await this.repository.All<Employer>()
-                                        .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            var model = await this.jobService.GetSingleJob(id, employer);
+            var model = await this.jobService.GetSingleJob(id, userId!);
             return View(model);
         }
 
@@ -128,12 +113,9 @@
 
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-            var employee = await this.repository.All<Employee>()
-                .FirstOrDefaultAsync(e => e.UserId == userId);
-
             try
             {
-                await this.jobService.Apply(model, employee!);
+                await this.jobService.Apply(model, userId);
                 TempData[NotificationConstants.SuccessMessage] = NotificationConstants.SuccessApply;
                 return RedirectToAction(nameof(All));
             }
@@ -167,12 +149,10 @@
         public async Task<IActionResult> ReceivedResumes(JobsWithCVsViewModel model)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var employer = await this.repository.All<Employer>()
-                            .FirstOrDefaultAsync(e => e.UserId == userId);
 
             try
             {
-                var jobViewModels = await this.jobService.GetJobsWithCV(model, employer!);
+                var jobViewModels = await this.jobService.GetJobsWithCV(model, userId!);
 
                 return View(jobViewModels);
             }
@@ -213,13 +193,12 @@
             try
             {
                 await this.jobService.Update(id, model);
+                return RedirectToAction(nameof(GetById), new { id });
             }
             catch (Exception)
             {
                 return View("CustomError");
             }
-
-            return RedirectToAction(nameof(GetById), new { id });
         }
 
         [HttpPost]

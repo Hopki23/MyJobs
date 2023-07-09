@@ -6,7 +6,7 @@
 
     public interface IJobService
     {
-        Task CreateAsync(CreateJobViewModel model, int employerId, int companyId);
+        Task CreateAsync(CreateJobViewModel model, string userId);
 
         Task<IEnumerable<JobsViewModel>> GetAllJobs();
 
@@ -14,11 +14,11 @@
 
         int GetTotalJobCount();
 
-        Task<SingleJobViewModel> GetSingleJob(int id, Employer employer);
+        Task<SingleJobViewModel> GetSingleJob(int id, string userId);
 
-        Task Apply(UploadResumeViewModel model, Employee employee);
+        Task Apply(UploadResumeViewModel model, string userId);
 
-        Task<IEnumerable<JobsWithCVsViewModel>> GetJobsWithCV(JobsWithCVsViewModel model, Employer employer);
+        Task<IEnumerable<JobsWithCVsViewModel>> GetJobsWithCV(JobsWithCVsViewModel model, string userId);
 
         Task<EditJobViewModel> GetById(int id, string userId);
 
@@ -32,8 +32,8 @@
 
         IEnumerable<Job> FilterJobOffers(string select, string[] selectedWorkingTimes, string locationSelect);
 
-        Task<IEnumerable<JobsViewModel>> GetJobsForCertainEmployer(Employer employer);
+        Task<IEnumerable<JobsViewModel>> GetJobsForCertainEmployer(string userId);
 
-        Task<IEnumerable<Job>> GetJobsByEmployeeId(int employeeId);
+        Task<IEnumerable<Job>> GetJobsByEmployeeId(string userId);
     }
 }
