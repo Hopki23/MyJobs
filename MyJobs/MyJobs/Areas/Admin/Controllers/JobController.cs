@@ -24,7 +24,7 @@
         {
             try
             {
-                await this.jobService.GetById(id);
+                await this.jobService.ApproveJob(id);
 
                 return RedirectToAction(nameof(Index));
             }

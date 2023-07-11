@@ -13,6 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyJobs.Infrastructure", "My
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyJobs.Core", "MyJobs.Core\MyJobs.Core.csproj", "{96BD346A-DB5A-441F-8F65-8D854EC48EFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyJobs.Tests", "MyJobs.Tests\MyJobs.Tests.csproj", "{F42AFC62-34C0-4EBF-A563-F4DCFD9A4347}"
+	ProjectSection(ProjectDependencies) = postProject
+		{96BD346A-DB5A-441F-8F65-8D854EC48EFA} = {96BD346A-DB5A-441F-8F65-8D854EC48EFA}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +36,10 @@ Global
 		{96BD346A-DB5A-441F-8F65-8D854EC48EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96BD346A-DB5A-441F-8F65-8D854EC48EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96BD346A-DB5A-441F-8F65-8D854EC48EFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F42AFC62-34C0-4EBF-A563-F4DCFD9A4347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F42AFC62-34C0-4EBF-A563-F4DCFD9A4347}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F42AFC62-34C0-4EBF-A563-F4DCFD9A4347}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F42AFC62-34C0-4EBF-A563-F4DCFD9A4347}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -32,13 +32,14 @@
             {
                 throw new ArgumentException("The requested resume was not found.");
             }
+            var employee = await this.repository.GetByIdAsync<Employee>(employeeId);
 
-            //var existingEmployment = employee.Employments.FirstOrDefault(c => c.EmployeeId == employeeId);
+            var existingEmployment = employee.Employments.FirstOrDefault(c => c.EmployeeId == employeeId);
 
-            //if (existingEmployment != null)
-            //{
-            //    throw new InvalidOperationException("The user has already been approved for this job.");
-            //}
+            if (existingEmployment != null)
+            {
+                throw new InvalidOperationException("The user has already been approved for this job.");
+            }
 
             job.Resumes.Remove(cvToRemove);
 
@@ -57,7 +58,6 @@
                 CreatedAt = DateTime.Now
             };
 
-            var employee = await this.repository.GetByIdAsync<Employee>(employeeId);
             var employer = await this.repository.GetByIdAsync<Employer>(employerId);
 
             employee.Jobs.Add(job);

@@ -23,5 +23,7 @@
         Task<IEnumerable<CategoryViewModel>> GetAll();
 
         Task DeleteCategoryJobsAsync(int id);
+
+        Task<bool> CategoryExistById(int id);
     }
 }

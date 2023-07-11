@@ -43,6 +43,15 @@
         [Authorize(Roles = RoleConstants.Employer)]
         public async Task<IActionResult> Create(CreateJobViewModel model)
         {
+            bool doesCategoryExist = await this.categoriesService.CategoryExistById(model.CategoryId);
+
+            if (!doesCategoryExist)
+            {
+                TempData[NotificationConstants.ErrorMessage] = "Selected category does not exist!";
+                model.CategoryItems = await this.categoriesService.GetAllCategories();
+                return View(model);
+            }
+
             if (!ModelState.IsValid)
             {
                 model.CategoryItems = await this.categoriesService.GetAllCategories();

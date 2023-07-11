@@ -120,5 +120,11 @@
                    .Where(j => j.CategoryId == id)
                    .ToListAsync();
         }
+
+        public async Task<bool> CategoryExistById(int id)
+        {
+            return await this.dbRepository.AllReadonly<Category>()
+                .AnyAsync(c => c.Id == id);
+        }
     }
 }

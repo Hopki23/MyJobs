@@ -22,7 +22,7 @@
 
         Task<EditJobViewModel> GetById(int id, string userId);
 
-        Task GetById(int id);
+        Task ApproveJob(int id);
 
         Task Update(int id, EditJobViewModel model);
 

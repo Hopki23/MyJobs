@@ -40,6 +40,7 @@
                 throw new ArgumentException(NotificationConstants.CreateResumeError);
             }
 
+
             var job = await this.repository.All<Job>()
                 .Include(j => j.Resumes)
                 .Include(e => e.Employees)
@@ -74,6 +75,8 @@
                 .Where(e => e.UserId == userId)
                 .Select(e => new { e.Id, e.CompanyId })
                 .FirstOrDefaultAsync();
+
+
 
             var job = new Job
             {
@@ -112,7 +115,7 @@
 
         public IEnumerable<Job> FilterJobOffers(string select, string[] selectedWorkingTimes, string locationSelect)
         {
-            IQueryable<Job> filteredJobOffers = this.repository.AllReadonly<Job>()
+            var filteredJobOffers = this.repository.AllReadonly<Job>()
                 .Where(x => !x.IsDeleted);
 
             if (!string.IsNullOrEmpty(select))
@@ -194,7 +197,7 @@
             return job;
         }
 
-        public async Task GetById(int id)
+        public async Task ApproveJob(int id)
         {
             var job = await this.repository.All<Job>()
                  .FirstOrDefaultAsync(x => x.Id == id);
@@ -252,7 +255,7 @@
                 .FirstOrDefaultAsync(e => e.UserId == userId);
 
             return await this.repository.AllReadonly<Job>()
-            .Where(j => j.EmployerId == employer.Id)
+            .Where(j => j.EmployerId == employer!.Id)
             .Select(x => new JobsViewModel()
             {
                 Id = x.Id,
