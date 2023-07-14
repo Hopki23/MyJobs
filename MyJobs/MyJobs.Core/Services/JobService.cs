@@ -40,7 +40,6 @@
                 throw new ArgumentException(NotificationConstants.CreateResumeError);
             }
 
-
             var job = await this.repository.All<Job>()
                 .Include(j => j.Resumes)
                 .Include(e => e.Employees)
@@ -75,8 +74,6 @@
                 .Where(e => e.UserId == userId)
                 .Select(e => new { e.Id, e.CompanyId })
                 .FirstOrDefaultAsync();
-
-
 
             var job = new Job
             {
