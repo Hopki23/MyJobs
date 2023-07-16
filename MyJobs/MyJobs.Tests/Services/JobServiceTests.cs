@@ -871,5 +871,597 @@
             Assert.That(dbJob, Is.Not.Null);
             Assert.That(dbJob.IsApproved, Is.True);
         }
+
+        [Test]
+        public async Task GetJobFilterViewModelShouldWorkCorrectlyTest()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            categoryServiceMock.Setup(c => c.GetAllCategories())
+                .ReturnsAsync(new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("1", "Category 1"),
+                    new KeyValuePair<string, string>("2", "Category 2"),
+                    new KeyValuePair<string, string>("3", "Category 3")
+                });
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+            await this.repository.AddRangeAsync(new List<Job>
+            {
+                new Job { Id = 1, WorkingTime = "Full-Time", Town = "Town 1", Description = "", Offering = "", Requirements = "", Responsibilities = "", Title = "" },
+                new Job { Id = 2, WorkingTime = "Part-Time", Town = "Town 2", Description = "", Offering = "", Requirements = "", Responsibilities = "", Title = ""},
+                new Job { Id = 3, WorkingTime = "Remote", Town = "Town 3", Description = "", Offering = "", Requirements = "", Responsibilities = "", Title = "" },
+                new Job { Id = 4, WorkingTime = "Full-Time", Town = "Town 2", Description = "", Offering = "", Requirements = "", Responsibilities = "", Title = "" }
+            });
+            await this.repository.SaveChangesAsync();
+
+            var jobFilterViewModel = await this.jobService.GetJobFilterViewModel();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(jobFilterViewModel.Categories, Has.Count.EqualTo(3));
+                Assert.That(jobFilterViewModel.WorkingTimes, Has.Count.EqualTo(3));
+                Assert.That(jobFilterViewModel.TownNames, Has.Count.EqualTo(3));
+                Assert.That(jobFilterViewModel.WorkingTimes, Contains.Item("Full-Time"));
+                Assert.That(jobFilterViewModel.TownNames, Contains.Item("Town 1"));
+            });
+        }
+        [Test]
+        public async Task GetJobsByEmployeeIdShouldWorkCorrectly()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+            var category = new Category()
+            {
+                Id = 1,
+                Name = "categoryy"
+            };
+
+            var company = new Company()
+            {
+                Id = 1,
+                CompanyName = "dsadsa",
+                Address = "",
+                PhoneNumber = "fas"
+            };
+
+            var employee = new Employee
+            {
+                Id = 1,
+                FirstName = "Test",
+                LastName = "Test",
+                UserId = "test",
+            };
+
+            var job = new Job()
+            {
+                Id = 1,
+                Description = "",
+                Offering = "",
+                Requirements = "",
+                Responsibilities = "",
+                Town = "",
+                Title = "",
+                CategoryId = category.Id,
+                CompanyId = company.Id,
+                IsDeleted = false
+            };
+
+            var cv = new CV
+            {
+                Id = 1,
+                Address = "",
+                Education = "",
+                Experience = "",
+                Gender = "",
+                PhoneNumber = "",
+                ResumeFile = Array.Empty<byte>(),
+                ResumeFileName = "",
+                Skills = "",
+                Summary = "",
+                Title = "",
+                EmployeeId = employee.Id
+            };
+
+            job.Resumes.Add(cv);
+
+            await repository.AddAsync(category);
+            await repository.AddAsync(company);
+            await repository.AddAsync(employee);
+            await repository.AddAsync(job);
+            await repository.AddAsync(cv);
+            await repository.SaveChangesAsync();
+
+            var jobs = await this.jobService.GetJobsByEmployeeId(employee.UserId);
+
+            Assert.That(jobs, Is.Not.Null);
+            Assert.That(jobs.Count(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task GetJobsForCertainEmployerShouldWorkCorrectlyTest()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+            var employer = new Employer
+            {
+                Id = 1,
+                FirstName = "Test",
+                LastName = "Test",
+                UserId = "test",
+            };
+
+            await this.repository.AddRangeAsync(new List<Job>()
+            {
+                new Job()
+                {
+                    Id = 1,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 1",
+                    Title = "",
+                    IsDeleted = false,
+                    Category = new Category { Id = 1, Name = "Category 3" },
+                    WorkingTime = "Remote",
+                    EmployerId = 1,
+                },
+                new Job()
+                {
+                    Id = 2,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 2",
+                    Title = "",
+                    IsDeleted = false,
+                    Category = new Category { Id = 2, Name = "Category 2" },
+                    WorkingTime = "Part-Time",
+                    EmployerId= 1,
+                },
+                 new Job()
+                {
+                    Id = 3,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 3",
+                    Title = "",
+                    IsDeleted = false,
+                    Category = new Category { Id = 3, Name = "Category 1" },
+                    WorkingTime = "Part-Time",
+                    EmployerId= 1,
+                }
+            });
+
+            await repository.AddAsync(employer);
+            await repository.SaveChangesAsync();
+
+            var dbJobs = await this.jobService.GetJobsForCertainEmployer("test");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(dbJobs, Is.Not.Null);
+                Assert.That(dbJobs.Count(), Is.EqualTo(3));
+                Assert.That(dbJobs.FirstOrDefault().Id, Is.EqualTo(3));
+            });
+        }
+
+        [Test]
+        public async Task GetSingleJobShouldThrowExceptionForNotExistingJobTest()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+            string userId = "test";
+
+            var employer = new Employer
+            {
+                Id = 1,
+                FirstName = "Test",
+                LastName = "Test",
+                UserId = userId,
+            };
+
+            await this.repository.AddRangeAsync(new List<Job>()
+            {
+                new Job()
+                {
+                    Id = 1,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 1",
+                    Title = "",
+                    IsDeleted = false,
+                    WorkingTime = "Remote",
+                    EmployerId = 1,
+                },
+                new Job()
+                {
+                    Id = 2,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 2",
+                    Title = "",
+                    IsDeleted = false,
+                    WorkingTime = "Part-Time",
+                    EmployerId= 1,
+                },
+                 new Job()
+                {
+                    Id = 3,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 3",
+                    Title = "",
+                    IsDeleted = false,
+                    WorkingTime = "Part-Time",
+                    EmployerId= 1,
+                }
+            });
+
+            await repository.AddAsync(employer);
+            await repository.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await this.jobService.GetSingleJob(54, userId));
+            Assert.That(ex.Message, Is.EqualTo("The requested job was not found."));
+        }
+
+        [Test]
+        public async Task GetSingleJobShouldWorkCorrectlyTest()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+            string userId = "test";
+
+            var employer = new Employer
+            {
+                Id = 1,
+                FirstName = "Test",
+                LastName = "Test",
+                UserId = userId,
+            };
+
+            await this.repository.AddRangeAsync(new List<Job>()
+            {
+                new Job()
+                {
+                    Id = 1,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 1",
+                    Title = "",
+                    IsDeleted = false,
+                    WorkingTime = "Remote",
+                    Category = new Category { Id = 1, Name = "Category 1" },
+                    Company = new Company {Id = 2, CompanyName = "doggg", PhoneNumber = "dgas", Address = "dsag"},
+                    EmployerId = 1,
+                },
+                 new Job()
+                {
+                    Id = 2,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 3",
+                    Title = "",
+                    IsDeleted = false,
+                    WorkingTime = "Part-Time",
+                    Category = new Category { Id = 2, Name = "Category 1" },
+                    Company = new Company {Id = 1, CompanyName = "dog", PhoneNumber = "das", Address = "dsa"},
+                    EmployerId= 1,
+                }
+            });
+
+            await repository.AddAsync(employer);
+            await repository.SaveChangesAsync();
+
+            var job = await this.jobService.GetSingleJob(1, userId);
+
+            Assert.That(job, Is.Not.Null);
+            Assert.That(job.IsOwner, Is.True);
+        }
+
+        [Test]
+        public async Task GetTotalJobCountTest()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+            await this.repository.AddRangeAsync(new List<Job>()
+            {
+                new Job()
+                {
+                    Id = 1,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 1",
+                    Title = "",
+                    IsDeleted = false,
+                    WorkingTime = "Remote",
+                    EmployerId = 1,
+                },
+                 new Job()
+                {
+                    Id = 2,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 3",
+                    Title = "",
+                    IsDeleted = false,
+                    WorkingTime = "Part-Time",
+                    EmployerId= 1,
+                }
+            });
+
+            await repository.SaveChangesAsync();
+
+            var jobs = await this.jobService.GetTotalJobCount();
+
+            Assert.That(jobs, Is.EqualTo(2));
+        }
+
+        [Test]
+        public async Task UpdateShoulThrowException()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+
+            var job = new Job()
+            {
+                Id = 1,
+                Description = "",
+                Offering = "",
+                Requirements = "",
+                Responsibilities = "",
+                Town = "Town 1",
+                Title = "",
+                IsDeleted = false,
+                WorkingTime = "Remote",
+                EmployerId = 1,
+            };
+
+            await this.repository.AddAsync(job);
+            await repository.SaveChangesAsync();
+
+            var model = new EditJobViewModel()
+            {
+                Title = "Job Title",
+                Description = "Job Description",
+                Requirements = "Job Requirements",
+                Responsibilities = "Job Responsibilities",
+                TownName = "Job Town",
+                WorkingTime = "Full-Time",
+                Salary = 1000,
+                Offering = "Job Offering",
+                CategoryId = 1
+            };
+
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await this.jobService.Update(6, model));
+            Assert.That(ex.Message, Is.EqualTo("The requested job was not found."));
+        }
+
+        [Test]
+        public async Task UpdateShoulWorkCorrectly()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+
+            var job = new Job()
+            {
+                Id = 1,
+                Description = "",
+                Offering = "",
+                Requirements = "",
+                Responsibilities = "",
+                Town = "Town 1",
+                Title = "",
+                IsDeleted = false,
+                WorkingTime = "Remote",
+                EmployerId = 1,
+            };
+
+            await this.repository.AddAsync(job);
+            await repository.SaveChangesAsync();
+
+            await this.jobService.Update(1, new EditJobViewModel()
+            {
+                Id = 1,
+                Title = "Job Title",
+                Description = "Job Description",
+                Requirements = "Job Requirements",
+                Responsibilities = "Job Responsibilities",
+                TownName = "Job Town",
+                WorkingTime = "Full-Time",
+                Salary = 1000,
+                Offering = "Job Offering",
+                CategoryId = 1
+            });
+
+            var dbJob = await this.repository.GetByIdAsync<Job>(1);
+
+            Assert.That(dbJob.Title, Is.EqualTo("Job Title"));
+        }
+
+        [Test]
+        public async Task GetAllJobsMethodWithParametersTest()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+            await this.repository.AddRangeAsync(new List<Job>()
+            {
+                new Job()
+                {
+                    Id = 1,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 1",
+                    Title = "",
+                    IsDeleted = false,
+                    Category = new Category { Id = 1,  Name = "test"},
+                    WorkingTime = "Remote",
+                    EmployerId = 1,
+                    IsApproved = true,
+                     CreatedOn = new DateTime(2022, 3, 1)
+                },
+                 new Job()
+                {
+                    Id = 2,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 2",
+                    Title = "",
+                    IsDeleted = false,
+                    IsApproved = true,
+                    Category = new Category { Id = 2,  Name = "test2"},
+                    WorkingTime = "Part-Time",
+                    EmployerId= 1,
+                     CreatedOn = new DateTime(2022, 2, 1)
+                },
+                   new Job()
+                {
+                    Id = 3,
+                    Description = "",
+                    Offering = "",
+                    Requirements = "",
+                    Responsibilities = "",
+                    Town = "Town 3",
+                    Title = "",
+                    IsDeleted = false,
+                    Category = new Category { Id = 3,  Name = "test3"},
+                    IsApproved = true,
+                    WorkingTime = "Part-Time",
+                    EmployerId= 1,
+                    CreatedOn = new DateTime(2022, 1, 1)
+                }
+            });
+
+            await this.repository.SaveChangesAsync();
+
+            var jobs = await this.jobService.GetAllJobs(1, 2);
+
+            Assert.That(jobs, Is.Not.Null);
+            Assert.That(jobs.Count, Is.EqualTo(2));
+            Assert.That(jobs.First().Id, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task GetJobsWithCVReturn0WhenEmployerIdIsWrong()
+        {
+            var categoryServiceMock = new Mock<ICategoryService>();
+            var categoryService = categoryServiceMock.Object;
+
+            this.repository = new DbRepository(this.context);
+            this.jobService = new JobService(this.repository, categoryService);
+
+            var userId = "testUser";
+            var employerId = 1;
+
+            var employer = new Employer
+            {
+                Id = employerId,
+                FirstName = "",
+                LastName = "",
+                UserId = userId
+            };
+
+            var job1 = new Job()
+            {
+                Id = 1,
+                Description = "Job 1",
+                Offering = "",
+                Requirements = "",
+                Responsibilities = "",
+                Town = "",
+                Title = "Job 1",
+                CategoryId = 1,
+                IsDeleted = false,
+                EmployerId = employerId
+            };
+
+            var cv1 = new CV
+            {
+                Id = 1,
+                EmployeeId = 1,
+                Jobs = new List<Job> { job1 },
+                IsDeleted = false,
+                Address = "",
+                Education = "",
+                Experience = "",
+                Gender = "",
+                PhoneNumber = "",
+                ResumeFile = Array.Empty<byte>(),
+                ResumeFileName = "",
+                Skills = "",
+                Summary = "",
+                Title = "",
+            };
+
+            await this.repository.AddAsync(employer);
+            await this.repository.AddAsync(job1);
+            await this.repository.AddAsync(cv1);
+            await this.repository.SaveChangesAsync();
+
+            var result = await jobService.GetJobsWithCV(new JobsWithCVsViewModel(), userId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Count(), Is.EqualTo(1));
+                Assert.That(result.First().CVs, Has.Count.EqualTo(1));
+            });
+        }
     }
 }

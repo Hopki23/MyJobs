@@ -84,7 +84,7 @@
                 PageNumber = page,
                 ItemsPerPage = ItemsPerPage,
                 Jobs = await this.jobService.GetAllJobs(page, ItemsPerPage),
-                JobsTotalCount = this.jobService.GetTotalJobCount(),
+                JobsTotalCount = await this.jobService.GetTotalJobCount(),
                 JobFilter = filterViewModel,
             };
             return View(model);

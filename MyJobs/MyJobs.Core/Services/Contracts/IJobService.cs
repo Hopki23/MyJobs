@@ -12,7 +12,7 @@
 
         Task<IEnumerable<JobsViewModel>> GetAllJobs(int page, int itemsToTake = 5);
 
-        int GetTotalJobCount();
+        Task<int> GetTotalJobCount();
 
         Task<SingleJobViewModel> GetSingleJob(int id, string userId);
 

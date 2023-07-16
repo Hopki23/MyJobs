@@ -240,7 +240,7 @@
                .FirstOrDefaultAsync(e => e.UserId == userId);
 
             return await this.repository.AllReadonly<Job>()
-                 .Where(j => j.Resumes.Any(r => r.EmployeeId == employee!.Id))
+                .Where(j => j.Resumes.Any(r => r.EmployeeId == employee!.Id))
                  .Include(j => j.Category)
                  .Include(j => j.Company)
                  .ToListAsync();
@@ -334,9 +334,9 @@
             return job;
         }
 
-        public int GetTotalJobCount()
+        public async Task<int> GetTotalJobCount()
         {
-            return this.repository.AllReadonly<Job>().Count();
+            return await this.repository.AllReadonly<Job>().CountAsync();
         }
 
         public async Task Update(int id, EditJobViewModel model)
