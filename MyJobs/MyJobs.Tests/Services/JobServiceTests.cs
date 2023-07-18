@@ -1463,5 +1463,11 @@
                 Assert.That(result.First().CVs, Has.Count.EqualTo(1));
             });
         }
+
+        [TearDown]
+        public void TearDown()
+        {
+            this.context.Dispose();
+        }
     }
 }

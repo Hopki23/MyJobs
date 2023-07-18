@@ -422,5 +422,11 @@
                 Assert.That(employerNotifications[0].Message, Is.EqualTo("We are sorry, but you are not approved to work with us."));
             });
         }
+
+        [TearDown]
+        public void TearDown()
+        {
+            this.context.Dispose();
+        }
     }
 }

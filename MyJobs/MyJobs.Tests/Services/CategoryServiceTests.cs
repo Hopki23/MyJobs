@@ -518,5 +518,11 @@
 
             Assert.That(result, Is.False);
         }
+
+        [TearDown]
+        public void TearDown()
+        {
+            this.context.Dispose();
+        }
     }
 }
