@@ -81,7 +81,7 @@
             var roles = await this.userManager.GetRolesAsync(user);
             var role = roles.FirstOrDefault();
 
-            if (role == null)
+            if (role == null || role != RoleConstants.Employee && role != RoleConstants.Employer)
             {
                 throw new ArgumentException("Invalid role!");
             }
@@ -108,7 +108,7 @@
                     IsEmployee = true
                 };
             }
-            else if (role == RoleConstants.Employer)
+            else
             {
                 var employer = await this.repository.AllReadonly<Employer>()
                     .Where(x => x.Id == id)
@@ -132,11 +132,6 @@
                     IsEmployee = false
                 };
             }
-            else
-            {
-                throw new ArgumentException("Invalid role!");
-            }
-
             return model;
         }
 
@@ -204,10 +199,6 @@
                     .Include(e => e.User)
                     .Where(e => e.UserId == id.ToString())
                     .FirstOrDefaultAsync();
-                if (employer == null)
-                {
-                    throw new InvalidOperationException();
-                }
 
                 userProfile.Id = employer!.Id;
                 userProfile.FirstName = employer.FirstName;

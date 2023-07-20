@@ -6,7 +6,6 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Caching.Memory;
 
     using MyJobs.Infrastructure.Data.Models.Identity;
     using MyJobs.Infrastructure.Constants;
@@ -17,21 +16,18 @@
     {
         private readonly IProfileService profileService;
         private readonly IJobService jobService;
-        private readonly IMemoryCache cache;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
         public ProfileController(
             IProfileService profileService,
             IJobService jobService,
-            IMemoryCache cache,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
             this.userManager = userManager;
             this.profileService = profileService;
             this.jobService = jobService;
-            this.cache = cache;
             this.roleManager = roleManager;
         }
 
@@ -54,7 +50,7 @@
             {
                 var userProfile = await this.profileService.GetUserById(user.Id, role);
 
-                ViewBag.UserId = userProfile.Id;
+                //ViewBag.UserId = userProfile.Id;
 
                 return View(userProfile);
             }
@@ -135,14 +131,9 @@
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-            if (userId == null)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-
             try
             {
-                var model = await this.profileService.GetProfileForEditing(id, userId);
+                var model = await this.profileService.GetProfileForEditing(id, userId!);
                 model.Id = id;
                 return View(model);
             }
@@ -162,15 +153,10 @@
 
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-            if (userId == null)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-
             try
             {
                 await this.profileService.EditProfile(model, id, userId);
-                return RedirectToAction(nameof(Index), new { id });
+                return RedirectToAction(nameof(PersonalInformation));
             }
             catch (Exception)
             {

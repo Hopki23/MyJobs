@@ -13,6 +13,7 @@
     using MyJobs.Core.Models.Profile;
     using MyJobs.Core.Services;
     using MyJobs.Infrastructure.Data.Models;
+    using MyJobs.Infrastructure.Constants;
 
     [TestFixture]
     public class ProfileServiceTests
@@ -38,8 +39,15 @@
             var userId = "testUser";
             var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
             var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
-            var user = new ApplicationUser { Id = userId, UserName = "f00", Email = "f00@example.com", PasswordHash = "test",
-            FirstName = "", LastName = ""};
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
 
             userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
 
@@ -167,7 +175,7 @@
                 FirstName = "John",
                 LastName = "Doe",
                 User = user,
-                Company = new Company { Id = 1, CompanyName = "test", Address = "da", PhoneNumber = "sakflhjhjfj"}
+                Company = new Company { Id = 1, CompanyName = "test", Address = "da", PhoneNumber = "sakflhjhjfj" }
             };
 
             await this.repository.AddAsync(employer);
@@ -302,7 +310,7 @@
             await this.repository.AddAsync(notification2);
             await this.repository.SaveChangesAsync();
 
-           var notifications = await profileService.GetReadNotifications(userId);
+            var notifications = await profileService.GetReadNotifications(userId);
 
             Assert.That(notifications, Is.Not.Null);
             Assert.That(notifications.Count, Is.EqualTo(2));
@@ -396,6 +404,495 @@
             Assert.That(dbNotification.IsRead, Is.True);
         }
 
+        [Test]
+        public async Task GetProfileForEditingShouldThrowExceptionForNotExistingEmployee()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            var roles = new List<string> { "Employee" };
+            userMgr.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
+            userMgr.Setup(x => x.AddToRoleAsync(user, It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employeeId = 1;
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                UserId = "faaaakeeee",
+                FirstName = "John",
+                LastName = "Doe",
+                User = user
+            };
+
+            await this.repository.AddAsync(employee);
+            await this.repository.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await profileService.GetProfileForEditing(5, userId));
+            Assert.That(ex.Message, Is.EqualTo("Invalid employee!"));
+        }
+
+        [Test]
+        public async Task GetProfileForEditingShouldThrowExceptionForNotExistingRole()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            var roles = new List<string> { };
+            userMgr.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
+            userMgr.Setup(x => x.AddToRoleAsync(user, It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employeeId = 1;
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                UserId = "faaaakeeee",
+                FirstName = "John",
+                LastName = "Doe",
+                User = user
+            };
+
+            await this.repository.AddAsync(employee);
+            await this.repository.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await profileService.GetProfileForEditing(1, userId));
+            Assert.That(ex.Message, Is.EqualTo("Invalid role!"));
+        }
+
+        [Test]
+        public async Task GetProfileForEditingShouldThrowExceptionForEmployeeWrongUserId()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            var roles = new List<string> { "Employee" };
+            userMgr.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
+            userMgr.Setup(x => x.AddToRoleAsync(user, It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employeeId = 1;
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                UserId = "faaaakeeee",
+                FirstName = "John",
+                LastName = "Doe",
+                User = user
+            };
+
+            await this.repository.AddAsync(employee);
+            await this.repository.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await profileService.GetProfileForEditing(employeeId, userId));
+            Assert.That(ex.Message, Is.EqualTo("Invalid employee!"));
+        }
+
+        [Test]
+        public async Task GetProfileForEditingShouldThrowExceptionForNotWrongRole()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            var roles = new List<string> { "Greshka" };
+            userMgr.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
+            userMgr.Setup(x => x.AddToRoleAsync(user, It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employeeId = 1;
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                UserId = "faaaakeeee",
+                FirstName = "John",
+                LastName = "Doe",
+                User = user
+            };
+
+            await this.repository.AddAsync(employee);
+            await this.repository.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await profileService.GetProfileForEditing(1, userId));
+            Assert.That(ex.Message, Is.EqualTo("Invalid role!"));
+        }
+
+         [Test]
+        public async Task GetProfileForEditingShouldWorkCorrectlyForEmployee()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            var roles = new List<string> { "Employee" };
+            userMgr.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
+            userMgr.Setup(x => x.AddToRoleAsync(user, It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employeeId = 1;
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                UserId = userId,
+                FirstName = "John",
+                LastName = "Doe",
+                User = user
+            };
+
+            await this.repository.AddAsync(employee);
+            await this.repository.SaveChangesAsync();
+
+            var model = await profileService.GetProfileForEditing(employeeId, userId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(model.FirstName, Is.EqualTo("John"));
+                Assert.That(model.LastName, Is.EqualTo("Doe"));
+            });
+        }
+
+        [Test]
+        public async Task GetProfileForEditingShouldThrowExceptionForEmployerWrongUserId()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            var roles = new List<string> { "Employer" };
+            userMgr.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
+            userMgr.Setup(x => x.AddToRoleAsync(user, It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employerId = 1;
+
+            var employer = new Employer
+            {
+                Id = employerId,
+                UserId = "faaaakeeee",
+                FirstName = "John",
+                LastName = "Doe",
+                User = user,
+                Company = new Company { Id = 1, Address = "", CompanyName = "", PhoneNumber = ""}
+            };
+
+            await this.repository.AddAsync(employer);
+            await this.repository.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await profileService.GetProfileForEditing(employerId, userId));
+            Assert.That(ex.Message, Is.EqualTo("Invalid employer!"));
+        }
+
+        [Test]
+        public async Task GetProfileForEditingShouldThrowExceptionForNotExistingEmployer()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            var roles = new List<string> { "Employer" };
+            userMgr.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
+            userMgr.Setup(x => x.AddToRoleAsync(user, It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employerId = 1;
+
+            var employer = new Employer
+            {
+                Id = employerId,
+                UserId = "faaaakeeee",
+                FirstName = "John",
+                LastName = "Doe",
+                User = user,
+                Company = new Company { Id = 1, Address = "", CompanyName = "", PhoneNumber = "" }
+            };
+
+            await this.repository.AddAsync(employer);
+            await this.repository.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await profileService.GetProfileForEditing(5, userId));
+            Assert.That(ex.Message, Is.EqualTo("Invalid employer!"));
+        }
+
+        [Test]
+        public async Task GetProfileForEditingShouldWorkCorrectlyForEmployer()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            var roles = new List<string> { "Employer" };
+            userMgr.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(roles);
+            userMgr.Setup(x => x.AddToRoleAsync(user, It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employerId = 1;
+
+            var employer = new Employer
+            {
+                Id = employerId,
+                UserId = userId,
+                FirstName = "John",
+                LastName = "Doe",
+                User = user,
+                Company = new Company { Id = 1, Address = "dasdsa", CompanyName = "aneve", PhoneNumber = "amida" }
+            };
+
+            await this.repository.AddAsync(employer);
+            await this.repository.SaveChangesAsync();
+
+            var model = await profileService.GetProfileForEditing(employerId, userId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(model.FirstName, Is.EqualTo("John"));
+                Assert.That(model.LastName, Is.EqualTo("Doe"));
+                Assert.That(model.CompanyName, Is.EqualTo("aneve"));
+                Assert.That(model.IsEmployee, Is.False);
+            });
+        }
+
+        [Test]
+        public async Task GetUserByIdShouldWorkCorrectlyForEmployee()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employeeId = 1;
+
+            var employee = new Employee
+            {
+                Id = employeeId,
+                UserId = userId,
+                FirstName = "John",
+                LastName = "Doe",
+                User = user
+            };
+
+            await this.repository.AddAsync(employee);
+            await this.repository.SaveChangesAsync();
+
+            var model = await profileService.GetUserById(userId, RoleConstants.Employee);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(model.Id, Is.EqualTo(1));
+                Assert.That(model.FirstName, Is.EqualTo("John"));
+                Assert.That(model.LastName, Is.EqualTo("Doe"));
+            });
+        }
+
+        [Test]
+        public async Task GetUserByIdShouldWorkCorrectlyForEmployer()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employerId = 1;
+
+            var employer = new Employer
+            {
+                Id = employerId,
+                UserId = userId,
+                FirstName = "John",
+                LastName = "Doe",
+                User = user,
+                Company = new Company { Id = 1, CompanyName = "test", Address = "da", PhoneNumber = "sakflhjhjfj" }
+            };
+
+            await this.repository.AddAsync(employer);
+            await this.repository.SaveChangesAsync();
+
+            var model = await profileService.GetUserById(userId, RoleConstants.Employer);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(model.Id, Is.EqualTo(1));
+                Assert.That(model.FirstName, Is.EqualTo("John"));
+                Assert.That(model.CompanyName, Is.EqualTo("test"));
+                Assert.That(model.CompanyAddress, Is.EqualTo("da"));
+            });
+        }
+
+        [Test]
+        public async Task GetUserByIdShouldThrowExceptionForInvalidRole()
+        {
+            var userId = "testUser";
+            var UserStoreMock = Mock.Of<IUserStore<ApplicationUser>>();
+            var userMgr = new Mock<UserManager<ApplicationUser>>(UserStoreMock, null, null, null, null, null, null, null, null);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = "f00",
+                Email = "f00@example.com",
+                PasswordHash = "test",
+                FirstName = "",
+                LastName = ""
+            };
+
+            userMgr.Setup(x => x.FindByIdAsync(userId)).ReturnsAsync(user);
+
+            this.repository = new DbRepository(this.context);
+            var profileService = new ProfileService(this.repository, userMgr.Object);
+
+            var employerId = 1;
+
+            var employer = new Employer
+            {
+                Id = employerId,
+                UserId = userId,
+                FirstName = "John",
+                LastName = "Doe",
+                User = user,
+                Company = new Company { Id = 1, CompanyName = "test", Address = "da", PhoneNumber = "sakflhjhjfj" }
+            };
+
+            await this.repository.AddAsync(employer);
+            await this.repository.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await profileService.GetUserById(userId, RoleConstants.Administrator));
+            Assert.That(ex.Message, Is.EqualTo(ErrorConstants.InvalidUserRole));
+        }
+
         [TearDown]
         public void TearDown()
         {
@@ -403,3 +900,49 @@
         }
     }
 }
+
+//public async Task<UserProfileViewModel> GetUserById(string id, string role)
+//{
+//    var userProfile = new UserProfileViewModel();
+
+//    if (role == RoleConstants.Employee)
+//    {
+//        var employee = await this.repository
+//            .AllReadonly<Employee>()
+//            .Include(e => e.User)
+//            .Where(e => e.UserId == id.ToString())
+//            .FirstOrDefaultAsync();
+
+//        userProfile.Id = employee!.Id;
+//        userProfile.FirstName = employee!.FirstName;
+//        userProfile.LastName = employee!.LastName;
+//        userProfile.Email = employee.User.Email;
+//        userProfile.IsEmployee = true;
+//    }
+//    else if (role == RoleConstants.Employer)
+//    {
+//        var employer = await this.repository.AllReadonly<Employer>()
+//            .Include(e => e.Company)
+//            .Include(e => e.User)
+//            .Where(e => e.UserId == id.ToString())
+//            .FirstOrDefaultAsync();
+//        if (employer == null)
+//        {
+//            throw new InvalidOperationException();
+//        }
+
+//        userProfile.Id = employer!.Id;
+//        userProfile.FirstName = employer.FirstName;
+//        userProfile.LastName = employer.LastName;
+//        userProfile.Email = employer.User.Email;
+//        userProfile.CompanyName = employer.Company.CompanyName;
+//        userProfile.CompanyAddress = employer.Company.Address;
+//        userProfile.CompanyPhoneNumber = employer.Company.PhoneNumber;
+//    }
+//    else
+//    {
+//        throw new InvalidOperationException(ErrorConstants.InvalidUserRole);
+//    }
+
+//    return userProfile;
+//}
