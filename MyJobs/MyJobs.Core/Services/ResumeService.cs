@@ -24,7 +24,7 @@
 
         public byte[] GenerateResumePDF(ResumeViewModel model)
         {
-            using MemoryStream memoryStream = new MemoryStream();
+            using MemoryStream memoryStream = new();
             using PdfWriter writer = new(memoryStream);
             using PdfDocument pdfDocument = new(writer);
             using Document document = new(pdfDocument);
