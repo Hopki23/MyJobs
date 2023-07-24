@@ -45,8 +45,14 @@
     }
     else
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Register</a>
+        <li class="nav-item dropdown ">
+            <a class="nav-link dropdown-toggle text-dark" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Register
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" asp-controller="Account" asp-action="Register" asp-route-userType="Employer">Employer</a></li>
+                <li><a class="dropdown-item" asp-controller="Account" asp-action="Register" asp-route-userType="Employee">Employee</a></li>
+            </ul>
         </li>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>

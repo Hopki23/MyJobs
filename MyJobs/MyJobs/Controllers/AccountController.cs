@@ -36,14 +36,24 @@
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Register()
+        public IActionResult Register(string userType)
         {
             if (User?.Identity?.IsAuthenticated ?? false)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var model = new RegisterViewModel();
+            if (userType == null)
+            {
+                TempData[NotificationConstants.ErrorMessage] = "You have to pick your role in order to continue!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var model = new RegisterViewModel
+            {
+                UserType = userType
+            };
+
             return View(model);
         }
 
@@ -76,7 +86,7 @@
 
             if (result.Succeeded)
             {
-                var role = model.CompanyName != null ? "Employer" : "Employee";
+                var role = model.UserType == RoleConstants.Employee ? "Employee" : "Employer";
 
                 await userManager.AddToRoleAsync(user, role);
 

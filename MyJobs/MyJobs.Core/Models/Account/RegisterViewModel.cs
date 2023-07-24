@@ -38,7 +38,7 @@
         public string LastName { get; set; } = null!;
 
         [Display(Name = "User Type")]
-        public string? UserType { get; set; }
+        public string UserType { get; set; }
 
         [Display(Name = "Company name")]
         public string? CompanyName { get; set; }
