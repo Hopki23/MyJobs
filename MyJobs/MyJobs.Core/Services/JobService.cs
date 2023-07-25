@@ -137,8 +137,8 @@
 
         public async Task<IEnumerable<JobsViewModel>> GetAllJobs(int page, int itemsToTake)
         {
-            return await this.repository.AllReadonly<Job>()
-                 .Where(x => x.IsApproved == true && !x.IsDeleted)
+            var jobs =  await this.repository.AllReadonly<Job>()
+                 .Where(x => x.IsApproved && !x.IsDeleted)
                  .OrderByDescending(j => j.CreatedOn)
                  .Skip((page - 1) * itemsToTake)
                  .Take(itemsToTake)
@@ -151,6 +151,8 @@
                      IsDeleted = j.IsDeleted
                  })
                  .ToListAsync();
+
+            return jobs;
         }
 
         public async Task<IEnumerable<JobsViewModel>> GetAllJobs()
@@ -336,7 +338,9 @@
 
         public async Task<int> GetTotalJobCount()
         {
-            return await this.repository.AllReadonly<Job>().CountAsync();
+            return await this.repository.AllReadonly<Job>()
+                .Where(j => j.IsApproved && !j.IsDeleted)
+                .CountAsync();
         }
 
         public async Task Update(int id, EditJobViewModel model)

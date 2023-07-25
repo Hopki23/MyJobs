@@ -76,7 +76,7 @@
         [HttpGet]
         public async Task<IActionResult> All(int page = 1)
         {
-            const int ItemsPerPage = 7;
+            const int ItemsPerPage = 5;
             var filterViewModel = await this.jobService.GetJobFilterViewModel();
 
             var model = new JobsListViewModel

@@ -6,11 +6,11 @@
     using Microsoft.AspNetCore.Mvc;
 
     using MyJobs.Core.Repositories;
+    using MyJobs.Core.Models.Account;
+    using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Data.Models.Identity;
     using MyJobs.Infrastructure.Models;
-    using MyJobs.Core.Models.Account;
-    using MyJobs.Core.Services.Contracts;
 
     public class AccountController : BaseController
     {

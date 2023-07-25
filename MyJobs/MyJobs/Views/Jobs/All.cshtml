@@ -49,9 +49,7 @@
 
 <nav id="paginationNav">
     <ul class="pagination justify-content-center">
-        <li class="page-item @if(!Model.HasPreviousPage) {
-        <text>disabled</text>
-}">
+        <li class="page-item @if(!Model.HasPreviousPage) {<text>disabled</text>}">
                 <a class="page-link" asp-action="All" asp-route-page="@Model.PreviousPageNumber">Previous</a>
             </li>
         @for (int i = Model.PageNumber - 3; i < Model.PageNumber; i++)
@@ -74,11 +72,9 @@
                 <li class="page-item"><a class="page-link" asp-action="All" asp-route-page="@i">@i</a></li>
             }
         }
-        <li class="page-item @if(!Model.HasNextPage) {
-        <text>disabled</text>
-}">
+        <li class="page-item @if(!Model.HasNextPage) {<text>disabled</text>}">
                 <a class="page-link" asp-action="All" asp-route-page="@Model.NextPageNumber">Next</a>
-            </li>
+        </li>
     </ul>
 </nav>
 

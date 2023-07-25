@@ -64,6 +64,7 @@
                 .ToListAsync();
         }
 
+        //Returns all categories for the dropdown
         public async Task<IEnumerable<KeyValuePair<string, string>>> GetAllCategories()
         {
             return await this.dbRepository.AllReadonly<Category>()
@@ -71,6 +72,7 @@
                     .ToListAsync();
         }
 
+        //Returns all categories along with the number of job offers
         public async Task<IndexViewModel> GetCategories()
         {
             return new IndexViewModel
@@ -121,6 +123,7 @@
                    .ToListAsync();
         }
 
+        //Checks if the selected category is exists (protects against manually changing the category id)
         public async Task<bool> CategoryExistById(int id)
         {
             return await this.dbRepository.AllReadonly<Category>()
