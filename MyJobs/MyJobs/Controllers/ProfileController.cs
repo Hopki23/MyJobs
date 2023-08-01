@@ -11,6 +11,8 @@
     using MyJobs.Infrastructure.Constants;
     using MyJobs.Core.Models.Profile;
     using MyJobs.Core.Services.Contracts;
+    using MyJobs.Core.Repositories;
+    using MyJobs.Core.Models.Resume;
 
     public class ProfileController : BaseController
     {
@@ -18,17 +20,23 @@
         private readonly IJobService jobService;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IResumeService resumeService;
+        private readonly IDbRepository repository;
 
         public ProfileController(
             IProfileService profileService,
             IJobService jobService,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IResumeService resumeService,
+            IDbRepository repository)
         {
             this.userManager = userManager;
             this.profileService = profileService;
             this.jobService = jobService;
             this.roleManager = roleManager;
+            this.resumeService = resumeService;
+            this.repository = repository;
         }
 
         [HttpGet]
@@ -126,6 +134,7 @@
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> EditProfile(int id)
         {
@@ -143,6 +152,7 @@
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditProfile(int id, UserProfileViewModel model)
         {
@@ -178,6 +188,93 @@
             }
 
             return View("CustomError");
+        }
+
+        [HttpGet]
+        [Authorize(Roles = RoleConstants.Employee)]
+        public async Task<IActionResult> MyResumes()
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            var resumes = await this.resumeService.MyResumes(userId);
+
+            return View(resumes);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = RoleConstants.Employee)]
+
+        public async Task<IActionResult> DownloadResumeAsync(int cvId)
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            try
+            {
+                var resume = await this.resumeService.DownloadResume(userId, cvId);
+                return resume;
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = RoleConstants.Employee)]
+        public async Task<IActionResult> EditResume(int id)
+        {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            try
+            {
+                var resume = await this.resumeService.GetResumeForEdit(userId, id);
+                return View(resume);
+            }
+            catch (ArgumentException ex)
+            {
+                TempData[NotificationConstants.ErrorMessage] = ex.Message;
+                return RedirectToAction(nameof(MyResumes));
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = RoleConstants.Employee)]
+
+        public async Task<IActionResult> EditResume(int id, EditResumeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                await this.resumeService.Update(id, model);
+                return RedirectToAction(nameof(MyResumes));
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = RoleConstants.Employee)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+               await this.resumeService.Delete(id);
+            }
+            catch (Exception)
+            {
+                return View("CustomError");
+            }
+
+            return RedirectToAction(nameof(MyResumes));
         }
     }
 }

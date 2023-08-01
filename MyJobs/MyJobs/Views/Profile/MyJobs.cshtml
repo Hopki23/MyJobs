@@ -23,9 +23,13 @@
             @if (!job.IsApproved)
             {
                 <span>Аwaiting confirmation..</span>
+            }else
+            {
+                <span>Confirmed</span>
+                    
             }
             <div class="items-link items-link2 f-right">
-                <a asp-action="GetById" asp-controller="Jobs" asp-route-id="@job.Id">Details</a>
+                <a asp-action="Details" asp-controller="Jobs" asp-route-id="@job.Id">Details</a>
             </div>
         </div>
     }

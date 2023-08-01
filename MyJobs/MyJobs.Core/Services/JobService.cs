@@ -281,6 +281,7 @@
             foreach (var job in jobs)
             {
                 var cvs = await this.repository.AllReadonly<CV>()
+                    .Include(c => c.Employee)
                     .Where(c => c.Jobs.Contains(job) && !c.IsDeleted)
                     .ToListAsync();
 
@@ -299,6 +300,7 @@
             return jobViewModels;
         }
 
+        //Returns single job details
         public async Task<SingleJobViewModel> GetSingleJob(int id, string userId)
         {
             var employer = await this.repository.All<Employer>()

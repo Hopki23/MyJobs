@@ -92,7 +92,7 @@
 
 
         [HttpGet]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> Details(int id)
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -136,6 +136,12 @@
 
                     return RedirectToAction("Create", "Resume");
                 }
+                else if (ex.Message == "The requested job was not found.")
+                {
+                    TempData[NotificationConstants.ErrorMessage] = ex.Message;
+
+                    return RedirectToAction(nameof(All));
+                }
                 else if (ex.Message == NotificationConstants.AlreadyApprovedMessageError)
                 {
                     TempData[NotificationConstants.ErrorMessage] = ex.Message;
@@ -175,11 +181,11 @@
         [Authorize(Roles = RoleConstants.Employer)]
         public async Task<IActionResult> Edit(int id)
         {
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
             try
             {
-                var model = await this.jobService.GetById(id, userId!);
+                var model = await this.jobService.GetById(id, userId);
                 model.CategoryItems = await this.categoriesService.GetAllCategories();
 
                 return View(model);
@@ -202,7 +208,7 @@
             try
             {
                 await this.jobService.Update(id, model);
-                return RedirectToAction(nameof(GetById), new { id });
+                return RedirectToAction(nameof(Details), new { id });
             }
             catch (Exception)
             {

@@ -18,20 +18,22 @@
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IDbRepository dbRepository;
-        private readonly IProfileService profileService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            IDbRepository dbRepository,
-            IProfileService profileService)
+            IDbRepository dbRepository)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.roleManager = roleManager;
             this.dbRepository = dbRepository;
-            this.profileService = profileService;
+        }
+
+        public IActionResult RegisterDropdown()
+        {
+            return PartialView("_RegisterDropdownPartial");
         }
 
         [HttpGet]

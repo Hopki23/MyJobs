@@ -14,11 +14,14 @@
         <h3>@jobViewModel.Job.Title</h3>
         @foreach (var cv in jobViewModel.CVs)
         {
+            string name = $"{cv.Employee.FirstName}  {cv.Employee.LastName}";
             string formattedDate = cv.DateOfBirth.ToString("dd.MM.yyyy");
             <div class="card" style="width: 18rem;">
                 <img src="data:image/jpeg;base64,@cv.Image" class="card-img-top" alt="CV Image">
                 <div class="card-body">
                     <h5 class="card-title">@cv.Title</h5>
+                    <p class="card-text">Name: @name</p>
+                    <p class="card-text">Address: @cv.Address</p>
                     <p class="card-text">Summary: @cv.Summary</p>
                     <p class="card-text">Date of Birth: @formattedDate</p>
                     <p class="card-text">Gender: @cv.Gender</p>

@@ -13,9 +13,7 @@
             <div class="col-xl-3 col-lg-3 col-md-4">
                 <div class="row">
                     <div class="col-12">
-                        <div class="small-section-tittle2 mb-45">
-                            <h4>Filter Jobs</h4>
-                        </div>
+                        <h4 class='text-center'>Filter Jobs</h4>
                     </div>
                 </div>
                 <partial name="_FilterJobsPartial" />
@@ -36,7 +34,7 @@
                                     </div>
                                 </div>
                                 <div class="items-link items-link2 f-right">
-                                    <a asp-action="GetById" asp-route-id="@job.Id">Details</a>
+                                    <a asp-action="Details" asp-route-id="@job.Id">Details</a>
                                 </div>
                             </div>
                         }
@@ -49,9 +47,11 @@
 
 <nav id="paginationNav">
     <ul class="pagination justify-content-center">
-        <li class="page-item @if(!Model.HasPreviousPage) {<text>disabled</text>}">
-                <a class="page-link" asp-action="All" asp-route-page="@Model.PreviousPageNumber">Previous</a>
-            </li>
+        <li class="page-item @if(!Model.HasPreviousPage) {
+        <text>disabled</text>
+}">
+            <a class="page-link" asp-action="All" asp-route-page="@Model.PreviousPageNumber">Previous</a>
+        </li>
         @for (int i = Model.PageNumber - 3; i < Model.PageNumber; i++)
         {
             if (i > 0)
@@ -72,8 +72,10 @@
                 <li class="page-item"><a class="page-link" asp-action="All" asp-route-page="@i">@i</a></li>
             }
         }
-        <li class="page-item @if(!Model.HasNextPage) {<text>disabled</text>}">
-                <a class="page-link" asp-action="All" asp-route-page="@Model.NextPageNumber">Next</a>
+        <li class="page-item @if(!Model.HasNextPage) {
+        <text>disabled</text>
+}">
+            <a class="page-link" asp-action="All" asp-route-page="@Model.NextPageNumber">Next</a>
         </li>
     </ul>
 </nav>
@@ -81,10 +83,14 @@
 @section Scripts{
     <script>
         $(document).ready(function() {
+            // Store the initial content of the job listing section (unfiltered job offers)
             var originalJobListing = $("#jobListingSection").html();
+
+            // Retrieve the anti-forgery token value from the hidden input field
             var token = $('input[name="__RequestVerificationToken"]').val();
 
             $("#applyFiltersBtn").click(function() {
+                // Retrieve the selected filter values (category, working times, location)
                 var selectedCategory = $("#categorySelect").val();
                 var selectedWorkingTimes = [];
                 $("input[name='selectedWorkingTimes']:checked").each(function() {
@@ -92,25 +98,33 @@
                 });
                 var selectedLocation = $("#locationSelect").val();
 
+                // Check if all filters are empty (no filters applied)
                 if (!selectedCategory && selectedWorkingTimes.length === 0 && !selectedLocation) {
+                    // Restore the original job listing and display the pagination
                     $("#jobListingSection").html(originalJobListing);
                     document.getElementById("paginationNav").style.display = 'block';
                     return;
                 }
 
+                // Hide the pagination since filtering is applied
                 document.getElementById("paginationNav").style.display = 'none';
+
+                // AJAX Request
                 $.ajax({
                     url: "/Jobs/Filter",
                     type: "POST",
                     headers: {
                         "RequestVerificationToken": token
                     },
+                    // Data Sent to Server (filter values)
                     data: {
                         select: selectedCategory,
                         selectedWorkingTimes: selectedWorkingTimes,
                         locationSelect: selectedLocation
                     },
+                    // AJAX Request Success Callback
                     success: function(data) {
+                        // Update the job listing section with the filtered data
                         $("#jobListingSection").html(data);
                     },
                     error: function() {

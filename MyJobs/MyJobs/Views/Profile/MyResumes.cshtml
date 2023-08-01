@@ -1,0 +1,66 @@
+﻿@using MyJobs.Infrastructure.Models
+@{
+    this.ViewData["Title"] = "My Resumes";
+}
+@model List<CV>
+
+<h2 class="text-center">@this.ViewData["Title"]</h2>
+<br />
+@if (Model.Count == 0)
+{
+     <h2 class="text-center">No resumes created yet!</h2>
+}
+else
+{
+    <div class="card-container">
+        @foreach (var cv in Model)
+        {
+            <h3>@cv.Title</h3>
+            string formattedDate = cv.DateOfBirth.ToString("dd.MM.yyyy");
+            string name = $"{cv.Employee.FirstName}  {cv.Employee.LastName}";
+            <div class="card" style="width: 18rem;">
+                <img src="data:image/jpeg;base64,@cv.Image" class="card-img-top" alt="CV Image">
+                <div class="card-body">
+                    <h5 class="card-title">@cv.Title</h5>
+                    <h5 class="card-title">Name: @name</h5>
+                    <p class="card-text">Address: @cv.Address</p>
+                    <p class="card-text">Summary: @cv.Summary</p>
+                    <p class="card-text">Date of Birth: @formattedDate</p>
+                    <p class="card-text">Gender: @cv.Gender</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Education: @cv.Education</li>
+                    <li class="list-group-item">Experience: @cv.Experience</li>
+                    <li class="list-group-item">Skills: @cv.Skills</li>
+                    <li class="list-group-item">Phone Number: @cv.PhoneNumber</li>
+                </ul>
+            </div>
+            <div class="d-flex">
+                <a asp-action="EditResume" asp-route-id="@cv.Id" class="btn btn-primary mr-2">Edit</a>
+                <form asp-action="Delete" id="deleteForm" asp-route-id="@cv.Id">
+                </form>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">Delete</button>
+
+            </div>
+            <a href="@Url.Action("DownloadResume", new { cvId = cv.Id })">Download here</a>
+        }
+    </div>
+}
+
+<div class="modal" tabindex="-1" role="dialog" id="deleteConfirmationModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete resume</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your resume?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger" onclick="deleteForm.submit()">Delete</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

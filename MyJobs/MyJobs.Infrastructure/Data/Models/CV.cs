@@ -46,6 +46,7 @@
         [Required]
         [MaxLength(CVConstants.SkillsMaxLength)]
         public string Skills { get; set; } = null!;
+
         [Required]
         public byte[] ResumeFile { get; set; } = null!;
 
