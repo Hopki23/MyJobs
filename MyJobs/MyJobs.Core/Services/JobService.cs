@@ -59,7 +59,7 @@
                 throw new ArgumentException(NotificationConstants.AlreadyApprovedMessageError);
             }
 
-            resume.Jobs.Add(job);
+            resume!.Jobs.Add(job);
             job.Resumes.Add(resume);
 
             await this.repository.SaveChangesAsync();

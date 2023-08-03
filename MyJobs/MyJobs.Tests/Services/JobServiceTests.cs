@@ -1193,6 +1193,7 @@
                     IsDeleted = false,
                     WorkingTime = "Remote",
                     EmployerId = 1,
+                    IsApproved = true
                 },
                  new Job()
                 {
@@ -1206,6 +1207,7 @@
                     IsDeleted = false,
                     WorkingTime = "Part-Time",
                     EmployerId= 1,
+                    IsApproved = true
                 }
             });
 
@@ -1379,6 +1381,68 @@
         [Test]
         public async Task GetJobsWithCVReturn0WhenEmployerIdIsWrong()
         {
+            //var categoryServiceMock = new Mock<ICategoryService>();
+            //var categoryService = categoryServiceMock.Object;
+
+            //this.repository = new DbRepository(this.context);
+            //this.jobService = new JobService(this.repository, categoryService);
+
+            //var userId = "testUser";
+            //var employerId = 1;
+
+            //var employer = new Employer
+            //{
+            //    Id = employerId,
+            //    FirstName = "",
+            //    LastName = "",
+            //    UserId = userId
+            //};
+
+            //var job1 = new Job()
+            //{
+            //    Id = 1,
+            //    Description = "Job 1",
+            //    Offering = "",
+            //    Requirements = "",
+            //    Responsibilities = "",
+            //    Town = "",
+            //    Title = "Job 1",
+            //    CategoryId = 1,
+            //    IsDeleted = false,
+            //    EmployerId = employerId
+            //};
+
+            //var cv1 = new CV
+            //{
+            //    Id = 1,
+            //    EmployeeId = 1,
+            //    Jobs = new List<Job> { job1 },
+            //    IsDeleted = false,
+            //    Address = "",
+            //    Education = "",
+            //    Experience = "",
+            //    Gender = "",
+            //    PhoneNumber = "",
+            //    ResumeFile = Array.Empty<byte>(),
+            //    ResumeFileName = "",
+            //    Skills = "",
+            //    Summary = "",
+            //    Title = "",
+            //};
+
+            //await this.repository.AddAsync(employer);
+            //await this.repository.AddAsync(job1);
+            //await this.repository.AddAsync(cv1);
+            //await this.repository.SaveChangesAsync();
+
+            //var result = await jobService.GetJobsWithCV(new JobsWithCVsViewModel(), userId);
+
+            //Assert.Multiple(() =>
+            //{
+            //    Assert.That(result, Is.Not.Null);
+            //    Assert.That(result.Count(), Is.EqualTo(1));
+            //    Assert.That(result.First().CVs, Has.Count.EqualTo(1));
+            //});
             var categoryServiceMock = new Mock<ICategoryService>();
             var categoryService = categoryServiceMock.Object;
 
@@ -1394,6 +1458,14 @@
                 FirstName = "",
                 LastName = "",
                 UserId = userId
+            };
+
+            var employee = new Employee
+            {
+                Id = 1,
+                FirstName = "",
+                LastName = "",
+                UserId = "damm"
             };
 
             var job1 = new Job()
@@ -1413,7 +1485,7 @@
             var cv1 = new CV
             {
                 Id = 1,
-                EmployeeId = 1,
+                Employee = employee,
                 Jobs = new List<Job> { job1 },
                 IsDeleted = false,
                 Address = "",
