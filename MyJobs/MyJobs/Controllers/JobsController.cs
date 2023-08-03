@@ -6,7 +6,6 @@
     using Microsoft.AspNetCore.Mvc;
 
     using MyJobs.Core.Models.Job;
-    using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Constants;
@@ -99,17 +98,6 @@
             var model = await this.jobService.GetSingleJob(id, userId!);
             return View(model);
         }
-
-        //[HttpGet]
-        //[Authorize]
-        //public IActionResult Apply(int id)
-        //{
-        //    var model = new UploadResumeViewModel()
-        //    {
-        //        Id = id
-        //    };
-        //    return View(model);
-        //}
 
         [HttpPost]
         [Authorize]

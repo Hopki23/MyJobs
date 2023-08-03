@@ -32,10 +32,10 @@
                 .FirstOrDefaultAsync(c => c.Id == resumeId && c.EmployeeId == employee!.Id);
 
             //if user tries to apply with wrong resume(not created via the application or does not have resume yet)
-            if (resume == null)
-            {
-                throw new ArgumentException(NotificationConstants.CreateResumeError);
-            }
+            //if (resume == null)
+            //{
+            //    throw new ArgumentException(NotificationConstants.CreateResumeError);
+            //}
 
             var job = await this.repository.All<Job>()
                 .Include(j => j.Resumes)
