@@ -9,7 +9,7 @@
     {
         Task SaveResume(ResumeViewModel model, int employeeId);
         byte[] GenerateResumePDF(ResumeViewModel model);
-        Task<IEnumerable<CV>> MyResumes(string userId);
+        Task<IEnumerable<CV>> GetUserResumes(string userId);
         Task<EditResumeViewModel> GetResumeForEdit(string userId, int id);
         Task<FileContentResult> DownloadResume(string userId, int cvId);
         Task Update(int id, EditResumeViewModel model);

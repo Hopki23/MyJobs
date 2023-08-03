@@ -100,20 +100,20 @@
             return View(model);
         }
 
-        [HttpGet]
-        [Authorize]
-        public IActionResult Apply(int id)
-        {
-            var model = new UploadResumeViewModel()
-            {
-                Id = id
-            };
-            return View(model);
-        }
+        //[HttpGet]
+        //[Authorize]
+        //public IActionResult Apply(int id)
+        //{
+        //    var model = new UploadResumeViewModel()
+        //    {
+        //        Id = id
+        //    };
+        //    return View(model);
+        //}
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Apply(UploadResumeViewModel model)
+        public async Task<IActionResult> Apply(int selectedResumeId, int jobId)
         {
             if (!ModelState.IsValid)
             {
@@ -124,38 +124,43 @@
 
             try
             {
-                await this.jobService.Apply(model, userId);
-                TempData[NotificationConstants.SuccessMessage] = NotificationConstants.SuccessApply;
-                return RedirectToAction(nameof(All));
+                await this.jobService.Apply(selectedResumeId, userId, jobId);
+                return Json(new { success = true, message = NotificationConstants.SuccessApply });
             }
             catch (ArgumentException ex)
             {
-                if (ex.Message == NotificationConstants.CreateResumeError)
+                if (ex.Message == NotificationConstants.AlreadyAppliedMessageError)
                 {
-                    TempData[NotificationConstants.ErrorMessage] = ex.Message;
+                    //return Json(new { success = false, message = ex.Message, StatusCode });
+                    return BadRequest(ex.Message);
+                }
+                else if (ex.Message == NotificationConstants.CreateResumeError)
+                {
+                    //TempData[NotificationConstants.ErrorMessage] = ex.Message;
 
-                    return RedirectToAction("Create", "Resume");
+                    //return RedirectToAction("Create", "Resume");
+                    return Json(new { success = false, message = ex.Message });
                 }
                 else if (ex.Message == "The requested job was not found.")
                 {
-                    TempData[NotificationConstants.ErrorMessage] = ex.Message;
+                    //TempData[NotificationConstants.ErrorMessage] = ex.Message;
 
-                    return RedirectToAction(nameof(All));
+                    //return RedirectToAction(nameof(All));
+                    return Json(new { success = false, message = ex.Message });
                 }
                 else if (ex.Message == NotificationConstants.AlreadyApprovedMessageError)
                 {
-                    TempData[NotificationConstants.ErrorMessage] = ex.Message;
+                    //TempData[NotificationConstants.ErrorMessage] = ex.Message;
 
-                    return RedirectToAction(nameof(All));
+                    //return RedirectToAction(nameof(All));
+                    return Json(new { success = false, message = ex.Message });
                 }
 
                 return View("CustomError");
             }
             catch (InvalidOperationException ex)
             {
-                TempData[NotificationConstants.ErrorMessage] = ex.Message;
-
-                return View(model);
+                return Json(new { success = false, message = ex.Message });
             }
         }
 

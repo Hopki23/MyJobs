@@ -13,6 +13,8 @@
     using MyJobs.Core.Services.Contracts;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Models.Resume;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
 
     public class ProfileController : BaseController
     {
@@ -195,9 +197,24 @@
         public async Task<IActionResult> MyResumes()
         {
             var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var resumes = await this.resumeService.MyResumes(userId);
+            var resumes = await this.resumeService.GetUserResumes(userId);
 
             return View(resumes);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = RoleConstants.Employee)]
+        public async Task<IActionResult> GetUserResumes()
+        {
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve // Set ReferenceHandler to handle object cycles
+            };
+
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            var resumes = await this.resumeService.GetUserResumes(userId);
+
+            return Json(resumes, options);
         }
 
         [HttpGet]
@@ -242,7 +259,6 @@
 
         [HttpPost]
         [Authorize(Roles = RoleConstants.Employee)]
-
         public async Task<IActionResult> EditResume(int id, EditResumeViewModel model)
         {
             if (!ModelState.IsValid)

@@ -103,7 +103,8 @@
                     @if (!Model.IsOwner)
                     {
                         <div class="apply-btn2">
-                            <a asp-action="Apply" asp-route-id="@Model.Id" class="btn btn-primary">Apply Now</a>
+                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resumeSelectionModal">Apply Now</a>
+                            @*<a asp-action="Apply" asp-route-id="@Model.Id" class="btn btn-primary">Apply Now</a>*@
                         </div>
                     }
                 </div>
@@ -139,3 +140,107 @@
         </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="resumeSelectionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Resume</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Choose one of your resumes:</p>
+                <!-- Add a form to submit the selected resume -->
+                <form id="applyForm" asp-route-jobId="@Model.Id">
+                    @Html.AntiForgeryToken()
+                    <div id="resumesContainer">
+                    </div>
+                    <input type="hidden" id="jobId" name="jobId" value="@Model.Id" />
+                    <input type="hidden" id="selectedResumeId" name="selectedResumeId" value="" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!-- Call the JavaScript function to submit the form -->
+                <button type="button" class="btn btn-primary" onclick="submitApplication()">Send</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function loadUserResumes() {
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            $.ajax({
+                url: '/Profile/GetUserResumes',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    const resumesContainer = $('#resumesContainer');
+                    resumesContainer.empty();
+                    let valuesArray = data.$values;
+
+                    valuesArray.forEach(resume => {
+                        const radioDiv = $('<div>').addClass('form-check');
+                        const radioInput = $('<input>')
+                            .addClass('form-check-input')
+                            .attr('type', 'radio')
+                            .attr('name', 'selectedResume')
+                            .val(resume.Id);
+                        const radioLabel = $('<label>')
+                            .addClass('form-check-label')
+                            .text(resume.Title);
+
+                        radioDiv.append(radioInput);
+                        radioDiv.append(radioLabel);
+
+                        resumesContainer.append(radioDiv);
+                    });
+
+                },
+                error: function(error) {
+                    console.error('Error fetching user resumes:', error);
+                }
+            });
+        }
+
+        $('#resumeSelectionModal').on('show.bs.modal', function() {
+            loadUserResumes();
+        });
+
+
+        function submitApplication() {
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            // Get the selected resume ID
+            const selectedResumeId = $('input[name="selectedResume"]:checked').val();
+
+            console.log(selectedResumeId);
+
+            if (!selectedResumeId) {
+                alert('Please select a resume.');
+                return;
+            }
+
+            $('#selectedResumeId').val(selectedResumeId);
+            const formData = selectedResumeId;
+
+            const form = $('#applyForm');
+            $.ajax({
+                url: '/Jobs/Apply',
+                method: 'POST',
+                data: form.serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    toastr.success(response.message);
+                },
+                error: function(error) {
+                     console.error('Error response:', error.responseText);
+                    toastr.error(error.responseJSON.message);
+                }
+            });
+
+            $('#resumeSelectionModal').modal('hide');
+        }
+    </script>
+}

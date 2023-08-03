@@ -47,7 +47,7 @@
             if (notifications.length > 0) {
                 countContainer.text(notifications.length);
 
-                $.each(notifications, function (index, notification) {
+                $.each(notifications, function (notification) {
                     var notificationHtml =
                         '<a class="dropdown-item">' +
                         'From: ' + notification.sender + ', ' +
@@ -79,7 +79,7 @@
                     "User-ID": userId
                 },
                 data: { id: id },
-                success: function (response) {
+                success: function () {
                     var cachedNotifications = sessionStorage.getItem('notifications_' + userId);
 
                     if (cachedNotifications) {

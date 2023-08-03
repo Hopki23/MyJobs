@@ -51,6 +51,8 @@
                 }
 
                 var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+                //move it into the service
                 var employee = await this.repository.All<Employee>()
                                 .FirstOrDefaultAsync(e => e.UserId == userId);
 

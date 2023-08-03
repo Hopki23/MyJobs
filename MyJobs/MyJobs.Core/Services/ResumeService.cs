@@ -119,7 +119,7 @@
             return memoryStream.ToArray();
         }
 
-        public async Task<IEnumerable<CV>> MyResumes(string userId)
+        public async Task<IEnumerable<CV>> GetUserResumes(string userId)
         {
             var employee = await this.repository.AllReadonly<Employee>()
                 .Where(e => e.UserId == userId).FirstOrDefaultAsync();

@@ -16,7 +16,7 @@
 
         Task<SingleJobViewModel> GetSingleJob(int id, string userId);
 
-        Task Apply(UploadResumeViewModel model, string userId);
+        Task Apply(int resumeId,string userId, int jobId);
 
         Task<IEnumerable<JobsWithCVsViewModel>> GetJobsWithCV(JobsWithCVsViewModel model, string userId);
 

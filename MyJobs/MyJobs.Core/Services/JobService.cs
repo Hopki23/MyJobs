@@ -5,7 +5,6 @@
     using Microsoft.EntityFrameworkCore;
 
     using MyJobs.Core.Models.Job;
-    using MyJobs.Core.Models.Resume;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services.Contracts;
     using MyJobs.Infrastructure.Constants;
@@ -24,17 +23,15 @@
             this.categoriesService = categoriesService;
         }
 
-        public async Task Apply(UploadResumeViewModel model, string userId)
+        public async Task Apply(int resumeId, string userId, int jobId)
         {
             var employee = await this.repository.All<Employee>()
                 .FirstOrDefaultAsync(e => e.UserId == userId);
 
-            int jobId = model.Id;
-
             var resume = await this.repository.All<CV>()
-                .FirstOrDefaultAsync(c => c.EmployeeId == employee!.Id);
+                .FirstOrDefaultAsync(c => c.Id == resumeId && c.EmployeeId == employee!.Id);
 
-            //if user tries to apply with wrong resume(not created via the application)
+            //if user tries to apply with wrong resume(not created via the application or does not have resume yet)
             if (resume == null)
             {
                 throw new ArgumentException(NotificationConstants.CreateResumeError);
@@ -51,7 +48,7 @@
             }
 
             //If user tries to apply if he had already applied
-            if (job.Resumes.Any(x => x.Id == resume.Id))
+            if (job.Resumes.Any(x => x.EmployeeId == employee!.Id))
             {
                 throw new InvalidOperationException(NotificationConstants.AlreadyAppliedMessageError);
             }
