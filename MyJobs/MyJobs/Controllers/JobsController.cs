@@ -119,28 +119,14 @@
             {
                 if (ex.Message == NotificationConstants.AlreadyAppliedMessageError)
                 {
-                    //return Json(new { success = false, message = ex.Message, StatusCode });
-                    return BadRequest(ex.Message);
-                }
-                else if (ex.Message == NotificationConstants.CreateResumeError)
-                {
-                    //TempData[NotificationConstants.ErrorMessage] = ex.Message;
-
-                    //return RedirectToAction("Create", "Resume");
-                    return Json(new { success = false, message = ex.Message });
+                    return Json(new { success = false, message = ex.Message});
                 }
                 else if (ex.Message == "The requested job was not found.")
                 {
-                    //TempData[NotificationConstants.ErrorMessage] = ex.Message;
-
-                    //return RedirectToAction(nameof(All));
                     return Json(new { success = false, message = ex.Message });
                 }
                 else if (ex.Message == NotificationConstants.AlreadyApprovedMessageError)
                 {
-                    //TempData[NotificationConstants.ErrorMessage] = ex.Message;
-
-                    //return RedirectToAction(nameof(All));
                     return Json(new { success = false, message = ex.Message });
                 }
 

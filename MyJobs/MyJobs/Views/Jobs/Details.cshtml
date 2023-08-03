@@ -211,7 +211,7 @@
 
 
         function submitApplication() {
-            var token = $('input[name="__RequestVerificationToken"]').val();
+            //var token = $('input[name="__RequestVerificationToken"]').val();
             // Get the selected resume ID
             const selectedResumeId = $('input[name="selectedResume"]:checked').val();
 
@@ -232,11 +232,15 @@
                 data: form.serialize(),
                 dataType: 'json',
                 success: function(response) {
-                    toastr.success(response.message);
+                    if (!response.success) {
+                        toastr.error(response.message)
+                    } else {
+                        toastr.success(response.message);
+                    }
                 },
                 error: function(error) {
-                     console.error('Error response:', error.responseText);
-                    toastr.error(error.responseJSON.message);
+                    console.error('Error response:', error.responseText);
+                    toastr.error(error);
                 }
             });
 
