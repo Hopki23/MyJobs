@@ -27,11 +27,25 @@
             </div>
         </form>
         <div class="text-center mt-3">
-            <p>If you do not have an account, <a href="@Url.Action("Register", "Account")" ">register here</a>.</p>
+            <p>If you do not have an account, <span id="registerLink" class="text-primary" style="cursor: pointer;">register here</span>.</p>
+            <ul class="dropdown-menu dropdown-menu-end" id="registerDropdown" style="display: none; position: absolute; right: 0;">
+                <li><a class="dropdown-item text-center" asp-controller="Account" asp-action="Register" asp-route-userType="Employer">Employer</a></li>
+                <li><a class="dropdown-item text-center" asp-controller="Account" asp-action="Register" asp-route-userType="Employee">Employee</a></li>
+            </ul>
         </div>
     </div>
 </div>
 
 @section Scripts {
-<partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(function() {
+            $('#registerLink').click(function(e) {
+                e.preventDefault();
+
+                $('#registerDropdown').toggle();
+            });
+        });
+    </script>
 }
