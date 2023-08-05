@@ -17,6 +17,7 @@
     using MyJobs.Core.Models.Resume;
     using MyJobs.Infrastructure.Models;
     using MyJobs.Core.Services.Contracts;
+    using Microsoft.AspNetCore.Http;
 
     public class ResumeService : IResumeService
     {
@@ -164,7 +165,7 @@
             await this.repository.SaveChangesAsync();
         }
 
-        public async Task Update(int id, EditResumeViewModel model)
+        public async Task Update(int id, EditResumeViewModel model, IFormFile? updatePicture)
         {
             var resume = await this.repository.All<CV>()
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -174,11 +175,14 @@
                 throw new ArgumentException("The requested resume was not found.");
             }
 
-            if (!string.IsNullOrEmpty(model.Image))
+            if (updatePicture != null)
             {
-                resume.Image = model.Image;
+                using var memoryStream = new MemoryStream();
+                await updatePicture.CopyToAsync(memoryStream);
+                resume.Image = Convert.ToBase64String(memoryStream.ToArray());
             }
-            else if (model.IsPictureRemoved)
+
+            if (model.IsPictureRemoved)
             {
                 resume.Image = null;
             }

@@ -1,6 +1,7 @@
 ﻿namespace MyJobs.Core.Models.Resume
 {
     using System.ComponentModel.DataAnnotations;
+
     using MyJobs.Infrastructure.Constants;
     public class EditResumeViewModel
     {

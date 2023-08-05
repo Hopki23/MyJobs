@@ -2,6 +2,8 @@
 {
     using System.Linq;
     using System.Security.Claims;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
@@ -13,8 +15,6 @@
     using MyJobs.Core.Services.Contracts;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Models.Resume;
-    using System.Text.Json;
-    using System.Text.Json.Serialization;
 
     public class ProfileController : BaseController
     {
@@ -259,7 +259,7 @@
 
         [HttpPost]
         [Authorize(Roles = RoleConstants.Employee)]
-        public async Task<IActionResult> EditResume(int id, EditResumeViewModel model)
+        public async Task<IActionResult> EditResume(int id, EditResumeViewModel model, IFormFile? updatePicture)
         {
             if (!ModelState.IsValid)
             {
@@ -268,7 +268,7 @@
 
             try
             {
-                await this.resumeService.Update(id, model);
+                await this.resumeService.Update(id, model, updatePicture);
                 return RedirectToAction(nameof(MyResumes));
             }
             catch (Exception)

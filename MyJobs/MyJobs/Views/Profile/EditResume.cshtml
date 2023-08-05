@@ -14,8 +14,8 @@
     @if (Model.Image == null)
     {
         <div class="form-group">
-            <label class="form-label" for="resumeFile">Upload Picture:</label>
-            <input type="file" id="resumeFile" class="form-control" name="ResumePicture" required>
+            <label class="form-label" for="updatePicture">Upload Picture:</label>
+            <input type="file" id="updatePicture" class="form-control" name="UpdatePicture">
         </div>
     }
     else
@@ -33,7 +33,7 @@
             </div>
             <div id="updatePictureField" style="display: none;">
                 <label class="form-label" for="updatePicture">Upload New Picture:</label>
-                <input type="file" id="updatePicture" class="form-control" name="UpdatePicture" required>
+                <input type="file" id="updatePicture" class="form-control" name="UpdatePicture">
             </div>
         </div>
     }
@@ -112,7 +112,7 @@
                 updatePictureCheckbox.checked = false;
                 updatePictureCheckbox.setAttribute('disabled', 'disabled');
                 updatePictureField.style.display = 'none';
-                @Model.IsPictureRemoved = true;
+                document.getElementById('IsPictureRemoved').value = 'True';
             } else {
                 updatePictureCheckbox.removeAttribute('disabled');
             }
