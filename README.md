@@ -16,6 +16,8 @@
 * NUnit
 * Moq
 * In-Memory Database
+# Services test coverage
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/dd92cb35-1727-4420-ab8e-0afb384245a4)
 # Functionalities
 ## For Employees
 1. **Create, Edit, and Delete Resumes:**
@@ -38,3 +40,34 @@
 
 3. **Edit or Delete Job Offers:**
    Employers can edit or delete their posted job offers as needed. This enables them to keep the job listings up-to-date and accurate.
+# Home Page 
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/4bcd972f-8504-406f-bf2d-2e4994588383)
+# All Jobs Page
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/a0bc02c5-6312-431c-b083-a4137b8b247c)
+# Job details
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/8b178fb8-2231-4db3-bf2b-8efc25eb28ed)
+# Apply for a job
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/97ae6a0c-2fa2-42cc-9f10-5fa7ac2ad586)
+# Create Resume Page
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/1bb4ef66-94da-492a-baf6-8d3b9bd0818f)
+# Received Resumes Page
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/6bc8f0f3-b7a1-439b-b8e5-64b4fe93d4b4)
+# Create job offer
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/283626ca-cec6-47b8-85d8-8136a93a745c)
+# Admin Pages
++ Admin can disable users
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/0b862e49-1cd0-4af6-9b0e-647a169fd9c4)
++ Admin can remove and add categories
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/c4ab36e3-02be-47d2-bd91-17657525540e)
++ Admin can approve, delete and see the job details
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/ccd90c0f-abf6-42e0-b5f0-bd0df08f2d59)
+## Template Attribution
+Certain parts of the HTML, CSS, and views used in this project were adapted from a template provided by [Colorlib].
+<br>
+While the overall structure and design were inspired by the template, modifications have been made to customize the content to suit the requirements of this project.
+# License
+This project is licensed with the [MIT license](https://github.com/Hopki23/MyJobs/blob/main/LICENSE).
+
+
+
+
