@@ -7,6 +7,7 @@
     using MyJobs.Core.Models.Category;
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services.Contracts;
+    using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Data.Models;
     using MyJobs.Infrastructure.Models;
 
@@ -32,7 +33,7 @@
 
             if (category == null)
             {
-                throw new ArgumentException("The requested category was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingCategory);
             }
 
             category.IsDeleted = true;
@@ -96,7 +97,7 @@
 
             if (category == null)
             {
-                throw new ArgumentException("The requested category was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingCategory);
             }
 
             category.IsDeleted = false;
@@ -123,7 +124,6 @@
                    .ToListAsync();
         }
 
-        //Checks if the selected category is exists (protects against manually changing the category id)
         public async Task<bool> CategoryExistById(int id)
         {
             return await this.dbRepository.AllReadonly<Category>()

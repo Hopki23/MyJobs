@@ -46,7 +46,7 @@
 
             if (!doesCategoryExist)
             {
-                TempData[NotificationConstants.ErrorMessage] = "Selected category does not exist!";
+                TempData[NotificationConstants.ErrorMessage] = NotificationConstants.NotExistingCategory;
                 model.CategoryItems = await this.categoriesService.GetAllCategories();
                 return View(model);
             }
@@ -121,7 +121,7 @@
                 {
                     return Json(new { success = false, message = ex.Message});
                 }
-                else if (ex.Message == "The requested job was not found.")
+                else if (ex.Message == NotificationConstants.NotExistingJob)
                 {
                     return Json(new { success = false, message = ex.Message });
                 }

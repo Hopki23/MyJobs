@@ -4,6 +4,7 @@
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
    
     using iText.Kernel.Pdf;
     using iText.Layout;
@@ -17,7 +18,7 @@
     using MyJobs.Core.Models.Resume;
     using MyJobs.Infrastructure.Models;
     using MyJobs.Core.Services.Contracts;
-    using Microsoft.AspNetCore.Http;
+    using MyJobs.Infrastructure.Constants;
 
     public class ResumeService : IResumeService
     {
@@ -65,7 +66,7 @@
 
             if (resume == null)
             {
-                throw new ArgumentException("The requested resume was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingResume);
             }
 
             return resume;
@@ -172,7 +173,7 @@
 
             if (resume == null)
             {
-                throw new ArgumentException("The requested resume was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingResume);
             }
 
             if (updatePicture != null)
@@ -207,7 +208,7 @@
 
             if (resume == null)
             {
-                throw new ArgumentException("The requested resume was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingResume);
             }
 
             resume.IsDeleted = true;

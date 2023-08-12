@@ -4,6 +4,7 @@
 
     using MyJobs.Core.Repositories;
     using MyJobs.Core.Services.Contracts;
+    using MyJobs.Infrastructure.Constants;
     using MyJobs.Infrastructure.Data.Models;
     using MyJobs.Infrastructure.Models;
     public class EmploymentService : IEmploymentService
@@ -23,14 +24,14 @@
 
             if (job == null)
             {
-                throw new ArgumentException("The requested job was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingJob);
             }
 
             var cvToRemove = job.Resumes.FirstOrDefault(c => c.EmployeeId == employeeId);
 
             if (cvToRemove == null)
             {
-                throw new ArgumentException("The requested resume was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingResume);
             }
             var employee = await this.repository.GetByIdAsync<Employee>(employeeId);
 
@@ -78,14 +79,14 @@
 
             if (job == null)
             {
-                throw new ArgumentException("The requested job was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingJob);
             }
 
             var cvToRemove = job.Resumes.FirstOrDefault(c => c.EmployeeId == employeeId);
 
             if (cvToRemove == null)
             {
-                throw new ArgumentException("The requested resume was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingResume);
             }
 
             job.Resumes.Remove(cvToRemove);

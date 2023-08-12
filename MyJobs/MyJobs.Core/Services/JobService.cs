@@ -31,12 +31,6 @@
             var resume = await this.repository.All<CV>()
                 .FirstOrDefaultAsync(c => c.Id == resumeId && c.EmployeeId == employee!.Id);
 
-            //if user tries to apply with wrong resume(not created via the application or does not have resume yet)
-            //if (resume == null)
-            //{
-            //    throw new ArgumentException(NotificationConstants.CreateResumeError);
-            //}
-
             var job = await this.repository.All<Job>()
                 .Include(j => j.Resumes)
                 .Include(e => e.Employees)
@@ -44,7 +38,7 @@
 
             if (job == null || job.IsDeleted)
             {
-                throw new ArgumentException("The requested job was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingJob);
             }
 
             //If user tries to apply if he had already applied
@@ -100,7 +94,7 @@
 
             if (job == null)
             {
-                throw new ArgumentException("The requested job was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingJob);
             }
 
             job.IsDeleted = true;
@@ -187,7 +181,7 @@
 
             if (job == null)
             {
-                throw new ArgumentException("The requested job was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingJob);
             }
 
             return job;
@@ -200,7 +194,7 @@
 
             if (job == null)
             {
-                throw new ArgumentException("Job not found!");
+                throw new ArgumentException(NotificationConstants.NotExistingJob);
             }
 
             job.IsApproved = true;
@@ -329,7 +323,7 @@
 
             if (job == null)
             {
-                throw new ArgumentException("The requested job was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingJob);
             }
 
             return job;
@@ -349,7 +343,7 @@
 
             if (job == null)
             {
-                throw new ArgumentException("The requested job was not found.");
+                throw new ArgumentException(NotificationConstants.NotExistingJob);
             }
 
             job.Title = model.Title;
