@@ -51,7 +51,7 @@
 # Create Resume Page
 ![image](https://github.com/Hopki23/MyJobs/assets/95144139/1bb4ef66-94da-492a-baf6-8d3b9bd0818f)
 # Received Resumes Page
-![image](https://github.com/Hopki23/MyJobs/assets/95144139/6bc8f0f3-b7a1-439b-b8e5-64b4fe93d4b4)
+![image](https://github.com/Hopki23/MyJobs/assets/95144139/2eb9b613-853f-483f-94fa-532bc4deed43)
 # Create job offer
 ![image](https://github.com/Hopki23/MyJobs/assets/95144139/283626ca-cec6-47b8-85d8-8136a93a745c)
 # Admin Pages
